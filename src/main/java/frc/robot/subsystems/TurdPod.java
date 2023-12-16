@@ -5,10 +5,12 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class TurdPod extends SubsystemBase {
 
@@ -19,20 +21,33 @@ public class TurdPod extends SubsystemBase {
   private final Encoder azimuthEncoder;
   private final Encoder driveEncoder;
 
-  public TurdPod(int azimuthID, int driveID, int absoluteEncoderID) {
+  private double absoluteEncoderOffset;
+
+  public TurdPod(int azimuthID, int driveID, int absoluteEncoderID, boolean azimuthInvert, boolean driveInvert, double absoluteEncoderOffset) {
     azimuth = new CANSparkMax(azimuthID, MotorType.kBrushless);
     drive = new CANSparkMax(driveID, MotorType.kBrushless);
     absoluteEncoder = new PWM(absoluteEncoderID);
 
     azimuthEncoder = new Encoder(null, null);
     driveEncoder = new Encoder(null, null);
+    
+    azimuth.setInverted(azimuthInvert);
+    drive.setInverted(driveInvert);
+
+    driveEncoder.setDistancePerPulse(Constants.azimuthRadiansPerPulse);
+    azimuthEncoder.setDistancePerPulse(Constants.driveMetersPerPulse);
+
+    this.absoluteEncoderOffset = absoluteEncoderOffset;
+
+    azimuth.setSmartCurrentLimit(Constants.azimuthAmpLimit);
+    drive.setSmartCurrentLimit(Constants.driveAmpLimit);
+
+    azimuth.setIdleMode(Constants.azimuthMode);
+    drive.setIdleMode(Constants.driveMode);
   }
 
   public void calibratePod() {
-    driveEncoder.setReverseDirection(false);
     driveEncoder.reset();
-    driveEncoder.setDistancePerPulse(0);
-    azimuthEncoder.setDistancePerPulse(0);
     azimuthEncoder.initSendable(null);
   }
 
@@ -46,6 +61,10 @@ public class TurdPod extends SubsystemBase {
 
   public double getDriveVelocity() {
     return driveEncoder.getRate();
+  }
+
+  public double getAbsoluteEncoder() {
+    return absoluteEncoder.getPosition() - absoluteEncoderOffset;
   }
 
 
