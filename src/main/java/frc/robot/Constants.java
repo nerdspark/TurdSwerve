@@ -19,7 +19,7 @@ public final class Constants {
 
     public static final int leftAzimuthEncoderAID = 0; // ?????
 
-    public static final double leftAbsoluteEncoderOffset = 0;
+    public static final double leftAbsoluteEncoderOffset = 0; // absolute encoder reading when pod is facing 0
     public static final double rightAbsoluteEncoderOffset = 0;
 
     public static final int azimuthRadiansPerPulse = 1;

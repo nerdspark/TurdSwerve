@@ -22,6 +22,7 @@ public class TurdPod extends SubsystemBase {
   private final Encoder driveEncoder;
 
   private double absoluteEncoderOffset;
+  private double azimuthEncoderOffset;
 
   public TurdPod(int azimuthID, int driveID, int absoluteEncoderID, boolean azimuthInvert, boolean driveInvert, double absoluteEncoderOffset) {
     azimuth = new CANSparkMax(azimuthID, MotorType.kBrushless);
@@ -48,11 +49,15 @@ public class TurdPod extends SubsystemBase {
 
   public void calibratePod() {
     driveEncoder.reset();
-    azimuthEncoder.initSendable(null);
+    azimuthEncoderOffset = getAzimuthDistance() - getAbsoluteEncoder();
+  }
+
+  public double getAzimuthDistance() {
+    return azimuthEncoder.getDistance();
   }
 
   public double getAzimuthAngle() {
-    return azimuthEncoder.getDistance();
+    return (azimuthEncoder.getDistance() - azimuthEncoderOffset) % (2*Math.PI);
   }
 
   public double getDrivePosition() {
