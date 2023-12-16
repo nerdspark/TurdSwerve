@@ -12,7 +12,7 @@ public final class Constants {
     public final int leftDriveID = 1;
     public final int rightDriveID = 3;
 
-    public final int leftEncoderID = 0;
-    public final int rightEncoderID = 1;
+    public final int leftAbsoluteEncoderID = 0;
+    public final int rightAbsoluteEncoderID = 1;
 
 }
