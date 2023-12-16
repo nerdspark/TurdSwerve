@@ -15,4 +15,6 @@ public final class Constants {
     public final int leftAbsoluteEncoderID = 0;
     public final int rightAbsoluteEncoderID = 1;
 
+    public final int leftAzimuthEncoderAID = 0;
+
 }

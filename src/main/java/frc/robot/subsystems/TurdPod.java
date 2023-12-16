@@ -28,6 +28,14 @@ public class TurdPod extends SubsystemBase {
     driveEncoder = new Encoder(null, null);
   }
 
+  public void calibratePod() {
+    driveEncoder.setReverseDirection(false);
+    driveEncoder.reset();
+    driveEncoder.setDistancePerPulse(0);
+    azimuthEncoder.setDistancePerPulse(0);
+    azimuthEncoder.initSendable(null);
+  }
+
   public double getAzimuthAngle() {
     return azimuthEncoder.getDistance();
   }
@@ -40,7 +48,7 @@ public class TurdPod extends SubsystemBase {
     return driveEncoder.getRate();
   }
 
-  
+
 
   @Override
   public void periodic() {
