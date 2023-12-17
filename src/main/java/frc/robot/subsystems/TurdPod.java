@@ -4,11 +4,19 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.AnalogInput;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -16,29 +24,28 @@ public class TurdPod extends SubsystemBase {
 
   private final CANSparkMax azimuth;
   private final CANSparkMax drive;
-  private final PWM absoluteEncoder;
+  private final AnalogEncoder absoluteEncoder;
 
-  private final Encoder azimuthEncoder;
-  private final Encoder driveEncoder;
+  private final RelativeEncoder azimuthEncoder;
+  private final RelativeEncoder driveEncoder;
 
-  private double absoluteEncoderOffset;
-  private double azimuthEncoderOffset;
 
   public TurdPod(int azimuthID, int driveID, int absoluteEncoderID, boolean azimuthInvert, boolean driveInvert, double absoluteEncoderOffset) {
     azimuth = new CANSparkMax(azimuthID, MotorType.kBrushless);
     drive = new CANSparkMax(driveID, MotorType.kBrushless);
-    absoluteEncoder = new PWM(absoluteEncoderID);
+    absoluteEncoder = new AnalogEncoder(absoluteEncoderID);
 
-    azimuthEncoder = new Encoder(null, null);
-    driveEncoder = new Encoder(null, null);
+    azimuthEncoder = azimuth.getEncoder();
+    driveEncoder = drive.getEncoder();
     
     azimuth.setInverted(azimuthInvert);
     drive.setInverted(driveInvert);
 
-    driveEncoder.setDistancePerPulse(Constants.azimuthRadiansPerPulse);
-    azimuthEncoder.setDistancePerPulse(Constants.driveMetersPerPulse);
+    driveEncoder.setPositionConversionFactor(Constants.driveMetersPerPulse);
+    azimuthEncoder.setPositionConversionFactor(Constants.azimuthRadiansPerPulse);
+    absoluteEncoder.setDistancePerRotation(Constants.absoluteEncoderRadiansPerRotation);
 
-    this.absoluteEncoderOffset = absoluteEncoderOffset;
+    absoluteEncoder.setPositionOffset(absoluteEncoderOffset);
 
     azimuth.setSmartCurrentLimit(Constants.azimuthAmpLimit);
     drive.setSmartCurrentLimit(Constants.driveAmpLimit);
@@ -47,35 +54,27 @@ public class TurdPod extends SubsystemBase {
     drive.setIdleMode(Constants.driveMode);
   }
 
-  public void calibratePod() {
-    driveEncoder.reset();
-    azimuthEncoderOffset = getAzimuthDistance() - getAbsoluteEncoder();
+  public void resetPod() {
+    driveEncoder.setPosition(0);
+    azimuthEncoder.setPosition(getAbsoluteEncoder());
   }
 
-  public double getAzimuthDistance() {
-    return azimuthEncoder.getDistance();
+  public SwerveModuleState getPodState() {
+    return new SwerveModuleState(driveEncoder.getVelocity(), new Rotation2d(azimuthEncoder.getPosition()));
   }
 
-  public double getAzimuthAngle() {
-    return (azimuthEncoder.getDistance() - azimuthEncoderOffset) % (2*Math.PI);
-  }
-
-  public double getDrivePosition() {
-    return driveEncoder.getDistance();
-  }
-
-  public double getDriveVelocity() {
-    return driveEncoder.getRate();
+  public void setPodState(SwerveModuleState state) {
+    drive.set(state.speedMetersPerSecond);
+    azimuth.set(state.angle.getRadians());
   }
 
   public double getAbsoluteEncoder() {
-    return absoluteEncoder.getPosition() - absoluteEncoderOffset;
+    return absoluteEncoder.getAbsolutePosition();
   }
-
-
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("absoluteEncoder " + absoluteEncoder.getChannel(), getAbsoluteEncoder());
     // This method will be called once per scheduler run
   }
 }

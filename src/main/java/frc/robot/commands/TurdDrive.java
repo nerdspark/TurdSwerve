@@ -4,12 +4,25 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.TurdPod;
 
 public class TurdDrive extends CommandBase {
-  /** Creates a new TurdDrive. */
-  public TurdDrive() {
-    // Use addRequirements() here to declare subsystem dependencies.
+  
+  TurdPod pod;
+  Supplier<Translation2d> joystickRight;
+
+  public TurdDrive(TurdPod pod, Supplier<Translation2d> joystickRight) {
+    this.pod = pod;
+    this.joystickRight = joystickRight;
+    addRequirements(pod);
   }
 
   // Called when the command is initially scheduled.
@@ -18,7 +31,10 @@ public class TurdDrive extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    SwerveModuleState state = new SwerveModuleState(joystickRight.get().getX(), new Rotation2d(joystickRight.get().getY()));
+    pod.setPodState(state);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
