@@ -4,14 +4,27 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.sensors.Pigeon2;
+
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class TurdSwerve extends SubsystemBase {
-  /** Creates a new TurdSwerve. */
-  public TurdSwerve() {}
+  private final Pigeon2 gyro = new Pigeon2(Constants.pigeonPort);
+  private final TurdPod leftPod = new TurdPod(Constants.leftAzimuthID, Constants.rightAzimuthID, Constants.leftAbsoluteEncoderID, Constants.leftAzimuthInvert, Constants.leftDriveInvert, Constants.leftAbsoluteEncoderOffset);
+  public TurdSwerve() {
+
+  }
+
+  public void setLeftPod(SwerveModuleState state) {
+    leftPod.setPodState(state);
+  }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    SmartDashboard.putNumber("pigeon", gyro.getYaw());
   }
 }

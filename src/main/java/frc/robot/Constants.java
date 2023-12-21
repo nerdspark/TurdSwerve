@@ -47,4 +47,6 @@ public final class Constants {
     public static final Translation2d rightPodPosition = new Translation2d(1, 0);
 
     public static final int driverPort = 0;
+
+    public static final int pigeonPort = 0;
 }

@@ -13,16 +13,17 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.TurdPod;
+import frc.robot.subsystems.TurdSwerve;
 
 public class TurdDrive extends CommandBase {
   
-  TurdPod pod;
+  TurdSwerve swerve;
   Supplier<Translation2d> joystickRight;
 
-  public TurdDrive(TurdPod pod, Supplier<Translation2d> joystickRight) {
-    this.pod = pod;
+  public TurdDrive(TurdSwerve swerve, Supplier<Translation2d> joystickRight) {
+    this.swerve = swerve;
     this.joystickRight = joystickRight;
-    addRequirements(pod);
+    addRequirements(swerve);
   }
 
   // Called when the command is initially scheduled.
@@ -33,7 +34,7 @@ public class TurdDrive extends CommandBase {
   @Override
   public void execute() {
     SwerveModuleState state = new SwerveModuleState(joystickRight.get().getX(), new Rotation2d(joystickRight.get().getY()));
-    pod.setPodState(state);
+    swerve.setLeftPod(state);
   }
 
   // Called once the command ends or is interrupted.

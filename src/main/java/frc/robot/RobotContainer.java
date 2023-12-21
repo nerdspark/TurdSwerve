@@ -13,16 +13,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.TurdDrive;
 import frc.robot.subsystems.TurdPod;
+import frc.robot.subsystems.TurdSwerve;
 
 public class RobotContainer {
 
   public static final XboxController driver = new XboxController(Constants.driverPort);
-  public static final TurdPod leftPod = new TurdPod(Constants.leftAzimuthID, Constants.leftDriveID, Constants.leftAbsoluteEncoderID, Constants.leftAzimuthInvert,Constants.rightAzimuthInvert, Constants.leftAbsoluteEncoderOffset);
+  // public static final TurdPod leftPod = new TurdPod(Constants.leftAzimuthID, Constants.leftDriveID, Constants.leftAbsoluteEncoderID, Constants.leftAzimuthInvert,Constants.rightAzimuthInvert, Constants.leftAbsoluteEncoderOffset);
+  public static final TurdSwerve swerve = new TurdSwerve();
 
   public RobotContainer() {
     configureBindings();
     Supplier<Translation2d> driverRightJoystick = () -> new Translation2d(driver.getRightX(), driver.getRightY());
-    leftPod.setDefaultCommand(new TurdDrive(leftPod, driverRightJoystick));
+    swerve.setDefaultCommand(new TurdDrive(swerve, driverRightJoystick));
   }
 
   private void configureBindings() {}
