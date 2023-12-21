@@ -7,9 +7,11 @@ package frc.robot.subsystems;
 import com.revrobotics.AnalogInput;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -29,6 +31,7 @@ public class TurdPod extends SubsystemBase {
   private final RelativeEncoder azimuthEncoder;
   private final RelativeEncoder driveEncoder;
 
+  private final PIDController azimuthPID = new PIDController(Constants.azimuthkP, Constants.azimuthkI, Constants.azimuthkD);
 
   public TurdPod(int azimuthID, int driveID, int absoluteEncoderID, boolean azimuthInvert, boolean driveInvert, double absoluteEncoderOffset) {
     azimuth = new CANSparkMax(azimuthID, MotorType.kBrushless);
@@ -52,6 +55,8 @@ public class TurdPod extends SubsystemBase {
 
     azimuth.setIdleMode(Constants.azimuthMode);
     drive.setIdleMode(Constants.driveMode);
+
+    resetPod();
   }
 
   public void resetPod() {
@@ -65,7 +70,7 @@ public class TurdPod extends SubsystemBase {
 
   public void setPodState(SwerveModuleState state) {
     drive.set(state.speedMetersPerSecond);
-    azimuth.set(state.angle.getRadians());
+    azimuth.set(azimuthPID.calculate(state.angle.getRadians()));
   }
 
   public double getAbsoluteEncoder() {
@@ -75,6 +80,6 @@ public class TurdPod extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("absoluteEncoder " + absoluteEncoder.getChannel(), getAbsoluteEncoder());
-    // This method will be called once per scheduler run
+
   }
 }

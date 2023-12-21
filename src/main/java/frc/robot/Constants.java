@@ -35,6 +35,10 @@ public final class Constants {
     public static final int azimuthAmpLimit = 1;
     public static final int driveAmpLimit = 1;
 
+    public static final double azimuthkP = 1;
+    public static final double azimuthkI = 0;
+    public static final double azimuthkD = 0;
+
     public static final IdleMode azimuthMode = IdleMode.kBrake;
     public static final IdleMode driveMode = IdleMode.kBrake;
 
