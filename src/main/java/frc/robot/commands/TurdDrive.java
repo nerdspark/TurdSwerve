@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -36,9 +37,11 @@ public class TurdDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    rotation = (Math.abs(joystickRight.get().getY()) < .1 && Math.abs(joystickRight.get().getX()) < .1) ? rotation : new Rotation2d(Math.atan2(joystickRight.get().getY(), joystickRight.get().getX()));
-    SwerveModuleState state = new SwerveModuleState(joystickLeft.get().getX(), rotation);
-    swerve.setLeftPod(state);
+    double speedX = joystickRight.get().getX();
+    double speedY = joystickRight.get().getY();
+    double speedOmega = joystickLeft.get().getX() * Math.abs(joystickLeft.get().getX());
+    ChassisSpeeds speeds = new ChassisSpeeds(speedX, speedY, speedOmega);
+    swerve.setRobotSpeeds(speeds);
   }
 
   // Called once the command ends or is interrupted.

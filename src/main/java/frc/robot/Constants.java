@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import java.util.HashMap;
+import java.util.Hashtable;
+
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -22,7 +25,7 @@ public final class Constants {
     public static final int leftAbsoluteEncoderID = 0;
     public static final int rightAbsoluteEncoderID = 1;
 
-    public static final int pigeonID = 0;
+    public static final int pigeonID = 5;
 
     public static final double leftAbsoluteEncoderOffset = 0; // absolute encoder reading when pod is facing 0
     public static final double rightAbsoluteEncoderOffset = 0; 
@@ -48,11 +51,14 @@ public final class Constants {
     public static final IdleMode azimuthMode = IdleMode.kBrake;
     public static final IdleMode driveMode = IdleMode.kBrake;
 
-    public static final Translation2d robotCenter = new Translation2d(0, 1); // serves as "center of robot for calculations; robot will turn about this point
+    public static final Translation2d robotCenter = new Translation2d(0, 0); // serves as "center of robot for calculations; robot will turn about this point
     public static final Translation2d leftPodPosition = new Translation2d(-1, 0); // units in meters
     public static final Translation2d rightPodPosition = new Translation2d(1, 0);
     public static final SwerveDriveKinematics drivetrainKinematics = new SwerveDriveKinematics(leftPodPosition.minus(robotCenter), rightPodPosition.minus(robotCenter));
 
     public static final int driverPort = 0;
 
+
+    public static final Hashtable<Double, Double> map = new Hashtable<Double, Double>();
+    // map.put(1,1);
 }

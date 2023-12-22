@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.Pigeon2;
+import com.ctre.phoenix.sensors.Pigeon2Configuration;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -13,6 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -25,10 +27,8 @@ public class TurdSwerve extends SubsystemBase {
               leftPod.getPodPosition(),
               rightPod.getPodPosition()
           });
-  SwerveDriveKinematics kinematics;
-
   public TurdSwerve() {
-
+    // gyro.configAllSettings(new Pigeon2Configuration());
   }
 
   public void resetOdometry(Pose2d pose) {
@@ -39,8 +39,8 @@ public class TurdSwerve extends SubsystemBase {
     leftPod.setPodState(state);
   }
 
-  public void setPodStates(ChassisSpeeds chassisSpeeds) {
-    SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
+  public void setRobotSpeeds(ChassisSpeeds chassisSpeeds) {
+    SwerveModuleState[] states = Constants.drivetrainKinematics.toSwerveModuleStates(chassisSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.podMaxSpeed);
 
     leftPod.setPodState(states[0]);
@@ -50,6 +50,6 @@ public class TurdSwerve extends SubsystemBase {
   @Override
   public void periodic() {
     odometer.update(new Rotation2d(gyro.getYaw()), new SwerveModulePosition[] {leftPod.getPodPosition(), rightPod.getPodPosition()});
-    // SmartDashboard.putNumber("pigeon", gyro.getYaw());
+    SmartDashboard.putNumber("pigeon", gyro.getYaw());
   }
 }
