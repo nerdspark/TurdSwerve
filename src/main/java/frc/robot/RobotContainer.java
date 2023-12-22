@@ -24,7 +24,8 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
     Supplier<Translation2d> driverRightJoystick = () -> new Translation2d(driver.getRightX(), driver.getRightY());
-    swerve.setDefaultCommand(new TurdDrive(swerve, driverRightJoystick));
+    Supplier<Translation2d> driverLeftJoystick = () -> new Translation2d(driver.getLeftX(), driver.getLeftY());
+    swerve.setDefaultCommand(new TurdDrive(swerve, driverLeftJoystick, driverRightJoystick));
   }
 
   private void configureBindings() {}

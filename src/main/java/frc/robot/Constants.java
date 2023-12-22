@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 
 /** Add your docs here. */
 public final class Constants {
@@ -20,6 +21,8 @@ public final class Constants {
     public static final int leftAbsoluteEncoderID = 0;
     public static final int rightAbsoluteEncoderID = 1;
 
+    public static final int pigeonID = 0;
+
     public static final double leftAbsoluteEncoderOffset = 0; // absolute encoder reading when pod is facing 0
     public static final double rightAbsoluteEncoderOffset = 0; 
 
@@ -28,14 +31,14 @@ public final class Constants {
     public static final boolean leftDriveInvert = false;
     public static final boolean rightDriveInvert = true;
 
-    public static final double azimuthRadiansPerPulse = 1;
-    public static final double driveMetersPerPulse = 1;
+    public static final double azimuthRadiansPerRotation = 2*Math.PI*15/33;
+    public static final double driveMetersPerRotation = Units.inchesToMeters(2) * Math.PI * 33 / 45 / 2;
     public static final double absoluteEncoderRadiansPerRotation = 2*Math.PI;
     
     public static final int azimuthAmpLimit = 1;
     public static final int driveAmpLimit = 1;
 
-    public static final double azimuthkP = 1;
+    public static final double azimuthkP = .05;
     public static final double azimuthkI = 0;
     public static final double azimuthkD = 0;
 
@@ -48,5 +51,4 @@ public final class Constants {
 
     public static final int driverPort = 0;
 
-    public static final int pigeonPort = 0;
 }

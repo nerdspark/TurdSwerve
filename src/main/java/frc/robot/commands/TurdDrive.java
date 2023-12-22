@@ -19,10 +19,13 @@ public class TurdDrive extends CommandBase {
   
   TurdSwerve swerve;
   Supplier<Translation2d> joystickRight;
+  Supplier<Translation2d> joystickLeft;
+  Rotation2d rotation = new Rotation2d();
 
-  public TurdDrive(TurdSwerve swerve, Supplier<Translation2d> joystickRight) {
+  public TurdDrive(TurdSwerve swerve, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight) {
     this.swerve = swerve;
     this.joystickRight = joystickRight;
+    this.joystickLeft = joystickLeft;
     addRequirements(swerve);
   }
 
@@ -33,7 +36,8 @@ public class TurdDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    SwerveModuleState state = new SwerveModuleState(joystickRight.get().getX(), new Rotation2d(joystickRight.get().getY()));
+    rotation = (Math.abs(joystickRight.get().getY()) < .1 && Math.abs(joystickRight.get().getX()) < .1) ? rotation : new Rotation2d(Math.atan2(joystickRight.get().getY(), joystickRight.get().getX()));
+    SwerveModuleState state = new SwerveModuleState(joystickLeft.get().getX(), rotation);
     swerve.setLeftPod(state);
   }
 

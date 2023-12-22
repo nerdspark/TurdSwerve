@@ -13,8 +13,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class TurdSwerve extends SubsystemBase {
-  private final Pigeon2 gyro = new Pigeon2(Constants.pigeonPort);
-  private final TurdPod leftPod = new TurdPod(Constants.leftAzimuthID, Constants.rightAzimuthID, Constants.leftAbsoluteEncoderID, Constants.leftAzimuthInvert, Constants.leftDriveInvert, Constants.leftAbsoluteEncoderOffset);
+  private final Pigeon2 gyro = new Pigeon2(Constants.pigeonID);
+  private final TurdPod leftPod = new TurdPod(Constants.leftAzimuthID, Constants.leftDriveID, Constants.leftAbsoluteEncoderID, Constants.leftAzimuthInvert, Constants.leftDriveInvert, Constants.leftAbsoluteEncoderOffset);
+  private final TurdPod rightPod = new TurdPod(Constants.rightAzimuthID, Constants.rightDriveID, Constants.rightAbsoluteEncoderID, Constants.rightAzimuthInvert, Constants.rightDriveInvert, Constants.rightAbsoluteEncoderOffset);
   public TurdSwerve() {
 
   }
@@ -25,6 +26,6 @@ public class TurdSwerve extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("pigeon", gyro.getYaw());
+    // SmartDashboard.putNumber("pigeon", gyro.getYaw());
   }
 }

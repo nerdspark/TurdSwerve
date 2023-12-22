@@ -44,8 +44,8 @@ public class TurdPod extends SubsystemBase {
     azimuth.setInverted(azimuthInvert);
     drive.setInverted(driveInvert);
 
-    driveEncoder.setPositionConversionFactor(Constants.driveMetersPerPulse);
-    azimuthEncoder.setPositionConversionFactor(Constants.azimuthRadiansPerPulse);
+    driveEncoder.setPositionConversionFactor(Constants.driveMetersPerRotation);
+    azimuthEncoder.setPositionConversionFactor(Constants.azimuthRadiansPerRotation);
     absoluteEncoder.setDistancePerRotation(Constants.absoluteEncoderRadiansPerRotation);
 
     absoluteEncoder.setPositionOffset(absoluteEncoderOffset);
@@ -65,12 +65,21 @@ public class TurdPod extends SubsystemBase {
   }
 
   public SwerveModuleState getPodState() {
-    return new SwerveModuleState(driveEncoder.getVelocity(), new Rotation2d(azimuthEncoder.getPosition()));
+    return new SwerveModuleState(driveEncoder.getPosition(), new Rotation2d(azimuthEncoder.getPosition()));
   }
 
   public void setPodState(SwerveModuleState state) {
-    drive.set(state.speedMetersPerSecond);
-    azimuth.set(azimuthPID.calculate(state.angle.getRadians()));
+    // boolean reverse = false;
+    // double angle = state.angle.getRadians();
+    // angle = ((azimuthEncoder.getPosition() - angle) % Math.PI*2) + angle;
+    // if (angle > Math.PI) {
+    //   angle -= 2*Math.PI;
+    // }
+
+    state = SwerveModuleState.optimize(state, new Rotation2d(azimuthEncoder.getPosition())); // does not account for rotations between 180 and 360?
+    azimuthPID.setSetpoint(state.angle.getRadians());
+    drive.set(Math.abs(state.speedMetersPerSecond) < .01 ? 0 : state.speedMetersPerSecond);
+    SmartDashboard.putNumber("state.angle.getRadians()", state.angle.getRadians());
   }
 
   public double getAbsoluteEncoder() {
@@ -80,6 +89,7 @@ public class TurdPod extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("absoluteEncoder " + absoluteEncoder.getChannel(), getAbsoluteEncoder());
-
+    azimuth.set(azimuthPID.calculate(azimuthEncoder.getPosition()));
+    SmartDashboard.putNumber("azimuthEncoder.getPosition() ", azimuthEncoder.getPosition());
   }
 }
