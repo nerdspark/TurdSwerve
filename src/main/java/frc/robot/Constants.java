@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
 /** Add your docs here. */
@@ -38,6 +39,8 @@ public final class Constants {
     public static final int azimuthAmpLimit = 1;
     public static final int driveAmpLimit = 1;
 
+    public static final double podMaxSpeed = 1;
+
     public static final double azimuthkP = .05;
     public static final double azimuthkI = 0;
     public static final double azimuthkD = 0;
@@ -48,6 +51,7 @@ public final class Constants {
     public static final Translation2d robotCenter = new Translation2d(0, 1); // serves as "center of robot for calculations; robot will turn about this point
     public static final Translation2d leftPodPosition = new Translation2d(-1, 0); // units in meters
     public static final Translation2d rightPodPosition = new Translation2d(1, 0);
+    public static final SwerveDriveKinematics drivetrainKinematics = new SwerveDriveKinematics(leftPodPosition.minus(robotCenter), rightPodPosition.minus(robotCenter));
 
     public static final int driverPort = 0;
 

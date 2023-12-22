@@ -14,6 +14,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.Encoder;
@@ -56,6 +57,8 @@ public class TurdPod extends SubsystemBase {
     azimuth.setIdleMode(Constants.azimuthMode);
     drive.setIdleMode(Constants.driveMode);
 
+    azimuthPID.enableContinuousInput(0, Math.PI*2); // ????
+
     resetPod();
   }
 
@@ -64,18 +67,11 @@ public class TurdPod extends SubsystemBase {
     azimuthEncoder.setPosition(getAbsoluteEncoder());
   }
 
-  public SwerveModuleState getPodState() {
-    return new SwerveModuleState(driveEncoder.getPosition(), new Rotation2d(azimuthEncoder.getPosition()));
+  public SwerveModulePosition getPodPosition() {
+    return new SwerveModulePosition(driveEncoder.getPosition(), new Rotation2d(azimuthEncoder.getPosition()));
   }
 
   public void setPodState(SwerveModuleState state) {
-    // boolean reverse = false;
-    // double angle = state.angle.getRadians();
-    // angle = ((azimuthEncoder.getPosition() - angle) % Math.PI*2) + angle;
-    // if (angle > Math.PI) {
-    //   angle -= 2*Math.PI;
-    // }
-
     state = SwerveModuleState.optimize(state, new Rotation2d(azimuthEncoder.getPosition())); // does not account for rotations between 180 and 360?
     azimuthPID.setSetpoint(state.angle.getRadians());
     drive.set(Math.abs(state.speedMetersPerSecond) < .01 ? 0 : state.speedMetersPerSecond);
