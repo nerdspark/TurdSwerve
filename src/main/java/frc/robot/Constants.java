@@ -39,17 +39,20 @@ public final class Constants {
     public static final double driveMetersPerRotation = Units.inchesToMeters(2) * Math.PI * 33 / 45 / 2;
     public static final double absoluteEncoderRadiansPerRotation = 2*Math.PI;
     
-    public static final int azimuthAmpLimit = 1;
-    public static final int driveAmpLimit = 1;
+    public static final int azimuthAmpLimit = 25;
+    public static final int driveAmpLimit = 5;
 
     public static final double podMaxSpeed = 1;
 
-    public static final double azimuthkP = .05;
-    public static final double azimuthkI = 0;
-    public static final double azimuthkD = 0;
+    public static final double azimuthkP = 0.4;
+    public static final double azimuthkI = 0.0;
+    public static final double azimuthkD = 0.003;
+    public static final double azimuthkIz = 0;
+    public static final double azimuthDriveSpeedMultiplier = 0.5;
 
-    public static final IdleMode azimuthMode = IdleMode.kBrake;
-    public static final IdleMode driveMode = IdleMode.kBrake;
+    public static final IdleMode azimuthMode = IdleMode.kCoast;
+    public static final IdleMode driveMode = IdleMode.kCoast;
+
 
     public static final Translation2d robotCenter = new Translation2d(0, 0); // serves as "center of robot for calculations; robot will turn about this point
     public static final Translation2d leftPodPosition = new Translation2d(-1, 0); // units in meters

@@ -21,12 +21,14 @@ public class TurdDrive extends CommandBase {
   TurdSwerve swerve;
   Supplier<Translation2d> joystickRight;
   Supplier<Translation2d> joystickLeft;
+  Supplier<Boolean> resetPods;
   Rotation2d rotation = new Rotation2d();
 
-  public TurdDrive(TurdSwerve swerve, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight) {
+  public TurdDrive(TurdSwerve swerve, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight, Supplier<Boolean> resetPods) {
     this.swerve = swerve;
     this.joystickRight = joystickRight;
     this.joystickLeft = joystickLeft;
+    this.resetPods = resetPods;
     addRequirements(swerve);
   }
 
@@ -37,7 +39,10 @@ public class TurdDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double speedX = joystickRight.get().getX();
+    if (resetPods.get()) {
+      swerve.resetPods();
+    }
+    double speedX = -joystickRight.get().getX();
     double speedY = joystickRight.get().getY();
     double speedOmega = joystickLeft.get().getX() * Math.abs(joystickLeft.get().getX());
     ChassisSpeeds speeds = new ChassisSpeeds(speedX, speedY, speedOmega);

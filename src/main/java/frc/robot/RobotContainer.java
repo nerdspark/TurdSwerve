@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.TurdDrive;
 import frc.robot.subsystems.TurdPod;
 import frc.robot.subsystems.TurdSwerve;
@@ -25,10 +26,13 @@ public class RobotContainer {
     configureBindings();
     Supplier<Translation2d> driverRightJoystick = () -> new Translation2d(driver.getRightX(), driver.getRightY());
     Supplier<Translation2d> driverLeftJoystick = () -> new Translation2d(driver.getLeftX(), driver.getLeftY());
-    swerve.setDefaultCommand(new TurdDrive(swerve, driverLeftJoystick, driverRightJoystick));
+    Supplier<Boolean> buttonY = () -> driver.getYButton();
+    swerve.setDefaultCommand(new TurdDrive(swerve, driverLeftJoystick, driverRightJoystick, buttonY));
   }
 
-  private void configureBindings() {}
+  private void configureBindings() {
+    // new JoystickButton(driver, 4).onTrue(swerve.resetPods());
+  }
 
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");

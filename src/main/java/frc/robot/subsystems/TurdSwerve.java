@@ -14,6 +14,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -27,12 +30,27 @@ public class TurdSwerve extends SubsystemBase {
               leftPod.getPodPosition(),
               rightPod.getPodPosition()
           });
+
+  private ShuffleboardTab tab = Shuffleboard.getTab("PID");
+  private GenericEntry azimuthP = tab.add("azimuth P", Constants.azimuthkP).getEntry();
+  private GenericEntry azimuthI = tab.add("azimuth I", Constants.azimuthkI).getEntry();
+  private GenericEntry azimuthD = tab.add("azimuth D", Constants.azimuthkD).getEntry();
+  private GenericEntry azimuthIzone = tab.add("azimuth IZone", Constants.azimuthkD).getEntry();
+  private GenericEntry ADMult = tab.add("azimuth-drive speed multiplier", Constants.azimuthDriveSpeedMultiplier).getEntry();
+
   public TurdSwerve() {
     // gyro.configAllSettings(new Pigeon2Configuration());
   }
 
   public void resetOdometry(Pose2d pose) {
     odometer.resetPosition(new Rotation2d(gyro.getYaw()), new SwerveModulePosition[] {leftPod.getPodPosition(), rightPod.getPodPosition()}, pose);
+  }
+
+  public void resetPods() {
+    leftPod.resetPod();
+    rightPod.resetPod();
+    leftPod.setPID(azimuthP.getDouble(Constants.azimuthkP), azimuthI.getDouble(Constants.azimuthkI), azimuthD.getDouble(Constants.azimuthkD), azimuthIzone.getDouble(Constants.azimuthkIz), 1, ADMult.getDouble(Constants.azimuthDriveSpeedMultiplier));
+    rightPod.setPID(azimuthP.getDouble(Constants.azimuthkP), azimuthI.getDouble(Constants.azimuthkI), azimuthD.getDouble(Constants.azimuthkD), azimuthIzone.getDouble(Constants.azimuthkIz), 1, ADMult.getDouble(Constants.azimuthDriveSpeedMultiplier));
   }
 
   public void setLeftPod(SwerveModuleState state) {

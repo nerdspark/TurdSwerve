@@ -16,9 +16,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -31,8 +34,11 @@ public class TurdPod extends SubsystemBase {
 
   private final RelativeEncoder azimuthEncoder;
   private final RelativeEncoder driveEncoder;
+  private final SparkMaxPIDController azimuthPID;
 
-  private final PIDController azimuthPID = new PIDController(Constants.azimuthkP, Constants.azimuthkI, Constants.azimuthkD);
+  private double azimuthDriveSpeedMultiplier;
+  private double speed = 0;
+
 
   public TurdPod(int azimuthID, int driveID, int absoluteEncoderID, boolean azimuthInvert, boolean driveInvert, double absoluteEncoderOffset) {
     azimuth = new CANSparkMax(azimuthID, MotorType.kBrushless);
@@ -57,7 +63,7 @@ public class TurdPod extends SubsystemBase {
     azimuth.setIdleMode(Constants.azimuthMode);
     drive.setIdleMode(Constants.driveMode);
 
-    azimuthPID.enableContinuousInput(0, Math.PI*2); // ????
+    azimuthPID = azimuth.getPIDController();
 
     resetPod();
   }
@@ -66,6 +72,19 @@ public class TurdPod extends SubsystemBase {
     driveEncoder.setPosition(0);
     azimuthEncoder.setPosition(getAbsoluteEncoder());
   }
+  public void setPID(double P, double I, double D, double IZone, double outputRange, double ADMult) {
+    if (P != azimuthPID.getP()) {azimuthPID.setP(P);}
+    if (I != azimuthPID.getI()) {azimuthPID.setI(I);}
+    if (D != azimuthPID.getD()) {azimuthPID.setD(D);}
+    if (IZone != azimuthPID.getIZone()) {azimuthPID.setIZone(IZone);}
+    if (outputRange != azimuthPID.getOutputMax()) {azimuthPID.setOutputRange(-outputRange, outputRange);}
+    azimuthPID.setPositionPIDWrappingMaxInput(Math.PI);
+    azimuthPID.setPositionPIDWrappingMinInput(-Math.PI);
+    azimuthPID.setPositionPIDWrappingEnabled(true);
+    azimuthPID.setSmartMotionAllowedClosedLoopError(0, 0);
+    azimuth.setClosedLoopRampRate(.1);
+    azimuthDriveSpeedMultiplier = ADMult;
+  }
 
   public SwerveModulePosition getPodPosition() {
     return new SwerveModulePosition(driveEncoder.getPosition(), new Rotation2d(azimuthEncoder.getPosition()));
@@ -73,9 +92,15 @@ public class TurdPod extends SubsystemBase {
 
   public void setPodState(SwerveModuleState state) {
     state = SwerveModuleState.optimize(state, new Rotation2d(azimuthEncoder.getPosition())); // does not account for rotations between 180 and 360?
-    azimuthPID.setSetpoint(state.angle.getRadians());
-    drive.set(Math.abs(state.speedMetersPerSecond) < .01 ? 0 : state.speedMetersPerSecond);
+    azimuthPID.setReference(state.angle.getRadians(), CANSparkMax.ControlType.kPosition); 
+    speed = 0;//Math.abs(state.speedMetersPerSecond) < .01 ? 0 : state.speedMetersPerSecond;
     SmartDashboard.putNumber("state.angle.getRadians()", state.angle.getRadians());
+
+    double error = (state.angle.getRadians() - azimuthEncoder.getPosition()) % (2*Math.PI);
+      error = error > Math.PI ? error - 2*Math.PI : error;
+      error = error < -Math.PI ? error + 2*Math.PI : error;
+      error *= 180 / Math.PI;
+      SmartDashboard.putNumber("error azimuth " + azimuth.getDeviceId(), error);
   }
 
   public double getAbsoluteEncoder() {
@@ -84,8 +109,10 @@ public class TurdPod extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("absoluteEncoder " + absoluteEncoder.getChannel(), getAbsoluteEncoder());
-    azimuth.set(azimuthPID.calculate(azimuthEncoder.getPosition()));
-    SmartDashboard.putNumber("azimuthEncoder.getPosition() ", azimuthEncoder.getPosition());
+    SmartDashboard.putNumber("getabsoluteEncoder() " + absoluteEncoder.getChannel(), getAbsoluteEncoder());
+    drive.set(speed + (azimuth.getAppliedOutput() * azimuthDriveSpeedMultiplier));
+    SmartDashboard.putNumber("azimuthEncoder.getPosition() " + azimuth.getDeviceId(), azimuthEncoder.getPosition());
+    SmartDashboard.putNumber("drive pos " + drive.getDeviceId(), driveEncoder.getPosition());
+    SmartDashboard.putNumber("azimuth.getAppliedOutput()" + azimuth.getDeviceId(), azimuth.getAppliedOutput()); //getAppliedOutput());
   }
 }
