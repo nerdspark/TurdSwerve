@@ -93,7 +93,7 @@ public class TurdPod extends SubsystemBase {
   public void setPodState(SwerveModuleState state) {
     state = SwerveModuleState.optimize(state, new Rotation2d(azimuthEncoder.getPosition())); // does not account for rotations between 180 and 360?
     azimuthPID.setReference(state.angle.getRadians(), CANSparkMax.ControlType.kPosition); 
-    speed = 0;//Math.abs(state.speedMetersPerSecond) < .01 ? 0 : state.speedMetersPerSecond;
+    speed = Math.abs(state.speedMetersPerSecond) < .01 ? 0 : state.speedMetersPerSecond * Constants.driveSpeedToPower;
     SmartDashboard.putNumber("state.angle.getRadians()", state.angle.getRadians());
 
     double error = (state.angle.getRadians() - azimuthEncoder.getPosition()) % (2*Math.PI);
@@ -104,7 +104,7 @@ public class TurdPod extends SubsystemBase {
   }
 
   public double getAbsoluteEncoder() {
-    return absoluteEncoder.getAbsolutePosition();
+    return absoluteEncoder.getAbsolutePosition() * 2*Math.PI;
   }
 
   @Override

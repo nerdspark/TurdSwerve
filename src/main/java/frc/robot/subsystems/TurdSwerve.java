@@ -38,19 +38,29 @@ public class TurdSwerve extends SubsystemBase {
   private GenericEntry azimuthIzone = tab.add("azimuth IZone", Constants.azimuthkD).getEntry();
   private GenericEntry ADMult = tab.add("azimuth-drive speed multiplier", Constants.azimuthDriveSpeedMultiplier).getEntry();
 
+  private Rotation2d gyroResetAngle = new Rotation2d();
   public TurdSwerve() {
     // gyro.configAllSettings(new Pigeon2Configuration());
   }
 
   public void resetOdometry(Pose2d pose) {
-    odometer.resetPosition(new Rotation2d(gyro.getYaw()), new SwerveModulePosition[] {leftPod.getPodPosition(), rightPod.getPodPosition()}, pose);
+    odometer.resetPosition(getGyro(), new SwerveModulePosition[] {leftPod.getPodPosition(), rightPod.getPodPosition()}, pose);
   }
 
   public void resetPods() {
+    resetGyro();
     leftPod.resetPod();
     rightPod.resetPod();
-    leftPod.setPID(azimuthP.getDouble(Constants.azimuthkP), azimuthI.getDouble(Constants.azimuthkI), azimuthD.getDouble(Constants.azimuthkD), azimuthIzone.getDouble(Constants.azimuthkIz), 1, ADMult.getDouble(Constants.azimuthDriveSpeedMultiplier));
-    rightPod.setPID(azimuthP.getDouble(Constants.azimuthkP), azimuthI.getDouble(Constants.azimuthkI), azimuthD.getDouble(Constants.azimuthkD), azimuthIzone.getDouble(Constants.azimuthkIz), 1, ADMult.getDouble(Constants.azimuthDriveSpeedMultiplier));
+    leftPod.setPID(azimuthP.getDouble(Constants.azimuthkP), azimuthI.getDouble(Constants.azimuthkI), azimuthD.getDouble(Constants.azimuthkD), azimuthIzone.getDouble(Constants.azimuthkIz), Constants.azimuthMaxOutput, ADMult.getDouble(Constants.azimuthDriveSpeedMultiplier));
+    rightPod.setPID(azimuthP.getDouble(Constants.azimuthkP), azimuthI.getDouble(Constants.azimuthkI), azimuthD.getDouble(Constants.azimuthkD), azimuthIzone.getDouble(Constants.azimuthkIz), Constants.azimuthMaxOutput, ADMult.getDouble(Constants.azimuthDriveSpeedMultiplier));
+  }
+
+  public Rotation2d getGyro() {
+    return new Rotation2d(gyro.getYaw()*Math.PI/180).minus(gyroResetAngle);
+  }
+
+  public void resetGyro() {
+    gyroResetAngle = getGyro().plus(gyroResetAngle);
   }
 
   public void setLeftPod(SwerveModuleState state) {
@@ -58,6 +68,7 @@ public class TurdSwerve extends SubsystemBase {
   }
 
   public void setRobotSpeeds(ChassisSpeeds chassisSpeeds) {
+    chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(chassisSpeeds, getGyro());
     SwerveModuleState[] states = Constants.drivetrainKinematics.toSwerveModuleStates(chassisSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.podMaxSpeed);
 
@@ -67,7 +78,7 @@ public class TurdSwerve extends SubsystemBase {
 
   @Override
   public void periodic() {
-    odometer.update(new Rotation2d(gyro.getYaw()), new SwerveModulePosition[] {leftPod.getPodPosition(), rightPod.getPodPosition()});
-    SmartDashboard.putNumber("pigeon", gyro.getYaw());
+    odometer.update(getGyro(), new SwerveModulePosition[] {leftPod.getPodPosition(), rightPod.getPodPosition()});
+    SmartDashboard.putNumber("pigeon", getGyro().getDegrees());
   }
 }
