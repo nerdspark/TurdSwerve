@@ -38,6 +38,7 @@ public class TurdPod extends SubsystemBase {
 
   private double azimuthDriveSpeedMultiplier;
   private double speed = 0;
+  private double absoluteEncoderOffset;
 
 
   public TurdPod(int azimuthID, int driveID, int absoluteEncoderID, boolean azimuthInvert, boolean driveInvert, double absoluteEncoderOffset) {
@@ -55,7 +56,8 @@ public class TurdPod extends SubsystemBase {
     azimuthEncoder.setPositionConversionFactor(Constants.azimuthRadiansPerRotation);
     absoluteEncoder.setDistancePerRotation(Constants.absoluteEncoderRadiansPerRotation);
 
-    absoluteEncoder.setPositionOffset(absoluteEncoderOffset);
+    // absoluteEncoder.setPositionOffset(absoluteEncoderOffset);
+    this.absoluteEncoderOffset = absoluteEncoderOffset;
 
     azimuth.setSmartCurrentLimit(Constants.azimuthAmpLimit);
     drive.setSmartCurrentLimit(Constants.driveAmpLimit);
@@ -104,7 +106,7 @@ public class TurdPod extends SubsystemBase {
   }
 
   public double getAbsoluteEncoder() {
-    return absoluteEncoder.getAbsolutePosition() * 2*Math.PI;
+    return (absoluteEncoder.getAbsolutePosition() * 2*Math.PI) - absoluteEncoderOffset;
   }
 
   @Override

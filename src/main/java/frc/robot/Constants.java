@@ -27,8 +27,8 @@ public final class Constants {
 
     public static final int pigeonID = 5;
 
-    public static final double leftAbsoluteEncoderOffset = ((6.16 - (Math.PI/2)) / (2 * Math.PI)) % 1; // absolute encoder reading at position //OLD: (coaxial +- PI/4 rad), end in rotations
-    public static final double rightAbsoluteEncoderOffset = ((5.2 - (Math.PI/2)) / (2 * Math.PI)) % 1; //both are gear facing out //OLD:((VALUE + (Math.PI/4)) / (2 * Math.PI)) % 1
+    public static final double leftAbsoluteEncoderOffset = 2.9; ////(-(6.16 - (Math.PI/2)) absolute encoder reading at position //OLD: (coaxial +- PI/4 rad), end in rotations
+    public static final double rightAbsoluteEncoderOffset = 2.2 + Math.PI; ////(-(5.2 - (Math.PI/2))both are gear facing out //OLD:((VALUE + (Math.PI/4)) / (2 * Math.PI)) % 1
 
     public static final boolean leftAzimuthInvert = false;
     public static final boolean rightAzimuthInvert = false;
@@ -57,8 +57,8 @@ public final class Constants {
 
 
     public static final Translation2d robotCenter = new Translation2d(0, 0); // serves as "center of robot for calculations; robot will turn about this point
-    public static final Translation2d leftPodPosition = new Translation2d(0, -1); // units in meters
-    public static final Translation2d rightPodPosition = new Translation2d(0, 1);
+    public static final Translation2d leftPodPosition = new Translation2d(-1, 0); // units in meters
+    public static final Translation2d rightPodPosition = new Translation2d(1, 0);
     public static final SwerveDriveKinematics drivetrainKinematics = new SwerveDriveKinematics(robotCenter.minus(leftPodPosition), robotCenter.minus(rightPodPosition));
 
     public static final int driverPort = 0;

@@ -44,6 +44,10 @@ public class TurdDrive extends CommandBase {
     }
     double speedX = -joystickRight.get().getX();
     double speedY = joystickRight.get().getY();
+    if (Math.abs(speedX) + Math.abs(speedY) < 0.1) {
+      speedX = 0;
+      speedY = 0;
+    }
     double speedOmega = joystickLeft.get().getX() * Math.abs(joystickLeft.get().getX());
     ChassisSpeeds speeds = new ChassisSpeeds(speedX, speedY, speedOmega);
     swerve.setRobotSpeeds(speeds);
