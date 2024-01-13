@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.sensors.Pigeon2;
 import com.ctre.phoenix.sensors.Pigeon2Configuration;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -38,6 +39,9 @@ public class TurdSwerve extends SubsystemBase {
   private GenericEntry azimuthIzone = tab.add("azimuth IZone", Constants.azimuthkD).getEntry();
   private GenericEntry ADMult = tab.add("azimuth-drive speed multiplier", Constants.azimuthDriveSpeedMultiplier).getEntry();
 
+  private PIDController GyroPID = new PIDController(Constants.gyroP, Constants.gyroI, Constants.gyroD);
+  private double targetAngle = 0;
+
   private Rotation2d gyroResetAngle = new Rotation2d();
   public TurdSwerve() {
     // gyro.configAllSettings(new Pigeon2Configuration());
@@ -61,6 +65,7 @@ public class TurdSwerve extends SubsystemBase {
 
   public void resetGyro() {
     gyroResetAngle = getGyro().plus(gyroResetAngle);
+    targetAngle = 0;
   }
 
   public void setLeftPod(SwerveModuleState state) {
@@ -68,7 +73,8 @@ public class TurdSwerve extends SubsystemBase {
   }
 
   public void setRobotSpeeds(ChassisSpeeds chassisSpeeds) {
-    chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(chassisSpeeds, getGyro());
+    targetAngle += chassisSpeeds.omegaRadiansPerSecond / 50;
+    chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond, GyroPID.calculate(getGyro().getRadians(), targetAngle), getGyro());
     SwerveModuleState[] states = Constants.drivetrainKinematics.toSwerveModuleStates(chassisSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.podMaxSpeed);
 

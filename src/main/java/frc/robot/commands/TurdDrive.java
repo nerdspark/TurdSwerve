@@ -42,13 +42,10 @@ public class TurdDrive extends CommandBase {
     if (resetPods.get()) {
       swerve.resetPods();
     }
-    double speedX = -joystickRight.get().getX();
-    double speedY = joystickRight.get().getY();
-    if (Math.abs(speedX) + Math.abs(speedY) < 0.1) {
-      speedX = 0;
-      speedY = 0;
-    }
-    double speedOmega = joystickLeft.get().getX() * Math.abs(joystickLeft.get().getX());
+    boolean deadband = Math.abs(joystickRight.get().getX()) + Math.abs(joystickRight.get().getY()) < 0.1;
+    double speedX = deadband ? 0 : -joystickRight.get().getX();
+    double speedY = deadband ? 0 : joystickRight.get().getY();
+    double speedOmega = -joystickLeft.get().getX() * Math.abs(joystickLeft.get().getX());
     ChassisSpeeds speeds = new ChassisSpeeds(speedX, speedY, speedOmega);
     swerve.setRobotSpeeds(speeds);
   }
