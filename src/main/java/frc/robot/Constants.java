@@ -50,7 +50,7 @@ public final class Constants {
     public static final double azimuthkI = 0.0;
     public static final double azimuthkD = 0.003;
     public static final double azimuthkIz = 0;
-    public static final double azimuthDriveSpeedMultiplier = 0.5;
+    public static final double azimuthDriveSpeedMultiplier = 0;//0.5;
 
     public static final IdleMode azimuthMode = IdleMode.kBrake;
     public static final IdleMode driveMode = IdleMode.kCoast;

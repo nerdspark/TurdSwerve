@@ -4,24 +4,16 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.AnalogInput;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.AnalogEncoder;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.PWM;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -34,7 +26,7 @@ public class TurdPod extends SubsystemBase {
 
   private final RelativeEncoder azimuthEncoder;
   private final RelativeEncoder driveEncoder;
-  private final SparkMaxPIDController azimuthPID;
+  private final SparkPIDController azimuthPID;
 
   private double azimuthDriveSpeedMultiplier;
   private double speed = 0;
@@ -83,8 +75,8 @@ public class TurdPod extends SubsystemBase {
     azimuthPID.setPositionPIDWrappingMaxInput(Math.PI);
     azimuthPID.setPositionPIDWrappingMinInput(-Math.PI);
     azimuthPID.setPositionPIDWrappingEnabled(true);
-    azimuthPID.setSmartMotionAllowedClosedLoopError(0, 0);
-    azimuth.setClosedLoopRampRate(.1);
+    // azimuthPID.setSmartMotionAllowedClosedLoopError(0, 0);
+    azimuth.setClosedLoopRampRate(0.35);
     azimuthDriveSpeedMultiplier = ADMult;
   }
 
@@ -94,7 +86,7 @@ public class TurdPod extends SubsystemBase {
 
   public void setPodState(SwerveModuleState state) {
     state = SwerveModuleState.optimize(state, new Rotation2d(azimuthEncoder.getPosition())); // does not account for rotations between 180 and 360?
-    azimuthPID.setReference(state.angle.getRadians(), CANSparkMax.ControlType.kPosition); 
+    azimuthPID.setReference(state.angle.getRadians(), ControlType.kPosition); 
     speed = Math.abs(state.speedMetersPerSecond) < .01 ? 0 : state.speedMetersPerSecond * Constants.driveSpeedToPower;
     SmartDashboard.putNumber("state.angle.getRadians()", state.angle.getRadians());
 

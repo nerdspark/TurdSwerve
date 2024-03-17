@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.TurdPod;
@@ -22,13 +23,15 @@ public class TurdDrive extends Command {
   Supplier<Translation2d> joystickRight;
   Supplier<Translation2d> joystickLeft;
   Supplier<Boolean> resetPods;
+  Supplier<Integer> DPAD;
   Rotation2d rotation = new Rotation2d();
 
-  public TurdDrive(TurdSwerve swerve, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight, Supplier<Boolean> resetPods) {
+  public TurdDrive(TurdSwerve swerve, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight, Supplier<Boolean> resetPods, Supplier<Integer> DPAD) {
     this.swerve = swerve;
     this.joystickRight = joystickRight;
     this.joystickLeft = joystickLeft;
     this.resetPods = resetPods;
+    this.DPAD = DPAD;
     addRequirements(swerve);
   }
 
@@ -42,10 +45,13 @@ public class TurdDrive extends Command {
     if (resetPods.get()) {
       swerve.resetPods();
     }
+    if (DPAD.get() != -1) {
+      swerve.targetAngle = -Units.degreesToRadians(DPAD.get());
+    }
     boolean deadband = Math.abs(joystickRight.get().getX()) + Math.abs(joystickRight.get().getY()) < 0.1;
     double speedX = deadband ? 0 : -joystickRight.get().getX();
     double speedY = deadband ? 0 : joystickRight.get().getY();
-    double speedOmega = -joystickLeft.get().getX() * Math.abs(joystickLeft.get().getX());
+    double speedOmega = Math.abs(joystickLeft.get().getX()) > 0.07 ? -joystickLeft.get().getX() * Math.abs(joystickLeft.get().getX()) : 0;
     ChassisSpeeds speeds = new ChassisSpeeds(speedX, speedY, speedOmega);
     swerve.setRobotSpeeds(speeds);
   }
