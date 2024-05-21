@@ -26,13 +26,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.RobotMap;
+import frc.robot.subsystems.hardware.pods.REVPod;
+import frc.robot.subsystems.hardware.pods.TurdPod;
 
-public class TurdSwerve extends SubsystemBase {
+/**REV Turdswerve implementation */
+public class REVTurdSwerve extends SubsystemBase {
   private final SlewRateLimiter xLimiter = new SlewRateLimiter(0.75);
   private final SlewRateLimiter yLimiter = new SlewRateLimiter(0.75);
   private final Pigeon2 gyro = new Pigeon2(RobotMap.pigeonID);
-  private final TurdPod leftPod = new TurdPod(RobotMap.leftAzimuthID, RobotMap.leftDriveID, RobotMap.leftAbsoluteEncoderID, RobotMap.leftAzimuthInvert, RobotMap.leftDriveInvert, RobotMap.leftAbsoluteEncoderOffset);
-  private final TurdPod rightPod = new TurdPod(RobotMap.rightAzimuthID, RobotMap.rightDriveID, RobotMap.rightAbsoluteEncoderID, RobotMap.rightAzimuthInvert, RobotMap.rightDriveInvert, RobotMap.rightAbsoluteEncoderOffset);
+  private final TurdPod leftPod = new REVPod(RobotMap.leftAzimuthID, RobotMap.leftDriveID, RobotMap.leftAbsoluteEncoderID, RobotMap.leftAzimuthInvert, RobotMap.leftDriveInvert, RobotMap.leftAbsoluteEncoderOffset);
+  private final TurdPod rightPod = new REVPod(RobotMap.rightAzimuthID, RobotMap.rightDriveID, RobotMap.rightAbsoluteEncoderID, RobotMap.rightAzimuthInvert, RobotMap.rightDriveInvert, RobotMap.rightAbsoluteEncoderOffset);
   private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(RobotMap.drivetrainKinematics,
           new Rotation2d(0), new SwerveModulePosition[] {
               leftPod.getPodPosition(),
@@ -55,7 +58,7 @@ public class TurdSwerve extends SubsystemBase {
   
   private final Field2d field2d = new Field2d();
 
-  public TurdSwerve() {
+  public REVTurdSwerve() {
     GyroPID.enableContinuousInput(0.0, 2*Math.PI);
     // gyro.configAllSettings(new Pigeon2Configuration());
   }
@@ -79,8 +82,8 @@ public class TurdSwerve extends SubsystemBase {
     resetGyro();
     leftPod.resetPod();
     rightPod.resetPod();
-    leftPod.setPID(azimuthP.getDouble(Constants.azimuthkP), azimuthI.getDouble(Constants.azimuthkI), azimuthD.getDouble(Constants.azimuthkD), azimuthIzone.getDouble(Constants.azimuthkIz), Constants.azimuthMaxOutput, ADMult.getDouble(Constants.azimuthDriveSpeedMultiplier));
-    rightPod.setPID(azimuthP.getDouble(Constants.azimuthkP), azimuthI.getDouble(Constants.azimuthkI), azimuthD.getDouble(Constants.azimuthkD), azimuthIzone.getDouble(Constants.azimuthkIz), Constants.azimuthMaxOutput, ADMult.getDouble(Constants.azimuthDriveSpeedMultiplier));
+    leftPod.setPID(azimuthIzone.getDouble(Constants.azimuthkIz), azimuthP.getDouble(Constants.azimuthkP), azimuthI.getDouble(Constants.azimuthkI), azimuthD.getDouble(Constants.azimuthkD), Constants.azimuthMaxOutput, ADMult.getDouble(Constants.azimuthDriveSpeedMultiplier));
+    rightPod.setPID(azimuthIzone.getDouble(Constants.azimuthkIz), azimuthP.getDouble(Constants.azimuthkP), azimuthI.getDouble(Constants.azimuthkI), azimuthD.getDouble(Constants.azimuthkD), Constants.azimuthMaxOutput, ADMult.getDouble(Constants.azimuthDriveSpeedMultiplier));
     resetOdometry(new Pose2d(new Translation2d(8.0, 4.2), new Rotation2d()));
   }
 
@@ -107,11 +110,7 @@ public class TurdSwerve extends SubsystemBase {
     gyroResetAngle = getGyro().plus(gyroResetAngle);
     targetAngle = 0;
   }
-
-  // public void setLeftPod(SwerveModuleState state) {
-  //   leftPod.setPodState(state);
-  // }
-
+  
   public void setRobotSpeeds(ChassisSpeeds chassisSpeeds) {
     boolean manualTurn = true;//Math.abs(chassisSpeeds.omegaRadiansPerSecond) > 0.1;
     // chassisSpeeds = chassisSpeeds.times(robotMaxSpeed);

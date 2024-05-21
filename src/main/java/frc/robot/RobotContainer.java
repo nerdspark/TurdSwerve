@@ -17,14 +17,14 @@ import frc.robot.commands.ResetZeroes;
 import frc.robot.commands.RevertZeroes;
 import frc.robot.commands.TurdDrive;
 import frc.robot.constants.Constants;
-import frc.robot.subsystems.TurdSwerve;
+import frc.robot.subsystems.REVTurdSwerve;
 
 public class RobotContainer {
 
   public static final XboxController driverRaw = new XboxController(Constants.driverPort);
   public static final CommandXboxController driverCommand = new CommandXboxController(Constants.driverPort);
   // public static final TurdPod leftPod = new TurdPod(Constants.leftAzimuthID, Constants.leftDriveID, Constants.leftAbsoluteEncoderID, Constants.leftAzimuthInvert,Constants.rightAzimuthInvert, Constants.leftAbsoluteEncoderOffset);
-  public static final TurdSwerve swerve = new TurdSwerve();
+  public static final REVTurdSwerve swerve = new REVTurdSwerve();
   
 
   public RobotContainer() {
@@ -34,6 +34,7 @@ public class RobotContainer {
     Supplier<Translation2d> driverLeftJoystick = () -> new Translation2d(driverRaw.getLeftX(), driverRaw.getLeftY());
     Supplier<Integer> DPAD = () -> driverRaw.getPOV();
     Supplier<Double> robotMaxSpeed = (driverRaw.getLeftBumper() ? () -> 1.0 : () -> Constants.robotMaxSpeed);
+    Supplier<XboxController> driverController = () -> driverRaw;
     swerve.setDefaultCommand(new TurdDrive(swerve, driverLeftJoystick, driverRightJoystick, DPAD, robotMaxSpeed));
     swerve.addDashboardWidgets(Odometry);
   }
