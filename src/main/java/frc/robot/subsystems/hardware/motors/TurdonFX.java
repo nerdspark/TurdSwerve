@@ -5,6 +5,7 @@
 package frc.robot.subsystems.hardware.motors;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -17,8 +18,10 @@ public class TurdonFX implements TurdMotor {
     TalonFXConfiguration config = new TalonFXConfiguration();
     TalonFXConfiguration lastAppliedConfig = config;
 
+    public double target = 0;
+
     //making position voltage default because it's the simplest. if you want to use a different control type, you can change it
-    private final PositionVoltage anglePID = new PositionVoltage(0).withSlot(0);
+    private final PositionDutyCycle anglePID = new PositionDutyCycle(0).withSlot(0);
 
 
     /**
@@ -62,7 +65,7 @@ public class TurdonFX implements TurdMotor {
         config.Feedback.RotorToSensorRatio = ROTOR_TO_ENCODER_RATIO;
         //the remote sensor defaults to internal encoder
 
-        applyConfig(config);
+        applyConfig();
     }
 
     /**
@@ -85,17 +88,28 @@ public class TurdonFX implements TurdMotor {
         config.ClosedLoopGeneral.ContinuousWrap = true;
         config.Feedback.FeedbackRemoteSensorID = angleEncoderID;
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-        
+
+        applyConfig();
     }
 
     //TODO: make non-fused-CANcoder azimuth constructor
 
-    public void applyConfig(TalonFXConfiguration config) {
+    private void applyConfig(TalonFXConfiguration config) {
         //only change the config if it's different from the last applied config
-        if(config != lastAppliedConfig) {
+        motor.getConfigurator().apply(config);
+        lastAppliedConfig = config;
+
+        System.out.println("CONFIG APPLIED ______________________________________");
+    }
+
+    private void applyConfig() {
+        //only change the config if it's different from the last applied config
+        // if(!config.equals(lastAppliedConfig)) {
             motor.getConfigurator().apply(config);
-            lastAppliedConfig = config;
-        }
+            // lastAppliedConfig = config;
+
+            // System.out.println("CONFIG APPLIED ______________________________________");
+        // }
     }
 
     @Override
@@ -107,7 +121,6 @@ public class TurdonFX implements TurdMotor {
     public double getPosition() {
         return motor.getPosition().getValueAsDouble();
     }
-
     @Override
     public void setPosition(double value) {
         motor.setPosition(value);
@@ -115,26 +128,32 @@ public class TurdonFX implements TurdMotor {
 
     @Override
     public void setTargetPosition(double target) {
+        this.target = target;
         motor.setControl(anglePID.withPosition(target));
     }
 
     @Override
     public void setPID(double kS, double P, double I, double D, double outputRange) {
-        config.Slot0.kP = P;
-        config.Slot0.kI = I;
-        config.Slot0.kD = D;
-        config.Slot0.kS = kS;
-        config.MotorOutput.PeakForwardDutyCycle = outputRange;
-        config.MotorOutput.PeakReverseDutyCycle = -outputRange;
-        applyConfig(config);
+        boolean apply = false;
+        if(config.Slot0.kP != P) {config.Slot0.kP = P; apply = true;}
+        if(config.Slot0.kI != I) {config.Slot0.kI = I; apply = true;}
+        if(config.Slot0.kD != D) {config.Slot0.kD = D; apply = true;}
+        if(config.Slot0.kS != kS) {config.Slot0.kS = kS; apply = true;}
+        if(config.MotorOutput.PeakForwardDutyCycle != outputRange) {
+            config.MotorOutput.PeakForwardDutyCycle = outputRange;
+            config.MotorOutput.PeakReverseDutyCycle = -outputRange;
+            apply = true;
+        }
+        if(apply) applyConfig();
     }
 
     @Override
     public void setAmpLimit(int limit) {
-        config.CurrentLimits.StatorCurrentLimitEnable = limit > 0;
-        config.CurrentLimits.StatorCurrentLimit = limit;
-
-        applyConfig(config);
+        if(config.CurrentLimits.StatorCurrentLimit != limit) {
+            config.CurrentLimits.StatorCurrentLimitEnable = limit > 0;
+            config.CurrentLimits.StatorCurrentLimit = limit;
+            applyConfig();
+        }
     }
 
     @Override

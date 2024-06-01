@@ -48,7 +48,7 @@ public class CANTurd implements TurdCoder {
      * 
      * @implNote please use {@link #getConfig()} to get the current configuration, modify it, and then apply it
      */
-    public void applyConfig(CANcoderConfiguration config) {
+    private void applyConfig(CANcoderConfiguration config) {
         encoder.getConfigurator().apply(config);
     }
 
@@ -61,7 +61,7 @@ public class CANTurd implements TurdCoder {
 
     @Override
     public double getAbsoluteAngle() {
-        return encoder.getAbsolutePosition().getValue() * (Math.PI * 2);
+        return encoder.getAbsolutePosition().getValue();// * (Math.PI * 2);
     }
 
     @Override
@@ -71,7 +71,6 @@ public class CANTurd implements TurdCoder {
 
     @Override
     public void revertZero() {
-        config.MagnetSensor.MagnetOffset = initialOffset;
-        applyConfig(config);
+        if(config.MagnetSensor.MagnetOffset != initialOffset) {config.MagnetSensor.MagnetOffset = initialOffset; applyConfig(config);}
     }
 }

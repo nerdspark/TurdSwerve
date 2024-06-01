@@ -52,6 +52,7 @@ public class MultiTurd extends SubsystemBase {
     private GenericEntry azimuthD;
     private GenericEntry azimuthWildcard;
     private GenericEntry ADMult;
+    private GenericEntry applyConfigs;
 
     private PIDController gyroPID;
     public double targetAngle = 0;
@@ -81,6 +82,7 @@ public class MultiTurd extends SubsystemBase {
         azimuthP = tab.add("azimuth P", templateConf.kP).getEntry();
         azimuthI = tab.add("azimuth I", templateConf.kI).getEntry();
         azimuthD = tab.add("azimuth D", templateConf.kD).getEntry();
+        applyConfigs = tab.add("apply", false).getEntry();
         // change wildcard gain dependent on pod type
         azimuthWildcard = tab.add("azimuth " + (podType == PodType.REV ? "Iz" : "kF"), templateConf.wildcard).getEntry();
         ADMult = tab.add("Drive Speed Multiplier", templateConf.driveSpeedMult).getEntry();
@@ -156,7 +158,7 @@ public class MultiTurd extends SubsystemBase {
         SwerveModuleState[] states = drivetrainKinematics.toSwerveModuleStates(chassisSpeeds);
         SwerveDriveKinematics.desaturateWheelSpeeds(states, robotMaxSpeed);
         if (manualTurn) {
-        targetAngle = getGyro().getRadians() + (chassisSpeeds.omegaRadiansPerSecond / 2.0);
+            targetAngle = getGyro().getRadians() + (chassisSpeeds.omegaRadiansPerSecond / 2.0);
         }
 
         forEachPodIndex((TurdPod pod, Integer index) -> pod.setPodState(states[index]));
@@ -167,6 +169,8 @@ public class MultiTurd extends SubsystemBase {
         odometer.update(getGyro(), getModulePositions());
         SmartDashboard.putNumber("pigeon", getGyro().getDegrees());
         field2d.setRobotPose(odometer.getPoseMeters().transformBy(new Transform2d(new Translation2d(), new Rotation2d(odoAngleOffset + Math.PI))));
+
+        forEachPod((TurdPod pod) -> pod.setPID(azimuthWildcard.getDouble(TemplateConf.wildcard), azimuthP.getDouble(TemplateConf.kP), azimuthI.getDouble(TemplateConf.kI), azimuthD.getDouble(TemplateConf.kD), ADMult.getDouble(TemplateConf.maxOut), 0));
     }
     
     private String getFomattedPose() {

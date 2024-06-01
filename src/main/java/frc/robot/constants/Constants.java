@@ -19,12 +19,14 @@ public final class Constants {
 
     public static final double robotMaxSpeed = 0.25;
 
-    public final class BrowningConfig {
+    //OG Turdswerve
+    public final class BrownoutConfig {
         private static final PIDController gyroPID = new PIDController(2, 0d, 0d);
 
         private static final Translation2d robotCenter = new Translation2d(0, 0); // serves as "center of robot for calculations; robot will turn about this point
-        private static final Translation2d leftPodPosition = new Translation2d(-Units.inchesToMeters(5.5), -Units.inchesToMeters(5.5)); // units in meters
-        private static final Translation2d rightPodPosition = new Translation2d(Units.inchesToMeters(5.5), Units.inchesToMeters(5.5));
+        private static final double wheelBase = 6.25;
+        private static final Translation2d leftPodPosition = new Translation2d(-Units.inchesToMeters(wheelBase), -Units.inchesToMeters(wheelBase)); // units in meters
+        private static final Translation2d rightPodPosition = new Translation2d(Units.inchesToMeters(wheelBase), Units.inchesToMeters(wheelBase));
         private static final SwerveDriveKinematics drivetrainKinematics = new SwerveDriveKinematics(robotCenter.minus(leftPodPosition), robotCenter.minus(rightPodPosition));
 
 
@@ -74,18 +76,85 @@ public final class Constants {
         private static final boolean rightDriveInvert = true;
 
         
-        private static final double leftAbsoluteEncoderOffset = 4.731349179724511;//absolute encoder reading at position
-        private static final double rightAbsoluteEncoderOffset = 0.73436864196419 + Math.PI;// gears facing inwards: fwd/bck TODO: less janky alignment
+        private static final double brownoutLeftOffset = 4.731349179724511;//absolute encoder reading at position
+        private static final double brownoutRightOffset = 0.73436864196419 + Math.PI;// gears facing inwards: fwd/bck TODO: less janky alignment
 
 
-        // Browning config
-        private static final TurdConfig BrowningTemplate = new TurdConfig(azimuthAmpLimit, azimuthRadiansPerMotorRotation, azimuthBrake, azimuthMotorRampRate, azimuthkP, azimuthkI, azimuthkD, azimuthkIz, azimuthMaxOutput, driveAmpLimit, boostDriveLimit, driveBrake, driveMotorRampRate, azimuthDriveSpeedMultiplier, PodType.REV); 
+        private static final TurdConfig NeoTemplate = new TurdConfig(azimuthAmpLimit, azimuthRadiansPerMotorRotation, azimuthBrake, azimuthMotorRampRate, azimuthkP, azimuthkI, azimuthkD, azimuthkIz, azimuthMaxOutput, driveAmpLimit, boostDriveLimit, driveBrake, driveMotorRampRate, azimuthDriveSpeedMultiplier, PodType.REV); 
 
-        private static final TurdConfig leftPod = new TurdConfig(leftAbsoluteEncoderID, leftAzimuthID, leftAzimuthInvert, leftDriveID, leftDriveInvert, leftAbsoluteEncoderOffset, BrowningTemplate);
-        private static final TurdConfig rightPod = new TurdConfig(rightAbsoluteEncoderID, rightAzimuthID, rightAzimuthInvert, rightDriveID, rightDriveInvert, rightAbsoluteEncoderOffset, BrowningTemplate);
+        private static final TurdConfig BrownoutLeftPod = new TurdConfig(leftAbsoluteEncoderID, leftAzimuthID, leftAzimuthInvert, leftDriveID, leftDriveInvert, brownoutLeftOffset, NeoTemplate);
+        private static final TurdConfig BrownoutRightPod = new TurdConfig(rightAbsoluteEncoderID, rightAzimuthID, rightAzimuthInvert, rightDriveID, rightDriveInvert, brownoutRightOffset, NeoTemplate);
         
-        public static final MultiTurd Browning = new MultiTurd(gyroPID, pigeonID, drivetrainKinematics, podMaxSpeed, BrowningTemplate, new TurdConfig[] {leftPod, rightPod});
-    
+        public static final MultiTurd Brownout = new MultiTurd(gyroPID, pigeonID, drivetrainKinematics, podMaxSpeed, NeoTemplate, new TurdConfig[] {BrownoutLeftPod, BrownoutRightPod});
+    }
+
+    //purple
+    public final class SkywarpConfig {
+        private static final PIDController gyroPID = new PIDController(0, 0d, 0d);
+
+        private static final Translation2d robotCenter = new Translation2d(0, 0); // serves as "center of robot for calculations; robot will turn about this point
+        private static final double wheelBase = 5.75;
+        private static final Translation2d leftPodPosition = new Translation2d(-Units.inchesToMeters(wheelBase), -Units.inchesToMeters(wheelBase)); // units in meters
+        private static final Translation2d rightPodPosition = new Translation2d(Units.inchesToMeters(wheelBase), Units.inchesToMeters(wheelBase));
+        private static final SwerveDriveKinematics drivetrainKinematics = new SwerveDriveKinematics(robotCenter.minus(leftPodPosition), robotCenter.minus(rightPodPosition));
+
+
+        // Azimuth Settings
+        private static final boolean azimuthBrake = true;
+
+        private static final int azimuthAmpLimit = 35;
+        private static final double azimuthMaxOutput = 1;
+
+        private static final double azimuthkP = 0.4;
+        private static final double azimuthkI = 0.0;
+        private static final double azimuthkD = 0.003;
+        private static final double azimuthkIz = 0;
+
+        private static final double azimuthDriveSpeedMultiplier = 0;//0.5;
+
+        private static final double azimuthMotorRampRate = 0.35;
+
+
+        // Drive Settings
+        private static final double podMaxSpeed = 1;
+
+        private static final boolean driveBrake = false;
+
+        private static final int driveAmpLimit = 25;
+        private static final int boostDriveLimit = 90;
+        private static final double driveMotorRampRate = 0.2;
+
+        private static final double azimuthRadiansPerMotorRotation = 15/33;
+
+
+        // robot map
+        private static final int pigeonID = 6;
+
+        private static final int leftAzimuthID = 2;
+        private static final int rightAzimuthID = 3;
+
+        private static final int leftDriveID = 4;
+        private static final int rightDriveID = 5;
+
+        private static final int leftAbsoluteEncoderID = 7;
+        private static final int rightAbsoluteEncoderID = 8;
+        
+        private static final boolean leftAzimuthInvert = false;
+        private static final boolean rightAzimuthInvert = false;
+        private static final boolean leftDriveInvert = false;
+        private static final boolean rightDriveInvert = true;
+
+        
+        private static final double skywarpLeftOffset = 0.4863;//absolute encoder reading at position
+        private static final double skywarpRightOffset = -0.431;// gears facing inwards: fwd/bck TODO: less janky alignment
+
+
+        private static final TurdConfig SkywarpTemplate = new TurdConfig(azimuthAmpLimit, azimuthRadiansPerMotorRotation, azimuthBrake, azimuthMotorRampRate, azimuthkP, azimuthkI, azimuthkD, azimuthkIz, azimuthMaxOutput, driveAmpLimit, boostDriveLimit, driveBrake, driveMotorRampRate, azimuthDriveSpeedMultiplier, PodType.CTRE); 
+
+        private static final TurdConfig leftPod = new TurdConfig(leftAbsoluteEncoderID, leftAzimuthID, leftAzimuthInvert, leftDriveID, leftDriveInvert, skywarpLeftOffset, SkywarpTemplate);
+        private static final TurdConfig rightPod = new TurdConfig(rightAbsoluteEncoderID, rightAzimuthID, rightAzimuthInvert, rightDriveID, rightDriveInvert, skywarpRightOffset, SkywarpTemplate);
+        
+        public static final MultiTurd Skywarp = new MultiTurd(gyroPID, pigeonID, drivetrainKinematics, podMaxSpeed, SkywarpTemplate, new TurdConfig[] {leftPod, rightPod});
     }
 
     public final class MegatronConfig {
@@ -93,7 +162,7 @@ public final class Constants {
         private static final PIDController gyroPID = new PIDController(0, 0d, 0d);
 
         private static final Translation2d robotCenter = new Translation2d(0, 0); // serves as "center of robot for calculations; robot will turn about this point
-        private static final double wheelBase = 7.375;
+        private static final double wheelBase = 6.375;
         private static final Translation2d frontLeftPodPosition = new Translation2d(-Units.inchesToMeters(wheelBase), -Units.inchesToMeters(wheelBase)); // units in meters
         private static final Translation2d frontRightPodPosition = new Translation2d(Units.inchesToMeters(wheelBase), -Units.inchesToMeters(wheelBase)); // units in meters
         private static final Translation2d backLeftPodPosition = new Translation2d(-Units.inchesToMeters(wheelBase), Units.inchesToMeters(wheelBase)); // units in meters

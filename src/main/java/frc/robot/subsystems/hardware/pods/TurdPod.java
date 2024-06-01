@@ -78,11 +78,13 @@ public abstract class TurdPod extends SubsystemBase {
 
     @Override
     public void periodic() {
-        driveMotor.setPower(speed + (azimuthMotor.getAppliedOutput() * azimuthDriveSpeedMultiplier)); //should this be in setPodState?
+        // driveMotor.setPower(speed + (azimuthMotor.getAppliedOutput() * azimuthDriveSpeedMultiplier)); //should this be in setPodState?
         
         //TODO: dont use smartdashboard
-        // SmartDashboard.putNumber("getabsoluteEncoder() " + absoluteEncoder.getChannel(), getAbsoluteEncoder());
-        // SmartDashboard.putNumber("azimuthEncoder.getPosition() " + azimuthMotor.getDeviceId(), azimuthEncoder.getPosition());
+        SmartDashboard.putNumber("absolute encoder #" + config.absoluteEncoderID, absoluteEncoder.getAbsoluteAngle());
+        SmartDashboard.putNumber("azimuth pose " + config.absoluteEncoderID, azimuthMotor.getPosition() * 2 * Math.PI);
+        // SmartDashboard.putNumber("azimuth pose " + config.absoluteEncoderID, azimuthMotor.);
+
         // SmartDashboard.putNumber("drive pos " + driveMotor.getDeviceId(), driveEncoder.getPosition());
         // SmartDashboard.putNumber("azimuth.getAppliedOutput()" + azimuthMotor.getDeviceId(), azimuthMotor.getAppliedOutput()); //getAppliedOutput());
     }
