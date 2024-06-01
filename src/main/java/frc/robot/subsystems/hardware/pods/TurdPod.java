@@ -27,6 +27,7 @@ public abstract class TurdPod extends SubsystemBase {
     public TurdMotor azimuthMotor;
     public TurdMotor driveMotor;
     public double azimuthDriveSpeedMultiplier;
+    public TurdConfig config;
     private double speed = 0;
 
     //this is very weird but its the only way i could think of doing it.
@@ -71,13 +72,17 @@ public abstract class TurdPod extends SubsystemBase {
         //TODO: for the love of god add comments
         state = SwerveModuleState.optimize(state, new Rotation2d(azimuthMotor.getPosition())); // does not account for rotations between 180 and 360?
         azimuthMotor.setTargetPosition(state.angle.getRadians()); 
-        speed = Math.abs(state.speedMetersPerSecond) < .01 ? 0 : state.speedMetersPerSecond * Constants.driveSpeedToPower;
+        speed = Math.abs(state.speedMetersPerSecond) < .01 ? 0 : state.speedMetersPerSecond;
         SmartDashboard.putNumber("state.angle.getRadians()", state.angle.getRadians());
 
         double error = (state.angle.getRadians() - azimuthMotor.getPosition()) % (2*Math.PI);
             error = error > Math.PI ? error - 2*Math.PI : error;
             error = error < -Math.PI ? error + 2*Math.PI : error;
             error *= 180 / Math.PI;
+    }
+
+    public TurdConfig getConfig() {
+        return config;
     }
 
 

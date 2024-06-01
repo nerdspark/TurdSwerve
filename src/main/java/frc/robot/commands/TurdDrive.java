@@ -13,17 +13,17 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants;
-import frc.robot.subsystems.REVTurdSwerve;
+import frc.robot.subsystems.MultiTurd;
 
 public class TurdDrive extends Command {
   
-  REVTurdSwerve swerve;
+  MultiTurd swerve;
   Supplier<Translation2d> joystickRight, joystickLeft;
   Supplier<Integer> DPAD;
   Supplier<Double> robotMaxSpeed;
   Rotation2d rotation = new Rotation2d();
 
-  public TurdDrive(REVTurdSwerve swerve, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight, Supplier<Integer> DPAD, Supplier<Double> robotMaxSpeed) {
+  public TurdDrive(MultiTurd swerve, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight, Supplier<Integer> DPAD, Supplier<Double> robotMaxSpeed) {
     this.swerve = swerve;
     this.joystickRight = joystickRight;
     this.joystickLeft = joystickLeft;
@@ -47,9 +47,9 @@ public class TurdDrive extends Command {
     }
 
     if (robotMaxSpeed.get() > 0.95) {
-      swerve.setAmpLimit(Constants.driveTopAmpLimit);
+      swerve.setAmpLimit(swerve.TemplateConf.boostDriveLimit);
     } else {
-      swerve.setAmpLimit(Constants.driveAmpLimit);
+      swerve.setAmpLimit(swerve.TemplateConf.driveLimit);
     }
     double speedX = MathUtil.applyDeadband(-joystickRight.get().getX(), 0.05) * robotMaxSpeed.get();
     double speedY = MathUtil.applyDeadband(joystickRight.get().getY(), 0.05) * robotMaxSpeed.get();

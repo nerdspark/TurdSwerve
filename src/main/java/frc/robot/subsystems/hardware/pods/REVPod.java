@@ -4,17 +4,24 @@
 
 package frc.robot.subsystems.hardware.pods;
 
-import frc.robot.constants.Constants;
-import frc.robot.constants.RobotMap;
 import frc.robot.subsystems.hardware.encoders.ThrifTurd;
 import frc.robot.subsystems.hardware.motors.TurdMAX;
 
 /** Sample REV pod with thrifty encoders and NEOs. Should represent normal NERDspark turdsweves */
 public class REVPod extends TurdPod {
-    public REVPod(int azimuthID, int driveID, int absoluteEncoderID, boolean azimuthInvert, boolean driveInvert, double absoluteEncoderOffset) {
-        absoluteEncoder = new ThrifTurd(absoluteEncoderID, absoluteEncoderOffset, RobotMap.absoluteRadiansPerEncoderRotation);
-        azimuthMotor = new TurdMAX(RobotMap.azimuthRadiansPerMotorRotation, Constants.azimuthAmpLimit, azimuthInvert, Constants.azimuthMode, 0.35);
+    private REVPod(int absoluteEncoderID, int azimuthID, int driveID, double absoluteEncoderOffset, boolean azimuthInvert, int azimuthLimit, double azimuthRadiansPerRot, boolean azimuthBrake, double azimuthRR, double kP, double kI, double kD, double Iz, double maxOut, boolean driveInvert, int driveLimit, boolean driveBrake, double driveRR) {
+        absoluteEncoder = new ThrifTurd(absoluteEncoderID, absoluteEncoderOffset, azimuthRadiansPerRot);
+        azimuthMotor = new TurdMAX(azimuthID, azimuthRadiansPerRot, azimuthLimit, azimuthInvert, azimuthBrake, 0.35, kP, kI, kD, Iz, maxOut);
+        //drive conversion factor hardcoded to 1
+        driveMotor = new TurdMAX(driveID, 1, driveLimit, driveInvert, driveBrake, driveRR);
+
         resetPod();
+    }
+
+    public REVPod(TurdConfig config) {
+        this(config.absoluteEncoderID, config.azimuthID, config.driveID, config.absoluteEncoderOffset, config.azimuthInvert, config.azimuthLimit, config.azimuthRadiansPerRot, config.azimuthBrake, config.azimuthRR, config.kP, config.kI, config.kD, config.wildcard, config.maxOut, config.driveInvert, config.driveLimit, config.driveBrake, config.driveRR);
+        this.config = config;
+        this.azimuthDriveSpeedMultiplier = config.driveSpeedMult;
     }
 
     @Override

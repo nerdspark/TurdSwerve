@@ -9,11 +9,17 @@ import frc.robot.subsystems.hardware.motors.TurdonFX;
 
 /** This is a sample pod that uses a CANcoder and TalonFXes. */
 public class CTREPod extends TurdPod {
-    public CTREPod(int azimuthID, int driveID, int absoluteEncoderID, boolean azimuthInvert, boolean driveInvert, double absoluteEncoderOffset) {
+    private CTREPod(int absoluteEncoderID, int azimuthID, int driveID, double absoluteEncoderOffset, boolean azimuthInvert, int azimuthLimit, double azimuthRadiansPerRot, boolean azimuthBrake, double azimuthRR, double kP, double kI, double kD, double FF, double maxOut, double ADMult, boolean driveInvert, int driveLimit, boolean driveBrake, double driveRR) {
         absoluteEncoder = new CANTurd(absoluteEncoderID, absoluteEncoderOffset);
-        azimuthMotor = new TurdonFX(azimuthID, azimuthInvert, false, 0d, 0d, 0d, 0d);
-        driveMotor = new TurdonFX(driveID, driveInvert, false, 0d, 0d, 0d, 0d);
+        azimuthMotor = new TurdonFX(azimuthID, azimuthInvert, azimuthBrake, azimuthLimit, azimuthRR, 1d, azimuthRadiansPerRot, kP, kI, kD, FF, maxOut, absoluteEncoderID);
+        driveMotor = new TurdonFX(driveID, driveInvert, driveBrake, driveLimit, driveRR, 1d, 1d);
         resetPod();
+    }
+
+    public CTREPod(TurdConfig config) {
+        this(config.absoluteEncoderID, config.azimuthID, config.driveID, config.absoluteEncoderOffset, config.azimuthInvert, config.azimuthLimit, config.azimuthRadiansPerRot, config.azimuthBrake, config.azimuthRR, config.kP, config.kI, config.kD, config.wildcard, config.maxOut, config.driveSpeedMult, config.driveInvert, config.driveLimit, config.driveBrake, config.driveRR);
+        this.config = config;
+        this.azimuthDriveSpeedMultiplier = config.driveSpeedMult;
     }
 
     @Override

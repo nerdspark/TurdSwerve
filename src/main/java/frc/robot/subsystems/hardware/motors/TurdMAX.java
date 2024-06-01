@@ -9,6 +9,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 /** Add your docs here. */
 public class TurdMAX implements TurdMotor {
@@ -16,17 +17,24 @@ public class TurdMAX implements TurdMotor {
     RelativeEncoder encoder;
     SparkPIDController PID;
 
-    public TurdMAX(double positionConversionFactor, int currentLimit, boolean invert, IdleMode idleMode, double rampRate) {
+    public TurdMAX(int id, double positionConversionFactor, int currentLimit, boolean invert, boolean isBrake, double rampRate) {
+        motor = new CANSparkMax(id, MotorType.kBrushless);
+        
         encoder = motor.getEncoder();
         encoder.setPositionConversionFactor(positionConversionFactor);
         
         motor.setInverted(invert);
         motor.setSmartCurrentLimit(currentLimit);
-        motor.setIdleMode(idleMode);
+        motor.setIdleMode(isBrake ? IdleMode.kBrake : IdleMode.kCoast);
 
         motor.setOpenLoopRampRate(rampRate);
 
         PID = motor.getPIDController();
+    }
+
+    public TurdMAX(int id, double positionConversionFactor, int currentLimit, boolean invert, boolean isBrake, double rampRate, double kP, double kI, double kD, double Iz, double maxOutput) {
+        this(id, positionConversionFactor, currentLimit, invert, isBrake, rampRate);
+        setPID(Iz, kP, kI, kD, maxOutput);
     }
 
     @Override

@@ -17,14 +17,15 @@ import frc.robot.commands.ResetZeroes;
 import frc.robot.commands.RevertZeroes;
 import frc.robot.commands.TurdDrive;
 import frc.robot.constants.Constants;
-import frc.robot.subsystems.REVTurdSwerve;
+import frc.robot.subsystems.MultiTurd;
+// import frc.robot.subsystems.REVTurdSwerve;
 
 public class RobotContainer {
 
   public static final XboxController driverRaw = new XboxController(Constants.driverPort);
   public static final CommandXboxController driverCommand = new CommandXboxController(Constants.driverPort);
   // public static final TurdPod leftPod = new TurdPod(Constants.leftAzimuthID, Constants.leftDriveID, Constants.leftAbsoluteEncoderID, Constants.leftAzimuthInvert,Constants.rightAzimuthInvert, Constants.leftAbsoluteEncoderOffset);
-  public static final REVTurdSwerve swerve = new REVTurdSwerve();
+  public static final MultiTurd swerve = Constants.BrowningConfig.Browning;
   
 
   public RobotContainer() {
