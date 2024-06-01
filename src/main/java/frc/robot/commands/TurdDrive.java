@@ -24,7 +24,7 @@ public class TurdDrive extends Command {
   Rotation2d rotation = new Rotation2d();
   double maxSpeed = Constants.robotMaxSpeed;
 
-  public TurdDrive(MultiTurd swerve, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight, Supplier<Integer> DPAD, Supplier<Double> robotMaxSpeed) {
+  public TurdDrive(MultiTurd swerve, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight, Supplier<Integer> DPAD, Supplier<Boolean> boost) {
     this.swerve = swerve;
     this.joystickRight = joystickRight;
     this.joystickLeft = joystickLeft;
