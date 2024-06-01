@@ -75,7 +75,7 @@ public final class Constants {
 
         
         private static final double leftAbsoluteEncoderOffset = 4.731349179724511;//absolute encoder reading at position
-        private static final double rightAbsoluteEncoderOffset = 0.73436864196419;// gears facing inwards: fwd/bck TODO: less janky alignment
+        private static final double rightAbsoluteEncoderOffset = 0.73436864196419 + Math.PI;// gears facing inwards: fwd/bck TODO: less janky alignment
 
 
         // Browning config
