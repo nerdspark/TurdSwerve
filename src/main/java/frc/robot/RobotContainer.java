@@ -34,15 +34,13 @@ public class RobotContainer {
     Supplier<Translation2d> driverRightJoystick = () -> new Translation2d(driverRaw.getRightX(), driverRaw.getRightY());
     Supplier<Translation2d> driverLeftJoystick = () -> new Translation2d(driverRaw.getLeftX(), driverRaw.getLeftY());
     Supplier<Integer> DPAD = () -> driverRaw.getPOV();
-    Supplier<Double> robotMaxSpeed = (driverRaw.getLeftBumper() ? () -> 1.0 : () -> Constants.robotMaxSpeed);
-    Supplier<XboxController> driverController = () -> driverRaw;
-    swerve.setDefaultCommand(new TurdDrive(swerve, driverLeftJoystick, driverRightJoystick, DPAD, robotMaxSpeed));
+    swerve.setDefaultCommand(new TurdDrive(swerve, driverLeftJoystick, driverRightJoystick, DPAD, driverRaw::getLeftBumper));
     swerve.addDashboardWidgets(Odometry);
   }
 
   private void configureBindings() {
-    driverCommand.rightBumper().and(() -> driverRaw.getYButton()).onTrue(new ResetZeroes(swerve));
-    driverCommand.rightBumper().and(() -> driverRaw.getXButton()).whileTrue(new RevertZeroes(swerve));
+    driverCommand.rightBumper().and(driverRaw::getYButton).onTrue(new ResetZeroes(swerve));
+    driverCommand.rightBumper().and(driverRaw::getXButton).whileTrue(new RevertZeroes(swerve));
     driverCommand.start().whileTrue(new InstantCommand(swerve::resetPods, swerve));
   }
 
