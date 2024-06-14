@@ -30,7 +30,7 @@ public class CANTurd implements TurdCoder {
 
         config.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
         config.MagnetSensor.SensorDirection = inverted ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive;
-        config.MagnetSensor.MagnetOffset = offset;
+        config.MagnetSensor.MagnetOffset = -offset;
 
         //not applying magnet config directly in order to overwrite other settings
         applyConfig();
@@ -61,12 +61,12 @@ public class CANTurd implements TurdCoder {
 
     @Override
     public double getAbsoluteAngle() {
-        return encoder.getAbsolutePosition().getValue();// * (Math.PI * 2);
+        return encoder.getAbsolutePosition().getValue();
     }
 
     @Override
     public void setPosition(double value) {
-        encoder.setPosition(value / (Math.PI * 2));
+        encoder.setPosition(value);
     }
 
     @Override

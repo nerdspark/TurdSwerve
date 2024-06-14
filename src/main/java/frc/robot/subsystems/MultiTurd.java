@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -35,8 +34,6 @@ import java.util.function.Consumer;
 
 /**REV Turdswerve implementation */
 public class MultiTurd extends SubsystemBase {
-    private final SlewRateLimiter xLimiter = new SlewRateLimiter(0.75);
-    private final SlewRateLimiter yLimiter = new SlewRateLimiter(0.75);
     private final Pigeon2 gyro;
     // private final TurdPod leftPod = new REVPod(RobotMap.leftAzimuthID, RobotMap.leftDriveID, RobotMap.leftAbsoluteEncoderID, RobotMap.leftAzimuthInvert, RobotMap.leftDriveInvert, RobotMap.leftAbsoluteEncoderOffset);
     // private final TurdPod rightPod = new REVPod(RobotMap.rightAzimuthID, RobotMap.rightDriveID, RobotMap.rightAbsoluteEncoderID, RobotMap.rightAzimuthInvert, RobotMap.rightDriveInvert, RobotMap.rightAbsoluteEncoderOffset);
@@ -152,13 +149,17 @@ public class MultiTurd extends SubsystemBase {
     }
     
     public void setRobotSpeeds(ChassisSpeeds chassisSpeeds) {
-        boolean manualTurn = true;//Math.abs(chassisSpeeds.omegaRadiansPerSecond) > 0.1;
-        // chassisSpeeds = chassisSpeeds.times(robotMaxSpeed);
-        chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xLimiter.calculate(chassisSpeeds.vxMetersPerSecond), yLimiter.calculate(chassisSpeeds.vyMetersPerSecond), manualTurn ? chassisSpeeds.omegaRadiansPerSecond * 3.0 : gyroPID.calculate(getGyro().getRadians(), targetAngle), getGyro());
+        boolean manualTurn = true; //Math.abs(chassisSpeeds.omegaRadiansPerSecond) > 0.1;
+
+        chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond,
+        manualTurn ? chassisSpeeds.omegaRadiansPerSecond * 3.0 : //TODO: magic number, please remove
+        gyroPID.calculate(getGyro().getRadians(), targetAngle), getGyro());
+
         SwerveModuleState[] states = drivetrainKinematics.toSwerveModuleStates(chassisSpeeds);
         SwerveDriveKinematics.desaturateWheelSpeeds(states, robotMaxSpeed);
+        
         if (manualTurn) {
-            targetAngle = getGyro().getRadians() + (chassisSpeeds.omegaRadiansPerSecond / 2.0);
+            targetAngle = getGyro().getRadians() + (chassisSpeeds.omegaRadiansPerSecond / 2.0); //TODO: magic number
         }
 
         forEachPodIndex((TurdPod pod, Integer index) -> pod.setPodState(states[index]));

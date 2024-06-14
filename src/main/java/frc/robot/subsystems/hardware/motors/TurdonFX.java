@@ -6,24 +6,22 @@ package frc.robot.subsystems.hardware.motors;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-
 /** Add your docs here. */
 public class TurdonFX implements TurdMotor {
     TalonFX motor;
     TalonFXConfiguration config = new TalonFXConfiguration();
-    TalonFXConfiguration lastAppliedConfig = config;
 
     public double target = 0;
+
+    //variable that determines whether or not to apply PID configurations to the motor (defaults to true for initial application)
     boolean apply = true;
 
-    //making position voltage default because it's the simplest. if you want to use a different control type, you can change it
+    //making position duty cycle default because it's the simplest. if you want to use a different control type, you can change it
     private final PositionDutyCycle anglePID = new PositionDutyCycle(0).withSlot(0);
 
 
@@ -56,12 +54,12 @@ public class TurdonFX implements TurdMotor {
 
 
         // this is kind of bad code, but it's the easiest way to set a ramp rate regardless of control type
-        this.config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = rampRate;
-        this.config.OpenLoopRamps.TorqueOpenLoopRampPeriod = rampRate;
-        this.config.OpenLoopRamps.VoltageOpenLoopRampPeriod = rampRate; 
-        this.config.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = rampRate;
-        this.config.ClosedLoopRamps.TorqueClosedLoopRampPeriod = rampRate;
-        this.config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = rampRate;
+        config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = rampRate;
+        config.OpenLoopRamps.TorqueOpenLoopRampPeriod = rampRate;
+        config.OpenLoopRamps.VoltageOpenLoopRampPeriod = rampRate; 
+        config.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = rampRate;
+        config.ClosedLoopRamps.TorqueClosedLoopRampPeriod = rampRate;
+        config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = rampRate;
 
         //set feedback ratios
         config.Feedback.SensorToMechanismRatio = ENCODER_TO_MECHANISM_RATIO;
@@ -97,22 +95,8 @@ public class TurdonFX implements TurdMotor {
 
     //TODO: make non-fused-CANcoder azimuth constructor
 
-    private void applyConfig(TalonFXConfiguration config) {
-        //only change the config if it's different from the last applied config
-        motor.getConfigurator().apply(config);
-        lastAppliedConfig = config;
-
-        System.out.println("CONFIG APPLIED ______________________________________");
-    }
-
     private void applyConfig() {
-        //only change the config if it's different from the last applied config
-        // if(!config.equals(lastAppliedConfig)) {
-            motor.getConfigurator().apply(config);
-            // lastAppliedConfig = config;
-
-            // System.out.println("CONFIG APPLIED ______________________________________");
-        // }
+        motor.getConfigurator().apply(config);
     }
 
     @Override
@@ -122,8 +106,9 @@ public class TurdonFX implements TurdMotor {
 
     @Override
     public double getPosition() {
-        return motor.getPosition().getValueAsDouble() * Math.PI * 2;
+        return motor.getPosition().getValueAsDouble();
     }
+
     @Override
     public void setPosition(double value) {
         motor.setPosition(value);

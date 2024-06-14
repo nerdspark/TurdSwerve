@@ -30,13 +30,13 @@ public class ThrifTurd implements TurdCoder{
 
     @Override
     public double getAbsoluteAngle() {
-        return (encoder.getAbsolutePosition() * (Math.PI * 2)) - offset;
+        return (encoder.getAbsolutePosition()) - offset;
     }
 
     @Override
     public void setPosition(double value) {
         //TODO: i believe it should be plus value, but it might be minus value
-        offset = (encoder.getAbsolutePosition() * (Math.PI * 2)) + value;
+        offset = (encoder.getAbsolutePosition()) + value;
     }
 
     @Override

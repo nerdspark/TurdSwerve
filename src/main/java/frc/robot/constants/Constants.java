@@ -17,7 +17,35 @@ import frc.robot.subsystems.hardware.pods.TurdConfig.PodType;
 public final class Constants {
     public static final int driverPort = 0;
 
-    public static final double robotMaxSpeed = 0.25;
+    public static final double robotMaxSpeed = 0.25; //meters per second
+    
+    /** CAN ID, Invert, Pod Positions, Offsets, Conversion Rates */
+    public final class RobotMap {
+        public static final double driveMetersPerMotorRotation = Units.inchesToMeters(2) * Math.PI * 33 / 45 / 15/13;
+
+        
+        public static final int pigeonID = 25;
+
+
+        public static final int leftAzimuthID = 18;
+        public static final int rightAzimuthID = 14;
+
+        public static final int leftDriveID = 17;
+        public static final int rightDriveID = 13;
+
+
+        public static final int RIO_LeftAbsoluteEncoderID = 3;
+        public static final int RIO_RightAbsoluteEncoderID = 0;
+
+        private static final int CAN_LeftAbsoluteEncoderID = 24;
+        private static final int CAN_RightAbsoluteEncoderID = 22;
+
+        
+        public static final boolean leftAzimuthInvert = false;
+        public static final boolean rightAzimuthInvert = false;
+        public static final boolean leftDriveInvert = false;
+        public static final boolean rightDriveInvert = true;
+    }
 
     //OG Turdswerve
     public final class BrownoutConfig {
@@ -55,64 +83,45 @@ public final class Constants {
         private static final int boostDriveLimit = 90;
         private static final double driveMotorRampRate = 0.2;
 
-        private static final double azimuthRadiansPerMotorRotation = 2*Math.PI*15/33;
+        private static final double azimuthRadiansPerMotorRotation = 15/33;
 
-
-        // robot map
-        private static final int pigeonID = 6;
-
-        private static final int leftAzimuthID = 2;
-        private static final int rightAzimuthID = 3;
-
-        private static final int leftDriveID = 4;
-        private static final int rightDriveID = 5;
-
-        private static final int leftAbsoluteEncoderID = 3;
-        private static final int rightAbsoluteEncoderID = 0;
-        
-        private static final boolean leftAzimuthInvert = false;
-        private static final boolean rightAzimuthInvert = false;
-        private static final boolean leftDriveInvert = false;
-        private static final boolean rightDriveInvert = true;
-
-        
         private static final double brownoutLeftOffset = 4.731349179724511;//absolute encoder reading at position
         private static final double brownoutRightOffset = 0.73436864196419 + Math.PI;// gears facing inwards: fwd/bck TODO: less janky alignment
 
 
         private static final TurdConfig NeoTemplate = new TurdConfig(azimuthAmpLimit, azimuthRadiansPerMotorRotation, azimuthBrake, azimuthMotorRampRate, azimuthkP, azimuthkI, azimuthkD, azimuthkIz, azimuthMaxOutput, driveAmpLimit, boostDriveLimit, driveBrake, driveMotorRampRate, azimuthDriveSpeedMultiplier, PodType.REV); 
 
-        private static final TurdConfig BrownoutLeftPod = new TurdConfig(leftAbsoluteEncoderID, leftAzimuthID, leftAzimuthInvert, leftDriveID, leftDriveInvert, brownoutLeftOffset, NeoTemplate);
-        private static final TurdConfig BrownoutRightPod = new TurdConfig(rightAbsoluteEncoderID, rightAzimuthID, rightAzimuthInvert, rightDriveID, rightDriveInvert, brownoutRightOffset, NeoTemplate);
+        private static final TurdConfig BrownoutLeftPod = new TurdConfig(RobotMap.RIO_LeftAbsoluteEncoderID, RobotMap.leftAzimuthID, RobotMap.leftAzimuthInvert, RobotMap.leftDriveID, RobotMap.leftDriveInvert, brownoutLeftOffset, NeoTemplate);
+        private static final TurdConfig BrownoutRightPod = new TurdConfig(RobotMap.RIO_RightAbsoluteEncoderID, RobotMap.rightAzimuthID, RobotMap.rightAzimuthInvert,RobotMap.rightDriveID, RobotMap.rightDriveInvert, brownoutRightOffset, NeoTemplate);
         
-        public static final MultiTurd Brownout = new MultiTurd(gyroPID, pigeonID, drivetrainKinematics, podMaxSpeed, NeoTemplate, new TurdConfig[] {BrownoutLeftPod, BrownoutRightPod});
+        public static final MultiTurd Brownout = new MultiTurd(gyroPID, RobotMap.pigeonID, drivetrainKinematics, podMaxSpeed, NeoTemplate, new TurdConfig[] {BrownoutLeftPod, BrownoutRightPod});
     }
 
-    //purple
-    public final class SkywarpConfig {
-        private static final PIDController gyroPID = new PIDController(0, 0d, 0d);
+     //black and white
+     public final class ProwlConfig {
+        private static final PIDController gyroPID = new PIDController(2, 0d, 0d);
 
         private static final Translation2d robotCenter = new Translation2d(0, 0); // serves as "center of robot for calculations; robot will turn about this point
-        private static final double wheelBase = 5.75;
-        private static final Translation2d leftPodPosition = new Translation2d(Units.inchesToMeters(wheelBase), -Units.inchesToMeters(wheelBase)); // units in meters
-        private static final Translation2d rightPodPosition = new Translation2d(-Units.inchesToMeters(wheelBase), Units.inchesToMeters(wheelBase));
-        private static final SwerveDriveKinematics drivetrainKinematics = new SwerveDriveKinematics(leftPodPosition, rightPodPosition);
+        private static final double wheelBase = 6.25;
+        private static final Translation2d leftPodPosition = new Translation2d(-Units.inchesToMeters(wheelBase), -Units.inchesToMeters(wheelBase)); // units in meters
+        private static final Translation2d rightPodPosition = new Translation2d(Units.inchesToMeters(wheelBase), Units.inchesToMeters(wheelBase));
+        private static final SwerveDriveKinematics drivetrainKinematics = new SwerveDriveKinematics(robotCenter.minus(leftPodPosition), robotCenter.minus(rightPodPosition));
 
 
         // Azimuth Settings
         private static final boolean azimuthBrake = true;
 
         private static final int azimuthAmpLimit = 35;
-        private static final double azimuthMaxOutput = 1;
+        private static final double azimuthMaxOutput = 0.25;
 
-        private static final double azimuthkP = 2d;
+        private static final double azimuthkP = 0.4;
         private static final double azimuthkI = 0.0;
-        private static final double azimuthkD = 0.0;
-        private static final double azimuthkS = 0;
+        private static final double azimuthkD = 0.003;
+        private static final double azimuthkIz = 0;
 
         private static final double azimuthDriveSpeedMultiplier = 0;//0.5;
 
-        private static final double azimuthMotorRampRate = 0.0;
+        private static final double azimuthMotorRampRate = 0.35;
 
 
         // Drive Settings
@@ -124,38 +133,70 @@ public final class Constants {
         private static final int boostDriveLimit = 90;
         private static final double driveMotorRampRate = 0.2;
 
+        private static final double azimuthRadiansPerMotorRotation = 2*Math.PI*15/33;
+            
+        private static final double brownoutLeftOffset = 1.01;
+        private static final double brownoutRightOffset = 1.06;
+
+
+        private static final TurdConfig NeoTemplate = new TurdConfig(azimuthAmpLimit, azimuthRadiansPerMotorRotation, azimuthBrake, azimuthMotorRampRate, azimuthkP, azimuthkI, azimuthkD, azimuthkIz, azimuthMaxOutput, driveAmpLimit, boostDriveLimit, driveBrake, driveMotorRampRate, azimuthDriveSpeedMultiplier, PodType.REV); 
+
+        private static final TurdConfig ProwlLeftPod = new TurdConfig(RobotMap.RIO_LeftAbsoluteEncoderID, RobotMap.leftAzimuthID, RobotMap.leftAzimuthInvert, RobotMap.leftDriveID, RobotMap.leftDriveInvert, brownoutLeftOffset, NeoTemplate);
+        private static final TurdConfig ProwlRightPod = new TurdConfig(RobotMap.RIO_RightAbsoluteEncoderID, RobotMap.rightAzimuthID, RobotMap.rightAzimuthInvert,RobotMap.rightDriveID, RobotMap.rightDriveInvert, brownoutRightOffset, NeoTemplate);
+        
+        public static final MultiTurd Brownout = new MultiTurd(gyroPID, RobotMap.pigeonID, drivetrainKinematics, podMaxSpeed, NeoTemplate, new TurdConfig[] {ProwlLeftPod, ProwlRightPod});
+    }
+
+    //purple
+    public final class SkywarpConfig {
+        private static final PIDController gyroPID = new PIDController(0, 0d, 0d);
+
+        private static final double wheelBase = 5.75;
+        private static final Translation2d leftPodPosition = new Translation2d(-Units.inchesToMeters(wheelBase), Units.inchesToMeters(wheelBase));
+        private static final Translation2d rightPodPosition = new Translation2d(Units.inchesToMeters(wheelBase), -Units.inchesToMeters(wheelBase));
+        private static final SwerveDriveKinematics drivetrainKinematics = new SwerveDriveKinematics(leftPodPosition, rightPodPosition);
+
+
+        // Azimuth Settings
+        private static final boolean azimuthBrake = true;
+
+        private static final int azimuthAmpLimit = 25;
+        private static final double azimuthMaxOutput = 1;
+
+        private static final double azimuthkP = 2;
+        
+        private static final double azimuthkI = 0.0;
+        private static final double azimuthkD = 0.0;
+        private static final double azimuthkS = 0;
+
+        private static final double azimuthDriveSpeedMultiplier = 0;//0.5;
+
+        private static final double azimuthMotorRampRate = 0.0;
+
+        // Drive Settings
+        private static final double podMaxSpeed = 1;
+
+        private static final boolean driveBrake = false;
+
+        private static final int driveAmpLimit = 35;
+        private static final int boostDriveLimit = 90;
+        private static final double driveMotorRampRate = 0.2;
+
         private static final double azimuthRadiansPerMotorRotation = 33d/15d;
 
-
-        // robot map
-        private static final int pigeonID = 6;
-
-        private static final int leftAzimuthID = 2;
-        private static final int rightAzimuthID = 3;
-
-        private static final int leftDriveID = 4;
-        private static final int rightDriveID = 5;
-
-        private static final int leftAbsoluteEncoderID = 7;
-        private static final int rightAbsoluteEncoderID = 8;
-        
-        private static final boolean leftAzimuthInvert = false;
-        private static final boolean rightAzimuthInvert = false;
-        private static final boolean leftDriveInvert = false;
-        private static final boolean rightDriveInvert = true;
-
-        //reset to 90 degrees, flat side of gear outwards (don't ask me why). also inverse of what shuffleboard says
-        private static final double skywarpLeftOffset = -0.205;
-        private static final double skywarpRightOffset = 0.404;
+        private static final double skywarpLeftOffset = 0.163; 
+        private static final double skywarpRightOffset = -0.422;
 
 
         private static final TurdConfig SkywarpTemplate = new TurdConfig(azimuthAmpLimit, azimuthRadiansPerMotorRotation, azimuthBrake, azimuthMotorRampRate, azimuthkP, azimuthkI, azimuthkD, azimuthkS, azimuthMaxOutput, driveAmpLimit, boostDriveLimit, driveBrake, driveMotorRampRate, azimuthDriveSpeedMultiplier, PodType.CTRE); 
 
-        private static final TurdConfig leftPod = new TurdConfig(leftAbsoluteEncoderID, leftAzimuthID, leftAzimuthInvert, leftDriveID, leftDriveInvert, skywarpLeftOffset, SkywarpTemplate);
-        private static final TurdConfig rightPod = new TurdConfig(rightAbsoluteEncoderID, rightAzimuthID, rightAzimuthInvert, rightDriveID, rightDriveInvert, skywarpRightOffset, SkywarpTemplate);
+        private static final TurdConfig leftPod = new TurdConfig(RobotMap.CAN_LeftAbsoluteEncoderID, RobotMap.leftAzimuthID, RobotMap.leftAzimuthInvert, RobotMap.leftDriveID, RobotMap.leftDriveInvert, skywarpLeftOffset, SkywarpTemplate);
+        private static final TurdConfig rightPod = new TurdConfig(RobotMap.CAN_RightAbsoluteEncoderID, RobotMap.rightAzimuthID, RobotMap.rightAzimuthInvert,RobotMap.rightDriveID, RobotMap.rightDriveInvert, skywarpRightOffset, SkywarpTemplate);
         
-        public static final MultiTurd Skywarp = new MultiTurd(gyroPID, pigeonID, drivetrainKinematics, podMaxSpeed, SkywarpTemplate, new TurdConfig[] {leftPod, rightPod});
+        public static final MultiTurd Skywarp = new MultiTurd(gyroPID, RobotMap.pigeonID, drivetrainKinematics, podMaxSpeed, SkywarpTemplate, new TurdConfig[] {leftPod, rightPod});
     }
+
+    
 
     public final class MegatronConfig {
         //TODO: tune

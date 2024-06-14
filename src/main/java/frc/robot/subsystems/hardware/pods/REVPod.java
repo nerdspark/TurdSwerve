@@ -19,7 +19,7 @@ public class REVPod extends TurdPod {
     }
 
     public REVPod(TurdConfig config) {
-        this(config.absoluteEncoderID, config.azimuthID, config.driveID, config.absoluteEncoderOffset, config.azimuthInvert, config.azimuthLimit, config.azimuthRadiansPerRot, config.azimuthBrake, config.azimuthRR, config.kP, config.kI, config.kD, config.wildcard, config.maxOut, config.driveInvert, config.driveLimit, config.driveBrake, config.driveRR);
+        this(config.absoluteEncoderID, config.azimuthID, config.driveID, config.absoluteEncoderOffset, config.azimuthInvert, config.azimuthLimit, config.azimuthRotationsPerTurn, config.azimuthBrake, config.azimuthRR, config.kP, config.kI, config.kD, config.wildcard, config.maxOut, config.driveInvert, config.driveLimit, config.driveBrake, config.driveRR);
         this.config = config;
         this.azimuthDriveSpeedMultiplier = config.driveSpeedMult;
     }
