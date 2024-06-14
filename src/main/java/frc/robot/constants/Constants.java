@@ -94,9 +94,9 @@ public final class Constants {
 
         private static final Translation2d robotCenter = new Translation2d(0, 0); // serves as "center of robot for calculations; robot will turn about this point
         private static final double wheelBase = 5.75;
-        private static final Translation2d leftPodPosition = new Translation2d(-Units.inchesToMeters(wheelBase), -Units.inchesToMeters(wheelBase)); // units in meters
-        private static final Translation2d rightPodPosition = new Translation2d(Units.inchesToMeters(wheelBase), Units.inchesToMeters(wheelBase));
-        private static final SwerveDriveKinematics drivetrainKinematics = new SwerveDriveKinematics(robotCenter.minus(leftPodPosition), robotCenter.minus(rightPodPosition));
+        private static final Translation2d leftPodPosition = new Translation2d(Units.inchesToMeters(wheelBase), -Units.inchesToMeters(wheelBase)); // units in meters
+        private static final Translation2d rightPodPosition = new Translation2d(-Units.inchesToMeters(wheelBase), Units.inchesToMeters(wheelBase));
+        private static final SwerveDriveKinematics drivetrainKinematics = new SwerveDriveKinematics(leftPodPosition, rightPodPosition);
 
 
         // Azimuth Settings
@@ -105,10 +105,10 @@ public final class Constants {
         private static final int azimuthAmpLimit = 35;
         private static final double azimuthMaxOutput = 1;
 
-        private static final double azimuthkP = 0.4;
+        private static final double azimuthkP = 1d;
         private static final double azimuthkI = 0.0;
-        private static final double azimuthkD = 0.003;
-        private static final double azimuthkIz = 0;
+        private static final double azimuthkD = 0.0;
+        private static final double azimuthkS = 0;
 
         private static final double azimuthDriveSpeedMultiplier = 0;//0.5;
 
@@ -124,7 +124,7 @@ public final class Constants {
         private static final int boostDriveLimit = 90;
         private static final double driveMotorRampRate = 0.2;
 
-        private static final double azimuthRadiansPerMotorRotation = 15/33;
+        private static final double azimuthRadiansPerMotorRotation = 33d/15d;
 
 
         // robot map
@@ -144,12 +144,12 @@ public final class Constants {
         private static final boolean leftDriveInvert = false;
         private static final boolean rightDriveInvert = true;
 
-        
-        private static final double skywarpLeftOffset = 0.4863;//absolute encoder reading at position
-        private static final double skywarpRightOffset = -0.431;// gears facing inwards: fwd/bck TODO: less janky alignment
+        //reset to 90 degrees, flat side of gear outwards (don't ask me why). also inverse of what shuffleboard says
+        private static final double skywarpLeftOffset = -0.205;
+        private static final double skywarpRightOffset = -0.06;
 
 
-        private static final TurdConfig SkywarpTemplate = new TurdConfig(azimuthAmpLimit, azimuthRadiansPerMotorRotation, azimuthBrake, azimuthMotorRampRate, azimuthkP, azimuthkI, azimuthkD, azimuthkIz, azimuthMaxOutput, driveAmpLimit, boostDriveLimit, driveBrake, driveMotorRampRate, azimuthDriveSpeedMultiplier, PodType.CTRE); 
+        private static final TurdConfig SkywarpTemplate = new TurdConfig(azimuthAmpLimit, azimuthRadiansPerMotorRotation, azimuthBrake, azimuthMotorRampRate, azimuthkP, azimuthkI, azimuthkD, azimuthkS, azimuthMaxOutput, driveAmpLimit, boostDriveLimit, driveBrake, driveMotorRampRate, azimuthDriveSpeedMultiplier, PodType.CTRE); 
 
         private static final TurdConfig leftPod = new TurdConfig(leftAbsoluteEncoderID, leftAzimuthID, leftAzimuthInvert, leftDriveID, leftDriveInvert, skywarpLeftOffset, SkywarpTemplate);
         private static final TurdConfig rightPod = new TurdConfig(rightAbsoluteEncoderID, rightAzimuthID, rightAzimuthInvert, rightDriveID, rightDriveInvert, skywarpRightOffset, SkywarpTemplate);

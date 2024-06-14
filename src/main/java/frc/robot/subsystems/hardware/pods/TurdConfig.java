@@ -62,6 +62,21 @@ public class TurdConfig {
         
     }
 
+
+    /**
+     * @ImplNote this constructor is used to create a new TurdConfig from a pre-existing template
+     */
+    public TurdConfig(int absoluteEncoderID, int azimuthID, boolean azimuthInvert, int driveID, boolean driveInvert, double absoluteEncoderOffset, double kP, double kI, double kD, double wildcard, TurdConfig config) {
+        this(config.azimuthLimit, config.azimuthRadiansPerRot, config.azimuthBrake, config.azimuthRR, kP, kI, kD, wildcard, config.maxOut, config.driveLimit, config.boostDriveLimit, config.driveBrake, config.driveRR, config.driveSpeedMult, config.podType);        
+        
+        this.absoluteEncoderID = absoluteEncoderID;
+        this.azimuthID = azimuthID;
+        this.driveID = driveID;
+        this.absoluteEncoderOffset = absoluteEncoderOffset;
+        this.azimuthInvert = azimuthInvert;
+        
+    }
+
     public static enum PodType {
         REV, CTRE, undef
     }

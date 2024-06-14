@@ -5,8 +5,8 @@
 package frc.robot.subsystems.hardware.encoders;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 public class CANTurd implements TurdCoder {
@@ -28,12 +28,12 @@ public class CANTurd implements TurdCoder {
     public CANTurd(int id, boolean inverted, double offset) {
         encoder = new CANcoder(id);
 
-        MagnetSensorConfigs magnetConfig = new MagnetSensorConfigs();
-        magnetConfig.SensorDirection = inverted ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive;
-        magnetConfig.MagnetOffset = offset;
+        config.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
+        config.MagnetSensor.SensorDirection = inverted ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive;
+        config.MagnetSensor.MagnetOffset = offset;
 
         //not applying magnet config directly in order to overwrite other settings
-        applyConfig(config.withMagnetSensor(magnetConfig));
+        applyConfig();
 
         initialOffset = offset;
     }
@@ -48,7 +48,7 @@ public class CANTurd implements TurdCoder {
      * 
      * @implNote please use {@link #getConfig()} to get the current configuration, modify it, and then apply it
      */
-    private void applyConfig(CANcoderConfiguration config) {
+    private void applyConfig() {
         encoder.getConfigurator().apply(config);
     }
 
@@ -71,6 +71,9 @@ public class CANTurd implements TurdCoder {
 
     @Override
     public void revertZero() {
-        if(config.MagnetSensor.MagnetOffset != initialOffset) {config.MagnetSensor.MagnetOffset = initialOffset; applyConfig(config);}
+        if(config.MagnetSensor.MagnetOffset != initialOffset) {
+            config.MagnetSensor.MagnetOffset = initialOffset; 
+            applyConfig();
+        }
     }
 }

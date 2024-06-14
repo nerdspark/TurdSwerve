@@ -12,6 +12,8 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+
 /** Add your docs here. */
 public class TurdonFX implements TurdMotor {
     TalonFX motor;
@@ -19,6 +21,7 @@ public class TurdonFX implements TurdMotor {
     TalonFXConfiguration lastAppliedConfig = config;
 
     public double target = 0;
+    boolean apply = true;
 
     //making position voltage default because it's the simplest. if you want to use a different control type, you can change it
     private final PositionDutyCycle anglePID = new PositionDutyCycle(0).withSlot(0);
@@ -84,7 +87,7 @@ public class TurdonFX implements TurdMotor {
      */
     public TurdonFX(int id, boolean inverted, boolean isBrake, double statorLimit, double rampRate, double ENCODER_TO_MECHANISM_RATIO, double ROTOR_TO_ENCODER_RATIO, double P, double I, double D, double kF, double outputRange, int angleEncoderID) {
         this(id, inverted, isBrake, statorLimit, rampRate, ENCODER_TO_MECHANISM_RATIO, ROTOR_TO_ENCODER_RATIO);
-        setPID(P, I, D, kF, outputRange);
+        setPID(kF, P, I, D, outputRange);
         config.ClosedLoopGeneral.ContinuousWrap = true;
         config.Feedback.FeedbackRemoteSensorID = angleEncoderID;
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
@@ -119,7 +122,7 @@ public class TurdonFX implements TurdMotor {
 
     @Override
     public double getPosition() {
-        return motor.getPosition().getValueAsDouble();
+        return motor.getPosition().getValueAsDouble() * Math.PI * 2;
     }
     @Override
     public void setPosition(double value) {
@@ -128,13 +131,11 @@ public class TurdonFX implements TurdMotor {
 
     @Override
     public void setTargetPosition(double target) {
-        this.target = target;
         motor.setControl(anglePID.withPosition(target));
     }
 
     @Override
     public void setPID(double kS, double P, double I, double D, double outputRange) {
-        boolean apply = false;
         if(config.Slot0.kP != P) {config.Slot0.kP = P; apply = true;}
         if(config.Slot0.kI != I) {config.Slot0.kI = I; apply = true;}
         if(config.Slot0.kD != D) {config.Slot0.kD = D; apply = true;}
@@ -144,7 +145,8 @@ public class TurdonFX implements TurdMotor {
             config.MotorOutput.PeakReverseDutyCycle = -outputRange;
             apply = true;
         }
-        if(apply) applyConfig();
+        if(apply) applyConfig(); 
+        apply = false;
     }
 
     @Override

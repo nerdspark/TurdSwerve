@@ -60,10 +60,10 @@ public abstract class TurdPod extends SubsystemBase {
 
     public void setPodState(SwerveModuleState state) {
         //TODO: for the love of god add comments
-        state = SwerveModuleState.optimize(state, new Rotation2d(azimuthMotor.getPosition())); // does not account for rotations between 180 and 360?
-        azimuthMotor.setTargetPosition(state.angle.getRadians()); 
+        state = SwerveModuleState.optimize(state, Rotation2d.fromRadians(azimuthMotor.getPosition())); // does not account for rotations between 180 and 360?
+        azimuthMotor.setTargetPosition(state.angle.getRotations()); 
         speed = Math.abs(state.speedMetersPerSecond) < .01 ? 0 : state.speedMetersPerSecond;
-        SmartDashboard.putNumber("state.angle.getRadians()", state.angle.getRadians());
+        // SmartDashboard.putNumber("state.angle.getRadians()", state.angle.getRadians());
 
         double error = (state.angle.getRadians() - azimuthMotor.getPosition()) % (2*Math.PI);
             error = error > Math.PI ? error - 2*Math.PI : error;
@@ -78,11 +78,11 @@ public abstract class TurdPod extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // driveMotor.setPower(speed + (azimuthMotor.getAppliedOutput() * azimuthDriveSpeedMultiplier)); //should this be in setPodState?
+        driveMotor.setPower(speed + (azimuthMotor.getAppliedOutput() * azimuthDriveSpeedMultiplier)); //should this be in setPodState?
         
         //TODO: dont use smartdashboard
         SmartDashboard.putNumber("absolute encoder #" + config.absoluteEncoderID, absoluteEncoder.getAbsoluteAngle());
-        SmartDashboard.putNumber("azimuth pose " + config.absoluteEncoderID, azimuthMotor.getPosition() * 2 * Math.PI);
+        SmartDashboard.putNumber("azimuth pose " + config.absoluteEncoderID, azimuthMotor.getPosition());
         // SmartDashboard.putNumber("azimuth pose " + config.absoluteEncoderID, azimuthMotor.);
 
         // SmartDashboard.putNumber("drive pos " + driveMotor.getDeviceId(), driveEncoder.getPosition());
