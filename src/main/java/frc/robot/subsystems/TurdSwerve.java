@@ -27,6 +27,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 import frc.robot.constants.RobotMap;
 
+import edu.wpi.first.util.datalog.BooleanLogEntry;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.wpilibj.DataLogManager;
+
 public class TurdSwerve extends SubsystemBase {
   private final SlewRateLimiter xLimiter = new SlewRateLimiter(0.75);
   private final SlewRateLimiter yLimiter = new SlewRateLimiter(0.75);
@@ -55,7 +60,32 @@ public class TurdSwerve extends SubsystemBase {
   
   private final Field2d field2d = new Field2d();
 
+  BooleanLogEntry drivingLogLeft;
+  DoubleLogEntry amperageLogAzimuthLeft;
+  DoubleLogEntry amperageLogDriveLeft;
+  BooleanLogEntry drivingLogRight;
+  DoubleLogEntry amperageLogAzimuthRight;
+  DoubleLogEntry amperageLogDriveRight;
+  DoubleLogEntry outputLogAzimuthLeft;
+  DoubleLogEntry outputLogDriveLeft;
+  DoubleLogEntry outputLogAzimuthRight;
+  DoubleLogEntry outputLogDriveRight;
+
   public TurdSwerve() {
+    DataLogManager.start();
+    
+    DataLog log = DataLogManager.getLog();
+    drivingLogLeft = new BooleanLogEntry(log, "Driving? (Left): ");
+    amperageLogAzimuthLeft = new DoubleLogEntry(log, "Amperage (Azimuth Left): ");
+    amperageLogDriveLeft = new DoubleLogEntry(log, "Amperage (Drive Left): ");
+    drivingLogRight = new BooleanLogEntry(log, "Driving? (Right): ");
+    amperageLogAzimuthRight = new DoubleLogEntry(log, "Amperage (Azimuth Right): ");
+    amperageLogDriveRight = new DoubleLogEntry(log, "Amperage (Drive Right): ");
+    outputLogAzimuthLeft = new DoubleLogEntry(log, "Output (Azimuth Left): ");
+    outputLogDriveLeft = new DoubleLogEntry(log, "Output (Drive Left): ");
+    outputLogAzimuthRight = new DoubleLogEntry(log, "Output (Azimuth Right): ");
+    outputLogDriveRight = new DoubleLogEntry(log, "Output (Drive Right): ");
+
     GyroPID.enableContinuousInput(0.0, 2*Math.PI);
     // gyro.configAllSettings(new Pigeon2Configuration());
   }
@@ -126,11 +156,55 @@ public class TurdSwerve extends SubsystemBase {
     rightPod.setPodState(states[1]);
   }
 
+  public void telemetry() {
+    // double leftSpeed = leftPod.getSpeed(null);
+    // double rightSpeed = rightPod.getSpeed(null);
+    // if (leftSpeed != 0) {
+    //   drivingLogLeft.append(true);
+    //   SmartDashboard.putBoolean("Driving? (Left): ", true);
+    // } else {
+    //   drivingLogLeft.append(false);
+    //   SmartDashboard.putBoolean("Driving? (Left): ", false);
+    // }
+    // if (rightSpeed != 0) {
+    //   drivingLogRight.append(true);
+    //   SmartDashboard.putBoolean("Driving? (Right): ", true);
+    // } else {
+    //   drivingLogRight.append(false);
+    //   SmartDashboard.putBoolean("Driving? (Right): ", false);
+    // }
+    
+    double OutputAzimuthLeft = leftPod.getAzimuthOutput();
+    double OutputDriveLeft = leftPod.getDriveOutput();
+    double OutputAzimuthRight = rightPod.getAzimuthOutput();
+    double OutputDriveRight = rightPod.getDriveOutput();
+    double AmperageAzimuthLeft = leftPod.getAzimuthAmp();
+    double AmperageDriveLeft = leftPod.getDriveAmp();
+    double AmperageAzimuthRight = rightPod.getAzimuthAmp();
+    double AmperageDriveRight = rightPod.getDriveAmp();
+    amperageLogAzimuthLeft.append(AmperageAzimuthLeft);
+    amperageLogDriveLeft.append(AmperageDriveLeft);
+    amperageLogAzimuthRight.append(AmperageAzimuthRight);
+    amperageLogDriveRight.append(AmperageDriveRight);
+    outputLogAzimuthLeft.append(OutputAzimuthLeft);
+    outputLogDriveLeft.append(OutputDriveLeft);
+    outputLogAzimuthRight.append(OutputAzimuthRight);
+    outputLogDriveRight.append(OutputDriveRight);
+    SmartDashboard.putNumber("Amperage (Azimuth Left)", AmperageAzimuthLeft);
+    SmartDashboard.putNumber("Amperage (Drive Left)", AmperageDriveLeft);
+    SmartDashboard.putNumber("Amperage (Azimuth Right)", AmperageAzimuthRight);
+    SmartDashboard.putNumber("Amperage (Drive Right)", AmperageDriveRight);
+    SmartDashboard.putNumber("Output (Azimuth Left): ", OutputAzimuthLeft);
+    SmartDashboard.putNumber("Output (Drive Left): ", OutputDriveLeft);
+    SmartDashboard.putNumber("Output (Azimuth Right): ", OutputAzimuthRight);
+    SmartDashboard.putNumber("Output (Drive Right): ", OutputDriveRight);
+  }
   @Override
   public void periodic() {
     odometer.update(getGyro(), new SwerveModulePosition[] {leftPod.getPodPosition(), rightPod.getPodPosition()});
     SmartDashboard.putNumber("pigeon", getGyro().getDegrees());
     field2d.setRobotPose(odometer.getPoseMeters().transformBy(new Transform2d(new Translation2d(), new Rotation2d(odoAngleOffset + Math.PI))));
+    telemetry();
   }
   
   private String getFomattedPose() {

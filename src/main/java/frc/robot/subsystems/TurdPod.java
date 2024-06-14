@@ -34,8 +34,8 @@ public class TurdPod extends SubsystemBase {
   private double absoluteEncoderOffset;
   private double driveSpeedToPower = Constants.driveSpeedToPower;
 
-
   public TurdPod(int azimuthID, int driveID, int absoluteEncoderID, boolean azimuthInvert, boolean driveInvert, double absoluteEncoderOffset) {
+
     azimuth = new CANSparkMax(azimuthID, MotorType.kBrushless);
     drive = new CANSparkMax(driveID, MotorType.kBrushless);
     absoluteEncoder = new AnalogEncoder(absoluteEncoderID);
@@ -121,7 +121,7 @@ public class TurdPod extends SubsystemBase {
   public void setPodState(SwerveModuleState state) {
     state = SwerveModuleState.optimize(state, new Rotation2d(azimuthEncoder.getPosition())); // does not account for rotations between 180 and 360?
     azimuthPID.setReference(state.angle.getRadians(), ControlType.kPosition); 
-    speed = Math.abs(state.speedMetersPerSecond) < .01 ? 0 : state.speedMetersPerSecond * driveSpeedToPower;
+    speed = getSpeed(state);
     SmartDashboard.putNumber("state.angle.getRadians()", state.angle.getRadians());
 
     double error = (state.angle.getRadians() - azimuthEncoder.getPosition()) % (2*Math.PI);
@@ -130,11 +130,25 @@ public class TurdPod extends SubsystemBase {
       error *= 180 / Math.PI;
       SmartDashboard.putNumber("error azimuth " + azimuth.getDeviceId(), error);
   }
+  public double getSpeed(SwerveModuleState state) {
+    double speed = Math.abs(state.speedMetersPerSecond) < .01 ? 0 : state.speedMetersPerSecond * driveSpeedToPower;
+    return speed;
+  }
+  public double getAzimuthOutput() {
+    return azimuth.getAppliedOutput();
+  }
+  public double getDriveOutput() {
+    return drive.getAppliedOutput();
+  }
+  
 
   public double getAbsoluteEncoder() {
     return (absoluteEncoder.getAbsolutePosition() * 2*Math.PI) - absoluteEncoderOffset;
   }
 
+    public double getAzimuthAmp() {
+    return azimuth.getOutputCurrent();
+  }
   public double getDriveAmp() {
     return drive.getOutputCurrent();
   }
