@@ -11,7 +11,7 @@ import frc.robot.subsystems.hardware.motors.TurdMAX;
 public class REVPod extends TurdPod {
     private REVPod(int absoluteEncoderID, int azimuthID, int driveID, double absoluteEncoderOffset, boolean azimuthInvert, int azimuthLimit, double azimuthRadiansPerRot, boolean azimuthBrake, double azimuthRR, double kP, double kI, double kD, double Iz, double maxOut, boolean driveInvert, int driveLimit, boolean driveBrake, double driveRR) {
         absoluteEncoder = new ThrifTurd(absoluteEncoderID, absoluteEncoderOffset, azimuthRadiansPerRot);
-        azimuthMotor = new TurdMAX(azimuthID, azimuthRadiansPerRot, azimuthLimit, azimuthInvert, azimuthBrake, 0.35, kP, kI, kD, Iz, maxOut);
+        azimuthMotor = new TurdMAX(azimuthID, azimuthRadiansPerRot, azimuthLimit, azimuthInvert, azimuthBrake, azimuthRR, kP, kI, kD, Iz, maxOut);
         //drive conversion factor hardcoded to 1
         driveMotor = new TurdMAX(driveID, 1, driveLimit, driveInvert, driveBrake, driveRR);
 
