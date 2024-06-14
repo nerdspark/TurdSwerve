@@ -170,7 +170,8 @@ public class MultiTurd extends SubsystemBase {
         SmartDashboard.putNumber("pigeon", getGyro().getDegrees());
         field2d.setRobotPose(odometer.getPoseMeters().transformBy(new Transform2d(new Translation2d(), new Rotation2d(odoAngleOffset + Math.PI))));
 
-        // forEachPod((TurdPod pod) -> pod.setPID(azimuthWildcard.getDouble(TemplateConf.wildcard), azimuthP.getDouble(TemplateConf.kP), azimuthI.getDouble(TemplateConf.kI), azimuthD.getDouble(TemplateConf.kD), ADMult.getDouble(TemplateConf.maxOut), 0));
+        //uncomment this line for azimuth tuning
+        // if(applyConfigs.getBoolean(false)) forEachPod((TurdPod pod) -> pod.setPID(azimuthWildcard.getDouble(TemplateConf.wildcard), azimuthP.getDouble(TemplateConf.kP), azimuthI.getDouble(TemplateConf.kI), azimuthD.getDouble(TemplateConf.kD), ADMult.getDouble(TemplateConf.maxOut), 0));
     }
     
     private String getFomattedPose() {

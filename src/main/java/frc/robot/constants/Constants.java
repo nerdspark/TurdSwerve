@@ -105,14 +105,14 @@ public final class Constants {
         private static final int azimuthAmpLimit = 35;
         private static final double azimuthMaxOutput = 1;
 
-        private static final double azimuthkP = 1d;
+        private static final double azimuthkP = 2d;
         private static final double azimuthkI = 0.0;
         private static final double azimuthkD = 0.0;
         private static final double azimuthkS = 0;
 
         private static final double azimuthDriveSpeedMultiplier = 0;//0.5;
 
-        private static final double azimuthMotorRampRate = 0.35;
+        private static final double azimuthMotorRampRate = 0.0;
 
 
         // Drive Settings
@@ -146,7 +146,7 @@ public final class Constants {
 
         //reset to 90 degrees, flat side of gear outwards (don't ask me why). also inverse of what shuffleboard says
         private static final double skywarpLeftOffset = -0.205;
-        private static final double skywarpRightOffset = -0.06;
+        private static final double skywarpRightOffset = 0.404;
 
 
         private static final TurdConfig SkywarpTemplate = new TurdConfig(azimuthAmpLimit, azimuthRadiansPerMotorRotation, azimuthBrake, azimuthMotorRampRate, azimuthkP, azimuthkI, azimuthkD, azimuthkS, azimuthMaxOutput, driveAmpLimit, boostDriveLimit, driveBrake, driveMotorRampRate, azimuthDriveSpeedMultiplier, PodType.CTRE); 
