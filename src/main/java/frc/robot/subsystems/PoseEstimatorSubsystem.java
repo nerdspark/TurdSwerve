@@ -129,24 +129,22 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
      * @param inputs The AprilTagVisionIOInputs object containing the inputs.
      */
     public void updatePoseEstimates(String limelightName) {
+        LimelightHelpers.SetRobotOrientation(limelightName, turdSwerve.getGyro().getDegrees(), 0, 0, 0, 0, 0);
 
         LimelightHelpers.PoseEstimate cameraPose = 
-        LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
-        
-
+        LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
 
         // var results = LimelightHelpers.getLatestResults(limelightName);
 
-        var distanceUsedForCalculatingStdDev = cameraPose.avgTagDist;
-
-        LimelightHelpers.SetRobotOrientation(limelightName, turdSwerve.getGyro().getDegrees(), 0, 0, 0, 0, 0);
-        
+        var distanceUsedForCalculatingStdDev = cameraPose.avgTagDist;        
         double timestamp = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName).timestampSeconds;            
         double xyStdDev = calculateXYStdDev(distanceUsedForCalculatingStdDev, cameraPose.tagCount);
         double thetaStdDev =
                     calculateThetaStdDev(distanceUsedForCalculatingStdDev, cameraPose.tagCount);
+        if(cameraPose.tagCount != 0 && Math.abs(turdSwerve.getGyroRate()) < 720) {
                 poseEstimator.addVisionMeasurement(
-                        cameraPose.pose, cameraPose.timestampSeconds, VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev));
+                        cameraPose.pose, cameraPose.timestampSeconds, VecBuilder.fill(xyStdDev, xyStdDev, 1));
+        }
                     
         }
         

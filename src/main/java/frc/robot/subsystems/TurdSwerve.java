@@ -133,20 +133,20 @@ public class TurdSwerve extends SubsystemBase {
     // field2d.setRobotPose(odometer.getPoseMeters().transformBy(new Transform2d(new Translation2d(), new Rotation2d(odoAngleOffset + Math.PI))));
   }
   
-  private String getFomattedPose() {
-    var pose = odometer.getPoseMeters();
-    return String.format(
-            "(%.3f, %.3f) %.2f degrees",
-            pose.getX(), pose.getY(), pose.getRotation().plus(new Rotation2d(odoAngleOffset)).getDegrees());
-  }
-  public Pose2d getPose() {
-    return odometer.getPoseMeters();
-  }
+  // private String getFomattedPose() {
+  //   var pose = odometer.getPoseMeters();
+  //   return String.format(
+  //           "(%.3f, %.3f) %.2f degrees",
+  //           pose.getX(), pose.getY(), pose.getRotation().plus(new Rotation2d(odoAngleOffset)).getDegrees());
+  // }
+  // public Pose2d getPose() {
+  //   return odometer.getPoseMeters();
+  // }
   
-  public void addDashboardWidgets(ShuffleboardTab tab) {
-    tab.add("Field", field2d).withPosition(0, 0).withSize(6, 4);
-    tab.addString("Pose", this::getFomattedPose).withPosition(6, 2).withSize(2, 1);
-  }
+  // public void addDashboardWidgets(ShuffleboardTab tab) {
+  //   tab.add("Field", field2d).withPosition(0, 0).withSize(6, 4);
+  //   tab.addString("Pose", this::getFomattedPose).withPosition(6, 2).withSize(2, 1);
+  // }
 
   public double[] getDriveAmps() {
     return new double[] {leftPod.getDriveAmp(), rightPod.getDriveAmp()};
@@ -157,5 +157,9 @@ public class TurdSwerve extends SubsystemBase {
               leftPod.getPodPosition(),
               rightPod.getPodPosition()
           };
+  }
+
+  public double getGyroRate() {
+    return gyro.getRate();
   }
 }
