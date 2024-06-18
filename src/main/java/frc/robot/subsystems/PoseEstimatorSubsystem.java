@@ -63,6 +63,10 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("LL 2 avgTagDist results.botpose", LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.Limelight2).avgTagDist);
         SmartDashboard.putNumber("LL 3 avgTagDist results.botpose", LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.Limelight3).avgTagDist);
 
+        SmartDashboard.putNumber("LL 3 X ", LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.Limelight3).pose.getX());
+        SmartDashboard.putNumber("LL 3 Y ", LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.Limelight3).pose.getY());
+        SmartDashboard.putNumber("LL 3 Rotation ", LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.Limelight3).pose.getRotation().getDegrees());
+
 
     }
 
@@ -126,20 +130,23 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
      */
     public void updatePoseEstimates(String limelightName) {
 
-        var cameraPose = 
+        LimelightHelpers.PoseEstimate cameraPose = 
         LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
+        
 
 
         // var results = LimelightHelpers.getLatestResults(limelightName);
 
         var distanceUsedForCalculatingStdDev = cameraPose.avgTagDist;
+
+        LimelightHelpers.SetRobotOrientation(limelightName, turdSwerve.getGyro().getDegrees(), 0, 0, 0, 0, 0);
         
         double timestamp = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName).timestampSeconds;            
         double xyStdDev = calculateXYStdDev(distanceUsedForCalculatingStdDev, cameraPose.tagCount);
         double thetaStdDev =
                     calculateThetaStdDev(distanceUsedForCalculatingStdDev, cameraPose.tagCount);
                 poseEstimator.addVisionMeasurement(
-                        cameraPose.pose, timestamp - LimelightHelpers.getLatency_Capture(limelightName), VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev));
+                        cameraPose.pose, cameraPose.timestampSeconds, VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev));
                     
         }
         
