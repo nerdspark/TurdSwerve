@@ -5,11 +5,11 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.MultiTurd;
+import frc.robot.subsystems.TurdSwerve;
 
 public class ResetZeroes extends Command {
-  private MultiTurd swerve;
-  public ResetZeroes(MultiTurd swerve) {
+  private TurdSwerve swerve;
+  public ResetZeroes(TurdSwerve swerve) {
     this.swerve = swerve;
     addRequirements(swerve);
     // Use addRequirements() here to declare subsystem dependencies.

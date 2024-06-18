@@ -13,23 +13,23 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.Constants;
-import frc.robot.subsystems.MultiTurd;
+import frc.robot.constants.Constants.RobotConfig;
+import frc.robot.subsystems.TurdSwerve;
 
 public class TurdDrive extends Command {
     
-    MultiTurd swerve;
+    TurdSwerve swerve;
     Supplier<Translation2d> joystickRight, joystickLeft;
     Supplier<Integer> DPAD;
     Supplier<Boolean> boost;
     Rotation2d rotation = new Rotation2d();
-    double maxSpeed = Constants.robotMaxSpeed;
+    double maxSpeed = RobotConfig.robotMaxSpeed;
 
     
     private final SlewRateLimiter xLimiter = new SlewRateLimiter(0.75);
     private final SlewRateLimiter yLimiter = new SlewRateLimiter(0.75);
 
-    public TurdDrive(MultiTurd swerve, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight, Supplier<Integer> DPAD, Supplier<Boolean> boost) {
+    public TurdDrive(TurdSwerve swerve, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight, Supplier<Integer> DPAD, Supplier<Boolean> boost) {
         this.swerve = swerve;
         this.joystickRight = joystickRight;
         this.joystickLeft = joystickLeft;
@@ -53,11 +53,11 @@ public class TurdDrive extends Command {
         }
 
         if (boost.get()) {
-            swerve.setAmpLimit(swerve.TemplateConf.boostDriveLimit);
+            swerve.setAmpLimit(RobotConfig.boostDriveLimit);
             maxSpeed = 1;
         } else {
-            swerve.setAmpLimit(swerve.TemplateConf.driveLimit);
-            maxSpeed = Constants.robotMaxSpeed;
+            swerve.setAmpLimit(RobotConfig.driveAmpLimit);
+            maxSpeed = RobotConfig.robotMaxSpeed;
         }
 
         //notice that X and Y are flipped - this is due to differences between WPILib field-based orientation (+Y is field "up") and conventional robot-based orientation (+Y is robot forward)
