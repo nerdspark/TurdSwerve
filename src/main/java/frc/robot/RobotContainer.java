@@ -17,6 +17,7 @@ import frc.robot.commands.ResetZeroes;
 import frc.robot.commands.RevertZeroes;
 import frc.robot.commands.TurdDrive;
 import frc.robot.constants.Constants;
+import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.TurdSwerve;
 
 public class RobotContainer {
@@ -25,10 +26,11 @@ public class RobotContainer {
   public static final CommandXboxController driverCommand = new CommandXboxController(Constants.driverPort);
   // public static final TurdPod leftPod = new TurdPod(Constants.leftAzimuthID, Constants.leftDriveID, Constants.leftAbsoluteEncoderID, Constants.leftAzimuthInvert,Constants.rightAzimuthInvert, Constants.leftAbsoluteEncoderOffset);
   public static final TurdSwerve swerve = new TurdSwerve();
+  public final PoseEstimatorSubsystem poseEstimatorSubsystem = new PoseEstimatorSubsystem(swerve);
   
 
   public RobotContainer() {
-    final var Odometry = Shuffleboard.getTab("Odometry");
+    final var Odometry = Shuffleboard.getTab("Pose");
     configureBindings();
     Supplier<Translation2d> driverRightJoystick = () -> new Translation2d(driverRaw.getRightX(), driverRaw.getRightY());
     Supplier<Translation2d> driverLeftJoystick = () -> new Translation2d(driverRaw.getLeftX(), driverRaw.getLeftY());

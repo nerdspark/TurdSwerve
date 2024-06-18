@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.LimelightHelpers;
 import frc.robot.constants.Constants;
 import frc.robot.constants.RobotMap;
 
@@ -51,8 +52,7 @@ public class TurdSwerve extends SubsystemBase {
   private double odoAngleOffset = Math.PI * 0.0;
 
   private Rotation2d gyroResetAngle = new Rotation2d();
-  
-  
+    
   private final Field2d field2d = new Field2d();
 
   public TurdSwerve() {
@@ -130,7 +130,7 @@ public class TurdSwerve extends SubsystemBase {
   public void periodic() {
     odometer.update(getGyro(), new SwerveModulePosition[] {leftPod.getPodPosition(), rightPod.getPodPosition()});
     SmartDashboard.putNumber("pigeon", getGyro().getDegrees());
-    field2d.setRobotPose(odometer.getPoseMeters().transformBy(new Transform2d(new Translation2d(), new Rotation2d(odoAngleOffset + Math.PI))));
+    // field2d.setRobotPose(odometer.getPoseMeters().transformBy(new Transform2d(new Translation2d(), new Rotation2d(odoAngleOffset + Math.PI))));
   }
   
   private String getFomattedPose() {
@@ -138,6 +138,9 @@ public class TurdSwerve extends SubsystemBase {
     return String.format(
             "(%.3f, %.3f) %.2f degrees",
             pose.getX(), pose.getY(), pose.getRotation().plus(new Rotation2d(odoAngleOffset)).getDegrees());
+  }
+  public Pose2d getPose() {
+    return odometer.getPoseMeters();
   }
   
   public void addDashboardWidgets(ShuffleboardTab tab) {
@@ -147,5 +150,12 @@ public class TurdSwerve extends SubsystemBase {
 
   public double[] getDriveAmps() {
     return new double[] {leftPod.getDriveAmp(), rightPod.getDriveAmp()};
+  }
+
+  public SwerveModulePosition[] getSwerveModulePosition(){
+    return new SwerveModulePosition[] {
+              leftPod.getPodPosition(),
+              rightPod.getPodPosition()
+          };
   }
 }

@@ -42,4 +42,15 @@ public final class Constants {
 
     public static final double podMaxSpeed = 1;
 
+    //Vision
+    public static final double xyStdDevCoefficient = 0.08;
+    public static final double thetaStdDevCoefficient = 0.16;
+
+    public static final String Limelight1 = "left";
+    public static final String Limelight2 = "right";
+    public static final String Limelight3 = "back";
+
+
+
+
 }
