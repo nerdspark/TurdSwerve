@@ -20,16 +20,17 @@ public class TurdDrive extends Command {
   TurdSwerve swerve;
   Supplier<Translation2d> joystickRight, joystickLeft;
   Supplier<Integer> DPAD;
-  Supplier<Boolean> boost;
+  Supplier<Boolean> boost, A;
   Rotation2d rotation = new Rotation2d();
   double maxSpeed = Constants.robotMaxSpeed;
 
-  public TurdDrive(TurdSwerve swerve, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight, Supplier<Integer> DPAD, Supplier<Boolean> boost) {
+  public TurdDrive(TurdSwerve swerve, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight, Supplier<Integer> DPAD, Supplier<Boolean> boost, Supplier<Boolean> A) {
     this.swerve = swerve;
     this.joystickRight = joystickRight;
     this.joystickLeft = joystickLeft;
     this.DPAD = DPAD;
     this.boost = boost;
+    this.A = A;
     addRequirements(swerve);
   }
 
@@ -53,6 +54,23 @@ public class TurdDrive extends Command {
     } else {
       swerve.setAmpLimit(Constants.driveAmpLimit);
       maxSpeed = Constants.robotMaxSpeed;
+    }
+    if (A.get()) {
+      swerve.drive(5);
+      try {
+        wait(1000);
+      } catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      swerve.turn(Math.PI);
+      try {
+        wait(1000);
+      } catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      swerve.drive(5);
     }
     boolean deadband = Math.abs(joystickRight.get().getX()) + Math.abs(joystickRight.get().getY()) < 0.05;
     double speedX = deadband ? 0 : -joystickRight.get().getX() * maxSpeed;

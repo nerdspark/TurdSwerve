@@ -33,7 +33,7 @@ public class TurdSwerve extends SubsystemBase {
   private final Pigeon2 gyro = new Pigeon2(RobotMap.pigeonID);
   private final TurdPod leftPod = new TurdPod(RobotMap.leftAzimuthID, RobotMap.leftDriveID, RobotMap.leftAbsoluteEncoderID, RobotMap.leftAzimuthInvert, RobotMap.leftDriveInvert, RobotMap.leftAbsoluteEncoderOffset);
   private final TurdPod rightPod = new TurdPod(RobotMap.rightAzimuthID, RobotMap.rightDriveID, RobotMap.rightAbsoluteEncoderID, RobotMap.rightAzimuthInvert, RobotMap.rightDriveInvert, RobotMap.rightAbsoluteEncoderOffset);
-  private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(RobotMap.drivetrainKinematics,
+  public final SwerveDriveOdometry odometer = new SwerveDriveOdometry(RobotMap.drivetrainKinematics,
           new Rotation2d(0), new SwerveModulePosition[] {
               leftPod.getPodPosition(),
               rightPod.getPodPosition()
@@ -45,8 +45,13 @@ public class TurdSwerve extends SubsystemBase {
   private GenericEntry azimuthD = tab.add("azimuth D", Constants.azimuthkD).getEntry();
   private GenericEntry azimuthIzone = tab.add("azimuth IZone", Constants.azimuthkD).getEntry();
   private GenericEntry ADMult = tab.add("azimuth-drive speed multiplier", Constants.azimuthDriveSpeedMultiplier).getEntry();
-
+  private GenericEntry driveP = tab.add("drive P", Constants.drivekP).getEntry();
+  private GenericEntry driveI = tab.add("drive I", Constants.drivekI).getEntry();
+  private GenericEntry driveD = tab.add("drive D", Constants.drivekD).getEntry();
+  private GenericEntry driveIzone = tab.add("drive IZone", Constants.drivekD).getEntry();
+  private GenericEntry DDMult = tab.add("drive-drive speed multiplier", Constants.driveDriveSpeedMultiplier).getEntry();
   private PIDController GyroPID = new PIDController(Constants.gyroP, Constants.gyroI, Constants.gyroD);
+  private PIDController drivePID = new PIDController(Constants.drivekP, Constants.drivekI, Constants.drivekD);
   public double targetAngle = 0;
   private double odoAngleOffset = Math.PI * 0.0;
 
@@ -57,6 +62,7 @@ public class TurdSwerve extends SubsystemBase {
 
   public TurdSwerve() {
     GyroPID.enableContinuousInput(0.0, 2*Math.PI);
+    drivePID.enableContinuousInput(-10,10);
     // gyro.configAllSettings(new Pigeon2Configuration());
   }
 
@@ -79,8 +85,8 @@ public class TurdSwerve extends SubsystemBase {
     resetGyro();
     leftPod.resetPod();
     rightPod.resetPod();
-    leftPod.setPID(azimuthP.getDouble(Constants.azimuthkP), azimuthI.getDouble(Constants.azimuthkI), azimuthD.getDouble(Constants.azimuthkD), azimuthIzone.getDouble(Constants.azimuthkIz), Constants.azimuthMaxOutput, ADMult.getDouble(Constants.azimuthDriveSpeedMultiplier));
-    rightPod.setPID(azimuthP.getDouble(Constants.azimuthkP), azimuthI.getDouble(Constants.azimuthkI), azimuthD.getDouble(Constants.azimuthkD), azimuthIzone.getDouble(Constants.azimuthkIz), Constants.azimuthMaxOutput, ADMult.getDouble(Constants.azimuthDriveSpeedMultiplier));
+    leftPod.setPID(azimuthP.getDouble(Constants.azimuthkP), azimuthI.getDouble(Constants.azimuthkI), azimuthD.getDouble(Constants.azimuthkD), azimuthIzone.getDouble(Constants.azimuthkIz), driveP.getDouble(Constants.drivekP), driveI.getDouble(Constants.drivekI), driveD.getDouble(Constants.drivekD), driveIzone.getDouble(Constants.drivekIz), Constants.azimuthMaxOutput, ADMult.getDouble(Constants.azimuthDriveSpeedMultiplier), DDMult.getDouble(Constants.driveDriveSpeedMultiplier));
+    rightPod.setPID(azimuthP.getDouble(Constants.azimuthkP), azimuthI.getDouble(Constants.azimuthkI), azimuthD.getDouble(Constants.azimuthkD), azimuthIzone.getDouble(Constants.azimuthkIz), driveP.getDouble(Constants.drivekP), driveI.getDouble(Constants.drivekI), driveD.getDouble(Constants.drivekD), driveIzone.getDouble(Constants.drivekIz), Constants.azimuthMaxOutput, ADMult.getDouble(Constants.azimuthDriveSpeedMultiplier), DDMult.getDouble(Constants.driveDriveSpeedMultiplier));
     resetOdometry(new Pose2d(new Translation2d(8.0, 4.2), new Rotation2d()));
   }
 
@@ -125,6 +131,15 @@ public class TurdSwerve extends SubsystemBase {
     leftPod.setPodState(states[0]);
     rightPod.setPodState(states[1]);
   }
+  public void drive(double meters) {
+    leftPod.drive.set(drivePID.calculate(meters));
+    rightPod.drive.set(drivePID.calculate(meters));
+  }
+
+  public void turn(double radians) {
+    leftPod.azimuth.set(GyroPID.calculate(radians));
+    rightPod.azimuth.set(GyroPID.calculate(radians));
+  }
 
   @Override
   public void periodic() {
@@ -133,7 +148,7 @@ public class TurdSwerve extends SubsystemBase {
     field2d.setRobotPose(odometer.getPoseMeters().transformBy(new Transform2d(new Translation2d(), new Rotation2d(odoAngleOffset + Math.PI))));
   }
   
-  private String getFomattedPose() {
+  public String getFomattedPose() {
     var pose = odometer.getPoseMeters();
     return String.format(
             "(%.3f, %.3f) %.2f degrees",

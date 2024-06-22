@@ -29,8 +29,13 @@ public final class Constants {
     public static final double azimuthkD = 0.003;
     public static final double azimuthkIz = 0;
 
-    public static final double azimuthDriveSpeedMultiplier = 0;//0.5;
+    public static final double drivekP = 0.4;
+    public static final double drivekI = 0.0;
+    public static final double drivekD = 0.003;
+    public static final double drivekIz = 0;
 
+    public static final double azimuthDriveSpeedMultiplier = 0;//0.5;
+    public static final double driveDriveSpeedMultiplier = 0;
 
     // Drive Settings
     public static final IdleMode driveMode = IdleMode.kCoast;

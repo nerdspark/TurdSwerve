@@ -21,15 +21,17 @@ import frc.robot.constants.RobotMap;
 
 public class TurdPod extends SubsystemBase {
 
-  private final CANSparkMax azimuth;
-  private final CANSparkMax drive;
+  public final CANSparkMax azimuth;
+  public final CANSparkMax drive;
   private final AnalogEncoder absoluteEncoder;
 
   private final RelativeEncoder azimuthEncoder;
   private final RelativeEncoder driveEncoder;
   private final SparkPIDController azimuthPID;
+  private final SparkPIDController drivePID;
 
   private double azimuthDriveSpeedMultiplier;
+  private double driveDriveSpeedMultiplier;
   private double speed = 0;
   private double absoluteEncoderOffset;
   private double driveSpeedToPower = Constants.driveSpeedToPower;
@@ -62,6 +64,7 @@ public class TurdPod extends SubsystemBase {
     drive.setOpenLoopRampRate(Constants.driveMotorRampRate);
 
     azimuthPID = azimuth.getPIDController();
+    drivePID = drive.getPIDController();
 
     resetPod();
   }
@@ -100,11 +103,11 @@ public class TurdPod extends SubsystemBase {
     drive.set(0);
   }
 
-  public void setPID(double P, double I, double D, double IZone, double outputRange, double ADMult) {
-    if (P != azimuthPID.getP()) {azimuthPID.setP(P);}
-    if (I != azimuthPID.getI()) {azimuthPID.setI(I);}
-    if (D != azimuthPID.getD()) {azimuthPID.setD(D);}
-    if (IZone != azimuthPID.getIZone()) {azimuthPID.setIZone(IZone);}
+  public void setPID(double aP, double aI, double aD, double aIZone, double dP, double dI, double dD, double dIZone, double outputRange, double ADMult, double DDMult) {
+    if (aP != azimuthPID.getP()) {azimuthPID.setP(aP);}
+    if (aI != azimuthPID.getI()) {azimuthPID.setI(aI);}
+    if (aD != azimuthPID.getD()) {azimuthPID.setD(aD);}
+    if (aIZone != azimuthPID.getIZone()) {azimuthPID.setIZone(aIZone);}
     if (outputRange != azimuthPID.getOutputMax()) {azimuthPID.setOutputRange(-outputRange, outputRange);}
     azimuthPID.setPositionPIDWrappingMaxInput(Math.PI);
     azimuthPID.setPositionPIDWrappingMinInput(-Math.PI);
@@ -112,6 +115,14 @@ public class TurdPod extends SubsystemBase {
     // azimuthPID.setSmartMotionAllowedClosedLoopError(0, 0);
     azimuth.setClosedLoopRampRate(0.35);
     azimuthDriveSpeedMultiplier = ADMult;
+    if (dP != drivePID.getP()) {drivePID.setP(dP);}
+    if (dI != drivePID.getI()) {drivePID.setI(dI);}
+    if (dD != drivePID.getD()) {drivePID.setD(dD);}
+    if (dIZone != drivePID.getIZone()) {drivePID.setIZone(dIZone);}
+    if (outputRange != drivePID.getOutputMax()) {drivePID.setOutputRange(-outputRange, outputRange);}
+    // azimuthPID.setSmartMotionAllowedClosedLoopError(0, 0);
+    drive.setClosedLoopRampRate(0.35);
+    driveDriveSpeedMultiplier = DDMult;
   }
 
   public SwerveModulePosition getPodPosition() {
