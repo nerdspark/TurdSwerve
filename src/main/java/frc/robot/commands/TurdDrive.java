@@ -10,7 +10,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants.Constants;
 import frc.robot.constants.RobotMap;
 import frc.robot.subsystems.TurdSwerve;
@@ -56,21 +58,25 @@ public class TurdDrive extends Command {
       maxSpeed = Constants.robotMaxSpeed;
     }
     if (A.get()) {
-      swerve.drive(5);
-      try {
-        wait(1000);
-      } catch (InterruptedException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-      swerve.turn(Math.PI);
-      try {
-        wait(1000);
-      } catch (InterruptedException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-      swerve.drive(5);
+      //swerve.drive(1);
+      SmartDashboard.putNumber("Abutton pressed", 1);
+      swerve.drive(0.1);
+      new WaitCommand(1);
+      
+      // try {
+      //   wait(1000);
+      // } catch (InterruptedException e) {
+      //   // TODO Auto-generated catch block
+      //   e.printStackTrace();
+      // }
+      // swerve.turn(Math.PI);
+      // try {
+      //   wait(1000);
+      // } catch (InterruptedException e) {
+      //   // TODO Auto-generated catch block
+      //   e.printStackTrace();
+      // }
+      // swerve.drive(5);
     }
     boolean deadband = Math.abs(joystickRight.get().getX()) + Math.abs(joystickRight.get().getY()) < 0.05;
     double speedX = deadband ? 0 : -joystickRight.get().getX() * maxSpeed;
@@ -79,6 +85,8 @@ public class TurdDrive extends Command {
     // double speedY = deadband ? 0 : 3.0 * Math.abs(joystickRight.get().getY()) * joystickRight.get().getY();
     double speedOmega = Math.abs(joystickLeft.get().getX()) > 0.07 ? -joystickLeft.get().getX() * Math.abs(joystickLeft.get().getX())*0.3 : 0;
     ChassisSpeeds speeds = new ChassisSpeeds(speedX, speedY, speedOmega);
+    SmartDashboard.putNumber("Execute-SpeedX", speedX);
+    SmartDashboard.putNumber("Execute-SpeedY", speedY);
     swerve.setRobotSpeeds(speeds);
     
   }

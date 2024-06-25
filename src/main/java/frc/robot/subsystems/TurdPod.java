@@ -25,8 +25,8 @@ public class TurdPod extends SubsystemBase {
   public final CANSparkMax drive;
   private final AnalogEncoder absoluteEncoder;
 
-  private final RelativeEncoder azimuthEncoder;
-  private final RelativeEncoder driveEncoder;
+  public final RelativeEncoder azimuthEncoder;
+  public final RelativeEncoder driveEncoder;
   private final SparkPIDController azimuthPID;
   private final SparkPIDController drivePID;
 

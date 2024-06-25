@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants.Constants;
 import frc.robot.constants.RobotMap;
 
@@ -51,18 +52,21 @@ public class TurdSwerve extends SubsystemBase {
   private GenericEntry driveIzone = tab.add("drive IZone", Constants.drivekD).getEntry();
   private GenericEntry DDMult = tab.add("drive-drive speed multiplier", Constants.driveDriveSpeedMultiplier).getEntry();
   private PIDController GyroPID = new PIDController(Constants.gyroP, Constants.gyroI, Constants.gyroD);
-  private PIDController drivePID = new PIDController(Constants.drivekP, Constants.drivekI, Constants.drivekD);
+  private PIDController leftDrivePID = new PIDController(Constants.drivekP, Constants.drivekI, Constants.drivekD);
+  private PIDController rightDrivePID = new PIDController(Constants.drivekP, Constants.drivekI, Constants.drivekD);
   public double targetAngle = 0;
   private double odoAngleOffset = Math.PI * 0.0;
+  private double targetDistance = 0;
 
   private Rotation2d gyroResetAngle = new Rotation2d();
   
   
   private final Field2d field2d = new Field2d();
+  
+  private boolean useDrivePID = false;
 
   public TurdSwerve() {
     GyroPID.enableContinuousInput(0.0, 2*Math.PI);
-    drivePID.enableContinuousInput(-10,10);
     // gyro.configAllSettings(new Pigeon2Configuration());
   }
 
@@ -114,6 +118,13 @@ public class TurdSwerve extends SubsystemBase {
     targetAngle = 0;
   }
 
+  public void cease() {
+    leftPod.drive.set(0);
+    leftPod.azimuth.set(0);
+    rightPod.azimuth.set(0);
+    rightPod.drive.set(0);
+  }
+
   // public void setLeftPod(SwerveModuleState state) {
   //   leftPod.setPodState(state);
   // }
@@ -132,8 +143,18 @@ public class TurdSwerve extends SubsystemBase {
     rightPod.setPodState(states[1]);
   }
   public void drive(double meters) {
-    leftPod.drive.set(drivePID.calculate(meters));
-    rightPod.drive.set(drivePID.calculate(meters));
+    // double driveSpeed = drivePID.calculate(meters);
+    // SmartDashboard.putNumber("Drive Speed:", driveSpeed);
+    // ChassisSpeeds speeds = new ChassisSpeeds(0, -0.25, 0);
+    // ChassisSpeeds stop = new ChassisSpeeds(0,0,0);
+    // double time = meters / 0.25;
+    // setRobotSpeeds(speeds);
+    // new WaitCommand(time);
+    // setRobotSpeeds(stop);
+    useDrivePID = true;
+    leftDrivePID.setSetpoint(meters);
+    rightDrivePID.setSetpoint(meters);
+    targetDistance = meters;
   }
 
   public void turn(double radians) {
@@ -145,7 +166,24 @@ public class TurdSwerve extends SubsystemBase {
   public void periodic() {
     odometer.update(getGyro(), new SwerveModulePosition[] {leftPod.getPodPosition(), rightPod.getPodPosition()});
     SmartDashboard.putNumber("pigeon", getGyro().getDegrees());
+    SmartDashboard.putNumber("lenc pose", leftPod.driveEncoder.getPosition());
+    SmartDashboard.putNumber("renc pose", rightPod.driveEncoder.getPosition());
+    SmartDashboard.putBoolean("drivePID?", useDrivePID);
+    SmartDashboard.putNumber("target", targetDistance);
     field2d.setRobotPose(odometer.getPoseMeters().transformBy(new Transform2d(new Translation2d(), new Rotation2d(odoAngleOffset + Math.PI))));
+    if (useDrivePID) {
+      double leftSpeed = leftDrivePID.calculate(leftPod.driveEncoder.getPosition());
+      double rightSpeed = rightDrivePID.calculate(rightPod.driveEncoder.getPosition());
+      double averageSpeed = (leftSpeed + rightSpeed) / 2;
+      ChassisSpeeds speeds = new ChassisSpeeds(averageSpeed,0,0);
+      setRobotSpeeds(speeds);     
+    }
+    if (leftDrivePID.atSetpoint()) {
+      targetDistance = 0;
+      useDrivePID = false;
+      cease();
+    }
+    
   }
   
   public String getFomattedPose() {
