@@ -218,7 +218,7 @@ public final class Constants {
         private static final double azimuthMaxOutput = 0.25;
 
         //TODO: tune
-        private static final double azimuthkP = 0.0;
+        private static final double azimuthkP = 1.0;
         private static final double azimuthkI = 0.0;
         private static final double azimuthkD = 0.0;
         private static final double azimuthkFF = 0;
@@ -241,7 +241,7 @@ public final class Constants {
 
 
         // robot map
-        private static final int pigeonID = 14;
+        private static final int pigeonID = 25;
 
         private static final int frontLeftAzimuthID  = 2;
         private static final int frontRightAzimuthID = 3;
@@ -254,10 +254,10 @@ public final class Constants {
         private static final int backLeftDriveID   = 8;
         private static final int backRightDriveID  = 9;
 
-        private static final int frontLeftAbsoluteEncoderID  = 10;
-        private static final int frontRightAbsoluteEncoderID = 11;
-        private static final int backRightAbsoluteEncoderID  = 12;
-        private static final int backLeftAbsoluteEncoderID   = 13;
+        private static final int frontLeftAbsoluteEncoderID  = 2;
+        private static final int frontRightAbsoluteEncoderID = 3;
+        private static final int backLeftAbsoluteEncoderID   = 1;
+        private static final int backRightAbsoluteEncoderID  = 0;
 
         
         private static final boolean frontLeftAzimuthInvert  = false;
@@ -271,15 +271,15 @@ public final class Constants {
         private static final boolean backRightDriveInvert  = true;
 
         
-        private static final double frontLeftAbsoluteEncoderOffset  = 0d; //absolute encoder reading at position
-        private static final double frontRightAbsoluteEncoderOffset = 0d; //absolute encoder reading at position
-        private static final double backLeftAbsoluteEncoderOffset   = 0d; //absolute encoder reading at position
-        private static final double backRightAbsoluteEncoderOffset  = 0d; // gears facing inwards: fwd/bck
+        private static final double frontLeftAbsoluteEncoderOffset  = 0.94d; //absolute encoder reading at position
+        private static final double frontRightAbsoluteEncoderOffset = 0.37d; //absolute encoder reading at position
+        private static final double backLeftAbsoluteEncoderOffset   = 0.45d; //absolute encoder reading at position
+        private static final double backRightAbsoluteEncoderOffset  = 0.76d; // gears facing inwards: fwd/bck
 
 
 
         // Megatron config
-        private static final TurdConfig MegatronTemplate = new TurdConfig(azimuthAmpLimit, azimuthRadiansPerMotorRotation, azimuthBrake, azimuthMotorRampRate, azimuthkP, azimuthkI, azimuthkD, azimuthkFF, azimuthMaxOutput, driveAmpLimit, boostDriveLimit, driveBrake, driveMotorRampRate, azimuthDriveSpeedMultiplier, PodType.REV); 
+        private static final TurdConfig MegatronTemplate = new TurdConfig(azimuthAmpLimit, azimuthRadiansPerMotorRotation, azimuthBrake, azimuthMotorRampRate, azimuthkP, azimuthkI, azimuthkD, azimuthkFF, azimuthMaxOutput, driveAmpLimit, boostDriveLimit, driveBrake, driveMotorRampRate, azimuthDriveSpeedMultiplier, PodType.Megatron); 
 
         private static final TurdConfig frontLeftPod = new TurdConfig(frontLeftAbsoluteEncoderID, frontLeftAzimuthID, frontLeftAzimuthInvert, frontLeftDriveID, frontLeftDriveInvert, frontLeftAbsoluteEncoderOffset, MegatronTemplate);
         private static final TurdConfig frontRightPod = new TurdConfig(frontRightAbsoluteEncoderID, frontRightAzimuthID, frontRightAzimuthInvert, frontRightDriveID, frontRightDriveInvert, frontRightAbsoluteEncoderOffset, MegatronTemplate);

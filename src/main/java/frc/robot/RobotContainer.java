@@ -23,7 +23,7 @@ public class RobotContainer {
 
   public static final XboxController driverRaw = new XboxController(Constants.driverPort);
   public static final CommandXboxController driverCommand = new CommandXboxController(Constants.driverPort);
-  public static final MultiTurd swerve = Constants.SkywarpConfig.Skywarp;
+  public static final MultiTurd swerve = Constants.MegatronConfig.Megatron;
   
 
   public RobotContainer() {

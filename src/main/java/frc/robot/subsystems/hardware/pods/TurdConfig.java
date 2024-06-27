@@ -64,7 +64,7 @@ public class TurdConfig {
     }
 
     public static enum PodType {
-        REV, CTRE, undef
+        REV, CTRE, Megatron, undef
     }
 
 }

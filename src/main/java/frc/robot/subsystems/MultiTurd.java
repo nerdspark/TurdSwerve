@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.hardware.pods.CTREPod;
+import frc.robot.subsystems.hardware.pods.MegatronPod;
 import frc.robot.subsystems.hardware.pods.REVPod;
 import frc.robot.subsystems.hardware.pods.TurdConfig;
 import frc.robot.subsystems.hardware.pods.TurdConfig.PodType;
@@ -86,7 +87,7 @@ public class MultiTurd extends SubsystemBase {
 
         for(int i = 0; i < configs.length; i++) {
             TurdConfig config = configs[i];
-            pods[i] = podType == PodType.REV ? new REVPod(config) : new CTREPod(config);
+            pods[i] = podType == PodType.REV ? new REVPod(config) : podType == podType.CTRE ? new CTREPod(config) : new MegatronPod(config);
 
             positions[i] = pods[i].getPodPosition();
         }
