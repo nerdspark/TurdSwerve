@@ -6,14 +6,15 @@ package frc.robot.subsystems.hardware.pods;
 
 import frc.robot.subsystems.hardware.encoders.CANTurd;
 import frc.robot.subsystems.hardware.encoders.ThrifTurd;
+import frc.robot.subsystems.hardware.motors.MegatronFX;
 import frc.robot.subsystems.hardware.motors.TurdonFX;
 
 /** This is a sample pod that uses a CANcoder and TalonFXes. */
 public class MegatronPod extends TurdPod {
     private MegatronPod(int absoluteEncoderID, int azimuthID, int driveID, double absoluteEncoderOffset, boolean azimuthInvert, int azimuthLimit, double azimuthRotationsPerRot, boolean azimuthBrake, double azimuthRR, double kP, double kI, double kD, double FF, double maxOut, double ADMult, boolean driveInvert, int driveLimit, boolean driveBrake, double driveRR) {
-        absoluteEncoder = new ThrifTurd(absoluteEncoderID, absoluteEncoderOffset, 1);
-        azimuthMotor = new TurdonFX(azimuthID, azimuthInvert, azimuthBrake, azimuthLimit, azimuthRR, 1d, azimuthRotationsPerRot, kP, kI, kD, FF, maxOut, absoluteEncoderID);
-        driveMotor = new TurdonFX(driveID, driveInvert, driveBrake, driveLimit, driveRR, 1d, 1d);
+        absoluteEncoder = new ThrifTurd(absoluteEncoderID, absoluteEncoderOffset, 2*Math.PI);
+        azimuthMotor = new MegatronFX(azimuthID, azimuthInvert, azimuthBrake, azimuthLimit, azimuthRR, 2.2, azimuthRotationsPerRot, kP, kI, kD, FF, maxOut, absoluteEncoderID);
+        driveMotor = new MegatronFX(driveID, driveInvert, driveBrake, driveLimit, driveRR, 1d, 1d);
         resetPod();
     }
 

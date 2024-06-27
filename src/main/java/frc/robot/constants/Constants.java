@@ -205,8 +205,8 @@ public final class Constants {
         private static final Translation2d robotCenter = new Translation2d(0, 0); // serves as "center of robot for calculations; robot will turn about this point
         private static final double wheelBase = 6.375;
         private static final Translation2d frontLeftPodPosition = new Translation2d(-Units.inchesToMeters(wheelBase), -Units.inchesToMeters(wheelBase)); // units in meters
-        private static final Translation2d frontRightPodPosition = new Translation2d(Units.inchesToMeters(wheelBase), -Units.inchesToMeters(wheelBase)); // units in meters
-        private static final Translation2d backLeftPodPosition = new Translation2d(-Units.inchesToMeters(wheelBase), Units.inchesToMeters(wheelBase)); // units in meters
+        private static final Translation2d frontRightPodPosition = new Translation2d(-Units.inchesToMeters(wheelBase), Units.inchesToMeters(wheelBase)); // units in meters
+        private static final Translation2d backLeftPodPosition = new Translation2d(Units.inchesToMeters(wheelBase), -Units.inchesToMeters(wheelBase)); // units in meters
         private static final Translation2d backRightPodPosition = new Translation2d(Units.inchesToMeters(wheelBase), Units.inchesToMeters(wheelBase));
         private static final SwerveDriveKinematics drivetrainKinematics = new SwerveDriveKinematics(robotCenter.minus(frontLeftPodPosition), robotCenter.minus(frontRightPodPosition), robotCenter.minus(backLeftPodPosition), robotCenter.minus(backRightPodPosition));
 
@@ -214,11 +214,11 @@ public final class Constants {
         // Azimuth Settings
         private static final boolean azimuthBrake = true;
 
-        private static final int azimuthAmpLimit = 35;
-        private static final double azimuthMaxOutput = 0.25;
+        private static final int azimuthAmpLimit = 40;
+        private static final double azimuthMaxOutput = 0.6;
 
         //TODO: tune
-        private static final double azimuthkP = 1.0;
+        private static final double azimuthkP = 0.8;
         private static final double azimuthkI = 0.0;
         private static final double azimuthkD = 0.0;
         private static final double azimuthkFF = 0;
@@ -229,7 +229,7 @@ public final class Constants {
 
 
         // Drive Settings
-        private static final double podMaxSpeed = 1;
+        private static final double podMaxSpeed = 0.125;
 
         private static final boolean driveBrake = false;
 
