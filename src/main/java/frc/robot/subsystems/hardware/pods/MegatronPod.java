@@ -13,7 +13,7 @@ import frc.robot.subsystems.hardware.motors.TurdonFX;
 public class MegatronPod extends TurdPod {
     private MegatronPod(int absoluteEncoderID, int azimuthID, int driveID, double absoluteEncoderOffset, boolean azimuthInvert, int azimuthLimit, double azimuthRotationsPerRot, boolean azimuthBrake, double azimuthRR, double kP, double kI, double kD, double FF, double maxOut, double ADMult, boolean driveInvert, int driveLimit, boolean driveBrake, double driveRR) {
         absoluteEncoder = new ThrifTurd(absoluteEncoderID, absoluteEncoderOffset, 2*Math.PI);
-        azimuthMotor = new MegatronFX(azimuthID, azimuthInvert, azimuthBrake, azimuthLimit, azimuthRR, 2.2, azimuthRotationsPerRot, kP, kI, kD, FF, maxOut, absoluteEncoderID);
+        azimuthMotor = new MegatronFX(azimuthID, azimuthInvert, azimuthBrake, azimuthLimit, azimuthRR, 2.2, 2.2, kP, kI, kD, FF, maxOut, absoluteEncoderID);
         driveMotor = new MegatronFX(driveID, driveInvert, driveBrake, driveLimit, driveRR, 1d, 1d);
         resetPod();
     }

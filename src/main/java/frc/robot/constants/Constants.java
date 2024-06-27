@@ -214,28 +214,28 @@ public final class Constants {
         // Azimuth Settings
         private static final boolean azimuthBrake = true;
 
-        private static final int azimuthAmpLimit = 40;
-        private static final double azimuthMaxOutput = 0.6;
+        private static final int azimuthAmpLimit = 80;
+        private static final double azimuthMaxOutput = 1.0;
 
         //TODO: tune
-        private static final double azimuthkP = 0.8;
+        private static final double azimuthkP = 1.2;
         private static final double azimuthkI = 0.0;
         private static final double azimuthkD = 0.0;
         private static final double azimuthkFF = 0;
 
         private static final double azimuthDriveSpeedMultiplier = 0;//0.5;
 
-        private static final double azimuthMotorRampRate = 0.35;
+        private static final double azimuthMotorRampRate = 0.25;
 
 
         // Drive Settings
-        private static final double podMaxSpeed = 0.125;
+        private static final double podMaxSpeed = 1.0;
 
         private static final boolean driveBrake = false;
 
         private static final int driveAmpLimit = 25;
         private static final int boostDriveLimit = 90;
-        private static final double driveMotorRampRate = 0.2;
+        private static final double driveMotorRampRate = 0.7;
 
         private static final double azimuthRadiansPerMotorRotation = 2*Math.PI*15/33;
 
