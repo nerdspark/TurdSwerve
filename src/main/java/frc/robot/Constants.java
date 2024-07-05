@@ -66,4 +66,6 @@ public final class Constants {
 
     public static final int driverPort = 0;
 
+    public static final double deadband = 0.1;
+
 }

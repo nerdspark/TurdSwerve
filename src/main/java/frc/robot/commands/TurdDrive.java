@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.TurdPod;
 import frc.robot.subsystems.TurdSwerve;
+import frc.robot.Constants;
 
 public class TurdDrive extends Command {
   
@@ -48,7 +49,7 @@ public class TurdDrive extends Command {
     if (DPAD.get() != -1) {
       swerve.targetAngle = -Units.degreesToRadians(DPAD.get());
     }
-    boolean deadband = Math.abs(joystickRight.get().getX()) + Math.abs(joystickRight.get().getY()) < 0.1;
+    boolean deadband = Math.abs(joystickRight.get().getX()) + Math.abs(joystickRight.get().getY()) < Constants.deadband;
     double speedX = deadband ? 0 : -joystickRight.get().getX();
     double speedY = deadband ? 0 : joystickRight.get().getY();
     double speedOmega = Math.abs(joystickLeft.get().getX()) > 0.07 ? -joystickLeft.get().getX() * Math.abs(joystickLeft.get().getX()) : 0;
