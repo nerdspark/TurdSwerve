@@ -327,16 +327,16 @@ public final class Constants {
 
         private static final double azimuthRadiansPerMotorRotation = 33d/15d;
 
-        private static final double skywarpLeftOffset = 0.163; 
-        private static final double skywarpRightOffset = -0.422;
+        private static final double devastatorLeftOffset = 0.316; 
+        private static final double devastatorRightOffset = -0.245;
 
 
-        private static final TurdConfig SkywarpTemplate = new TurdConfig(azimuthAmpLimit, azimuthRadiansPerMotorRotation, azimuthBrake, azimuthMotorRampRate, azimuthkP, azimuthkI, azimuthkD, azimuthkS, azimuthMaxOutput, driveAmpLimit, boostDriveLimit, driveBrake, driveMotorRampRate, azimuthDriveSpeedMultiplier, PodType.CTRE); 
+        private static final TurdConfig DevastatorTemplate = new TurdConfig(azimuthAmpLimit, azimuthRadiansPerMotorRotation, azimuthBrake, azimuthMotorRampRate, azimuthkP, azimuthkI, azimuthkD, azimuthkS, azimuthMaxOutput, driveAmpLimit, boostDriveLimit, driveBrake, driveMotorRampRate, azimuthDriveSpeedMultiplier, PodType.CTRE); 
 
-        private static final TurdConfig leftPod = new TurdConfig(RobotMap.CAN_LeftAbsoluteEncoderID, RobotMap.leftAzimuthID, RobotMap.leftAzimuthInvert, RobotMap.leftDriveID, RobotMap.leftDriveInvert, skywarpLeftOffset, SkywarpTemplate);
-        private static final TurdConfig rightPod = new TurdConfig(RobotMap.CAN_RightAbsoluteEncoderID, RobotMap.rightAzimuthID, RobotMap.rightAzimuthInvert,RobotMap.rightDriveID, RobotMap.rightDriveInvert, skywarpRightOffset, SkywarpTemplate);
+        private static final TurdConfig leftPod = new TurdConfig(RobotMap.CAN_LeftAbsoluteEncoderID, RobotMap.leftAzimuthID, RobotMap.leftAzimuthInvert, RobotMap.leftDriveID, RobotMap.leftDriveInvert, devastatorLeftOffset, DevastatorTemplate);
+        private static final TurdConfig rightPod = new TurdConfig(RobotMap.CAN_RightAbsoluteEncoderID, RobotMap.rightAzimuthID, RobotMap.rightAzimuthInvert,RobotMap.rightDriveID, RobotMap.rightDriveInvert, devastatorRightOffset, DevastatorTemplate);
         
-        public static final MultiTurd Skywarp = new MultiTurd(gyroPID, RobotMap.pigeonID, drivetrainKinematics, podMaxSpeed, SkywarpTemplate, new TurdConfig[] {leftPod, rightPod});
+        public static final MultiTurd Devastator = new MultiTurd(gyroPID, RobotMap.pigeonID, drivetrainKinematics, podMaxSpeed, DevastatorTemplate, new TurdConfig[] {leftPod, rightPod});
     }
     
 
