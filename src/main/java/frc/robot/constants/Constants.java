@@ -47,4 +47,6 @@ public final class Constants {
 
     public static final double podMaxSpeed = 1;
 
+    public static boolean aPressed = false;
+
 }

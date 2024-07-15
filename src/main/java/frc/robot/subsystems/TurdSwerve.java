@@ -142,20 +142,20 @@ public class TurdSwerve extends SubsystemBase {
     leftPod.setPodState(states[0]);
     rightPod.setPodState(states[1]);
   }
-  public void drive(double meters) {
-    // double driveSpeed = drivePID.calculate(meters);
-    // SmartDashboard.putNumber("Drive Speed:", driveSpeed);
-    // ChassisSpeeds speeds = new ChassisSpeeds(0, -0.25, 0);
-    // ChassisSpeeds stop = new ChassisSpeeds(0,0,0);
-    // double time = meters / 0.25;
-    // setRobotSpeeds(speeds);
-    // new WaitCommand(time);
-    // setRobotSpeeds(stop);
-    useDrivePID = true;
-    leftDrivePID.setSetpoint(meters);
-    rightDrivePID.setSetpoint(meters);
-    targetDistance = meters;
-  }
+  // public void drive(double meters) {
+  //   // double driveSpeed = drivePID.calculate(meters);
+  //   // SmartDashboard.putNumber("Drive Speed:", driveSpeed);
+  //   // ChassisSpeeds speeds = new ChassisSpeeds(0, -0.25, 0);
+  //   // ChassisSpeeds stop = new ChassisSpeeds(0,0,0);
+  //   // double time = meters / 0.25;
+  //   // setRobotSpeeds(speeds);
+  //   // new WaitCommand(time);
+  //   // setRobotSpeeds(stop);
+  //   useDrivePID = true;
+  //   leftDrivePID.setSetpoint(meters);
+  //   rightDrivePID.setSetpoint(meters);
+  //   targetDistance = meters;
+  // }
 
   public void turn(double radians) {
     leftPod.azimuth.set(GyroPID.calculate(radians));
@@ -171,18 +171,18 @@ public class TurdSwerve extends SubsystemBase {
     SmartDashboard.putBoolean("drivePID?", useDrivePID);
     SmartDashboard.putNumber("target", targetDistance);
     field2d.setRobotPose(odometer.getPoseMeters().transformBy(new Transform2d(new Translation2d(), new Rotation2d(odoAngleOffset + Math.PI))));
-    if (useDrivePID) {
-      double leftSpeed = leftDrivePID.calculate(leftPod.driveEncoder.getPosition());
-      double rightSpeed = rightDrivePID.calculate(rightPod.driveEncoder.getPosition());
-      double averageSpeed = (leftSpeed + rightSpeed) / 2;
-      ChassisSpeeds speeds = new ChassisSpeeds(averageSpeed,0,0);
-      setRobotSpeeds(speeds);     
-    }
-    if (leftDrivePID.atSetpoint()) {
-      targetDistance = 0;
-      useDrivePID = false;
-      cease();
-    }
+    // if (useDrivePID) {
+    //   double leftSpeed = leftDrivePID.calculate(leftPod.driveEncoder.getPosition());
+    //   double rightSpeed = rightDrivePID.calculate(rightPod.driveEncoder.getPosition());
+    //   double averageSpeed = (leftSpeed + rightSpeed) / 2;
+    //   ChassisSpeeds speeds = new ChassisSpeeds(averageSpeed,0,0);
+    //   setRobotSpeeds(speeds);     
+    // }
+    // if (leftDrivePID.atSetpoint()) {
+    //   targetDistance = 0;
+    //   useDrivePID = false;
+    //   cease();
+    // }
     
   }
   

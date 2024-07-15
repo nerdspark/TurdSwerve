@@ -22,17 +22,16 @@ public class TurdDrive extends Command {
   TurdSwerve swerve;
   Supplier<Translation2d> joystickRight, joystickLeft;
   Supplier<Integer> DPAD;
-  Supplier<Boolean> boost, A;
+  Supplier<Boolean> boost;
   Rotation2d rotation = new Rotation2d();
   double maxSpeed = Constants.robotMaxSpeed;
 
-  public TurdDrive(TurdSwerve swerve, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight, Supplier<Integer> DPAD, Supplier<Boolean> boost, Supplier<Boolean> A) {
+  public TurdDrive(TurdSwerve swerve, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight, Supplier<Integer> DPAD, Supplier<Boolean> boost) {
     this.swerve = swerve;
     this.joystickRight = joystickRight;
     this.joystickLeft = joystickLeft;
     this.DPAD = DPAD;
     this.boost = boost;
-    this.A = A;
     addRequirements(swerve);
   }
 
@@ -45,7 +44,7 @@ public class TurdDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
+    if (!Constants.aPressed) {
     if (DPAD.get() != -1) {
       swerve.targetAngle = -Units.degreesToRadians(DPAD.get());
     }
@@ -57,27 +56,7 @@ public class TurdDrive extends Command {
       swerve.setAmpLimit(Constants.driveAmpLimit);
       maxSpeed = Constants.robotMaxSpeed;
     }
-    if (A.get()) {
-      //swerve.drive(1);
-      SmartDashboard.putNumber("Abutton pressed", 1);
-      swerve.drive(0.1);
-      new WaitCommand(1);
-      
-      // try {
-      //   wait(1000);
-      // } catch (InterruptedException e) {
-      //   // TODO Auto-generated catch block
-      //   e.printStackTrace();
-      // }
-      // swerve.turn(Math.PI);
-      // try {
-      //   wait(1000);
-      // } catch (InterruptedException e) {
-      //   // TODO Auto-generated catch block
-      //   e.printStackTrace();
-      // }
-      // swerve.drive(5);
-    }
+    
     boolean deadband = Math.abs(joystickRight.get().getX()) + Math.abs(joystickRight.get().getY()) < 0.05;
     double speedX = deadband ? 0 : -joystickRight.get().getX() * maxSpeed;
     double speedY = deadband ? 0 : joystickRight.get().getY() * maxSpeed;
@@ -88,7 +67,7 @@ public class TurdDrive extends Command {
     SmartDashboard.putNumber("Execute-SpeedX", speedX);
     SmartDashboard.putNumber("Execute-SpeedY", speedY);
     swerve.setRobotSpeeds(speeds);
-    
+  }
   }
 
   // Called once the command ends or is interrupted.
