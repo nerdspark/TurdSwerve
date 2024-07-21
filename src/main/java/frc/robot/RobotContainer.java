@@ -21,6 +21,7 @@ import frc.robot.commands.TurdDrive;
 import frc.robot.commands.TurdDriveAuto;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.TurdSwerve;
+import frc.robot.subsystems.LimeLight;
 
 public class RobotContainer {
 
@@ -28,6 +29,7 @@ public class RobotContainer {
   public static final CommandXboxController driverCommand = new CommandXboxController(Constants.driverPort);
   // public static final TurdPod leftPod = new TurdPod(Constants.leftAzimuthID, Constants.leftDriveID, Constants.leftAbsoluteEncoderID, Constants.leftAzimuthInvert,Constants.rightAzimuthInvert, Constants.leftAbsoluteEncoderOffset);
   public static final TurdSwerve swerve = new TurdSwerve();
+  public static final LimeLight ll = new LimeLight();
   JoystickButton A = new JoystickButton(driverRaw, 1);
   
 
@@ -39,10 +41,10 @@ public class RobotContainer {
     Supplier<Integer> DPAD = () -> driverRaw.getPOV();
     
     
-    //swerve.setDefaultCommand(new TurdDrive(swerve, driverLeftJoystick, driverRightJoystick, DPAD, driverRaw::getLeftBumper));
+    swerve.setDefaultCommand(new TurdDrive(swerve, ll, driverLeftJoystick, driverRightJoystick, DPAD, driverRaw::getLeftBumper));
     
 
-    A.onTrue(new MoveSequence(swerve));
+    //A.onTrue(new MoveSequence(swerve));
 
       swerve.addDashboardWidgets(Odometry);
     

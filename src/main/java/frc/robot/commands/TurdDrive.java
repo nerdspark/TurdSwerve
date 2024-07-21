@@ -16,18 +16,21 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants.Constants;
 import frc.robot.constants.RobotMap;
 import frc.robot.subsystems.TurdSwerve;
+import frc.robot.subsystems.LimeLight;
 
 public class TurdDrive extends Command {
   
   TurdSwerve swerve;
+  LimeLight ll;
   Supplier<Translation2d> joystickRight, joystickLeft;
   Supplier<Integer> DPAD;
   Supplier<Boolean> boost;
   Rotation2d rotation = new Rotation2d();
   double maxSpeed = Constants.robotMaxSpeed;
 
-  public TurdDrive(TurdSwerve swerve, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight, Supplier<Integer> DPAD, Supplier<Boolean> boost) {
+  public TurdDrive(TurdSwerve swerve, LimeLight ll, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight, Supplier<Integer> DPAD, Supplier<Boolean> boost) {
     this.swerve = swerve;
+    this.ll = ll;
     this.joystickRight = joystickRight;
     this.joystickLeft = joystickLeft;
     this.DPAD = DPAD;
@@ -44,7 +47,6 @@ public class TurdDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (!Constants.aPressed) {
     if (DPAD.get() != -1) {
       swerve.targetAngle = -Units.degreesToRadians(DPAD.get());
     }
@@ -66,8 +68,10 @@ public class TurdDrive extends Command {
     ChassisSpeeds speeds = new ChassisSpeeds(speedX, speedY, speedOmega);
     SmartDashboard.putNumber("Execute-SpeedX", speedX);
     SmartDashboard.putNumber("Execute-SpeedY", speedY);
+    SmartDashboard.putNumber("tX", ll.getTx());
+    SmartDashboard.putNumber("tY", ll.getTy());
+    SmartDashboard.putNumber("tA", ll.getTa());
     swerve.setRobotSpeeds(speeds);
-  }
   }
 
   // Called once the command ends or is interrupted.

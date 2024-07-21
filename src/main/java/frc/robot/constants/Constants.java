@@ -21,7 +21,7 @@ public final class Constants {
     // Azimuth Settings
     public static final IdleMode azimuthMode = IdleMode.kBrake;
 
-    public static final int azimuthAmpLimit = 55;
+    public static final int azimuthAmpLimit = 70;
     public static final double azimuthMaxOutput = 0.25;
 
     public static final double azimuthkP = 0.4;
