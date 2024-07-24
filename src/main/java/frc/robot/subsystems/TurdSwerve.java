@@ -58,8 +58,7 @@ public class TurdSwerve extends SubsystemBase {
     
     private final Field2d field2d = new Field2d();
 
-    public TurdSwerve() {
-        gyroPID.enableContinuousInput(0.0, 2*Math.PI);
+    public TurdSwerve() {      
         
         this.gyroPID = RobotConfig.gyroPID;
         this.drivetrainKinematics = RobotConfig.drivetrainKinematics;
@@ -67,6 +66,7 @@ public class TurdSwerve extends SubsystemBase {
         
         
         gyro = new Pigeon2(RobotMap.pigeonID);
+        gyroPID.enableContinuousInput(0.0, 2*Math.PI);
         
         azimuthP = tab.add("azimuth P", RobotConfig.azimuthkP).getEntry();
         azimuthI = tab.add("azimuth I", RobotConfig.azimuthkI).getEntry();
