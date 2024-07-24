@@ -81,7 +81,7 @@ public final class Constants {
 
         public static final double azimuthRadiansPerMotorRotation = 33d/15d;
 
-        public static final double skywarpLeftOffset = 0.163; 
-        public static final double skywarpRightOffset = -0.422;
+        public static final double devastatorLeftOffset = 0.316; 
+        public static final double devastatorRightOffset = -0.245;
     }
 }
