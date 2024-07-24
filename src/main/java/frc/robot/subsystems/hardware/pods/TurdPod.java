@@ -58,6 +58,10 @@ public abstract class TurdPod extends SubsystemBase {
         return new SwerveModulePosition(driveMotor.getPosition(), Rotation2d.fromRotations(azimuthMotor.getPosition()));
     }
 
+    public SwerveModuleState getState() {
+        return new SwerveModuleState(driveMotor.getState(), Rotation2d.fromRotations(azimuthMotor.getState()));
+    }
+
     public void setPodState(SwerveModuleState state) {
         //TODO: for the love of god add comments
         state = SwerveModuleState.optimize(state, Rotation2d.fromRotations(azimuthMotor.getPosition())); // does not account for rotations between 180 and 360?

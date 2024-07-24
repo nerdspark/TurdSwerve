@@ -31,6 +31,11 @@ public interface TurdMotor {
     public double getPosition();
 
     /**
+     * @return the output reported by the motor's encoder (likely meters for drive and radians for turn)
+     */
+    public double getState();
+
+    /**
      * sets the PID values of the motor (likely used for azimuth)
      * @param wildcard a wildcard value that is used for the motor's specific PID controller. For Talons, it is kS, and for Sparks, it is the IZone.
      * @implNote please note that P is not the first parameter.

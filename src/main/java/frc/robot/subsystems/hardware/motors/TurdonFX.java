@@ -147,4 +147,10 @@ public class TurdonFX implements TurdMotor {
     public double getAppliedOutput() {
         return motor.getDutyCycle().getValue(); //TODO: not quite sure if this is right.
     }
+
+    @Override
+    public double getState() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getState'");
+    }
 }

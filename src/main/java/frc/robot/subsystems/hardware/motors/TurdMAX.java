@@ -78,4 +78,10 @@ public class TurdMAX implements TurdMotor {
     public double getAppliedOutput() {
         return motor.getAppliedOutput();
     }
+
+    @Override
+    public double getState() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getState'");
+    }
 }

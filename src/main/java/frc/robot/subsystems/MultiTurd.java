@@ -5,6 +5,14 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,6 +26,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -38,7 +47,7 @@ public class MultiTurd extends SubsystemBase {
     private final Pigeon2 gyro;
     // private final TurdPod leftPod = new REVPod(RobotMap.leftAzimuthID, RobotMap.leftDriveID, RobotMap.leftAbsoluteEncoderID, RobotMap.leftAzimuthInvert, RobotMap.leftDriveInvert, RobotMap.leftAbsoluteEncoderOffset);
     // private final TurdPod rightPod = new REVPod(RobotMap.rightAzimuthID, RobotMap.rightDriveID, RobotMap.rightAbsoluteEncoderID, RobotMap.rightAzimuthInvert, RobotMap.rightDriveInvert, RobotMap.rightAbsoluteEncoderOffset);
-    
+
     private final TurdPod[] pods;
     public final TurdConfig TemplateConf;
     
@@ -62,9 +71,10 @@ public class MultiTurd extends SubsystemBase {
     
     private final Field2d field2d = new Field2d();
 
+
     public MultiTurd(PIDController gyroPID, int pigeonID, SwerveDriveKinematics drivetrainKinematics, double robotMaxSpeed, TurdConfig templateConf, TurdConfig[] configs) {
         gyroPID.enableContinuousInput(0.0, 2*Math.PI);
-        
+
         this.gyroPID = gyroPID;
         this.drivetrainKinematics = drivetrainKinematics;
         this.robotMaxSpeed = robotMaxSpeed;
@@ -87,16 +97,36 @@ public class MultiTurd extends SubsystemBase {
 
         for(int i = 0; i < configs.length; i++) {
             TurdConfig config = configs[i];
-            pods[i] = podType == PodType.REV ? new REVPod(config) : podType == podType.CTRE ? new CTREPod(config) : new MegatronPod(config);
+            pods[i] = podType == PodType.REV ? new REVPod(config) : podType == PodType.CTRE ? new CTREPod(config) : new MegatronPod(config);
 
             positions[i] = pods[i].getPodPosition();
         }
 
         odometer = new SwerveDriveOdometry(drivetrainKinematics, new Rotation2d(0), positions);
 
+            // Configure AutoBuilder for PathPlanner
+        AutoBuilder.configureHolonomic(
+            this::getPose,
+            this::resetOdometry,
+            () -> drivetrainKinematics.toChassisSpeeds(getModuleStates()),
+            this::setRobotSpeeds,
+            new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+                    4.5, // Max module speed, in m/s
+                    0.4, // Drive base radius in meters. Distance from robot center to furthest module.
+                    new ReplanningConfig() // Default path replanning config. See the API for the options here
+            ),
+                () ->
+                    DriverStation.getAlliance().isPresent()
+                        && DriverStation.getAlliance().get() == Alliance.Red,
+            this);
+
 
         // gyro.configAllSettings(new Pigeon2Configuration());
     }
+
+
 
     public void setAmpLimit(int ampLimit) {
         forEachPod((TurdPod pod) -> pod.setAmpLimit(ampLimit));
@@ -123,6 +153,18 @@ public class MultiTurd extends SubsystemBase {
         forEachPod(TurdPod::resetPod);
         
         resetOdometry(new Pose2d(new Translation2d(8.0, 4.2), new Rotation2d()));
+    }
+
+    public Pose2d getPose() {
+        return odometer.getPoseMeters();
+    }
+
+    public SwerveModuleState[] getModuleStates() {
+        SwerveModuleState[] states = new SwerveModuleState[2];
+        for (int i = 0; i < pods.length; i++) {
+          states[i] = pods[i].getState();
+        }
+        return states;
     }
 
     public void resetZero() {
@@ -163,6 +205,9 @@ public class MultiTurd extends SubsystemBase {
         forEachPodIndex((TurdPod pod, Integer index) -> pod.setPodState(states[index]));
     }
 
+
+
+    
     @Override
     public void periodic() {
         odometer.update(getGyro(), getModulePositions());

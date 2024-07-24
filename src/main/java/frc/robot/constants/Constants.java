@@ -17,7 +17,7 @@ import frc.robot.subsystems.hardware.pods.TurdConfig.PodType;
 public final class Constants {
     public static final int driverPort = 0;
 
-    public static final double robotMaxSpeed = 0.25; //meters per second
+    public static final double robotMaxSpeed = 1.0; //meters per second
     
     /** CAN ID, Invert, Pod Positions, Offsets, Conversion Rates */
     public final class RobotMap {
@@ -317,6 +317,11 @@ public final class Constants {
         private static final double azimuthMotorRampRate = 0.0;
 
         // Drive Settings
+
+        // Theoretical free speed (m/s) at 12v applied output;
+        // This needs to be tuned to your individual robot
+        public static final double kSpeedAt12VoltsMps = 1.0;
+
         private static final double podMaxSpeed = 1;
 
         private static final boolean driveBrake = false;
