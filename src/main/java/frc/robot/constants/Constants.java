@@ -53,10 +53,12 @@ public final class Constants {
         public static final int azimuthAmpLimit = 80;
         public static final double azimuthMaxOutput = 1;
 
-        public static final double azimuthkP = 79.80000305175781;
-        public static final double azimuthkI = 0.0;
-        public static final double azimuthkD = 0.6899999976158142;
-        public static final double azimuthkS = 0;
+
+        public static final double azimuthkP = 1.2;
+        
+        public static final double azimuthkI = 0.02;
+        public static final double azimuthkD = 0.001;
+        public static final double azimuthkS = 0.0;
 
         public static final double azimuthDriveSpeedMultiplier = 0.5;
 
