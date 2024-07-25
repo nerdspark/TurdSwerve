@@ -18,6 +18,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 /** This is a sample pod that uses a CANcoder and TalonFXes. */
@@ -45,8 +46,59 @@ public class TurdPod extends SubsystemBase {
 
     public TurdPod(int absoluteEncoderID, int azimuthID, int driveID, double absoluteEncoderOffset, boolean azimuthInvert, int azimuthLimit, double azimuthRotationsPerRot, boolean azimuthBrake, double azimuthRR, double kP, double kI, double kD, double FF, double maxOut, double ADMult, boolean driveInvert, int driveLimit, boolean driveBrake, double driveRR) {
         absoluteEncoder = makeCANCoder(absoluteEncoderID, false, absoluteEncoderOffset);
-        azimuthMotor = makeAzimuth(azimuthID, azimuthInvert, azimuthBrake, azimuthLimit, azimuthRR, 1, azimuthRotationsPerRot, kP, kI, kD, FF, maxOut, absoluteEncoderID, ADMult);
-        driveMotor = makeDrive(driveID, driveInvert, driveBrake, driveLimit, driveRR, 1, 1);
+        
+        driveMotor = makeDrive(driveID, driveInvert, driveBrake, driveLimit, driveRR, 1d, 1d);
+        
+        this.azimuthMotor = new TalonFX(azimuthID);
+
+        //set neutral mode and inverts
+        azimuthConfig.MotorOutput.Inverted = azimuthInvert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+        azimuthConfig.MotorOutput.NeutralMode = azimuthBrake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+
+        //set current limits; supply current limits are hardcoded because they are almost always the same
+        azimuthConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        azimuthConfig.CurrentLimits.SupplyCurrentLimit = 40d;
+        azimuthConfig.CurrentLimits.SupplyCurrentThreshold = 40d;
+        azimuthConfig.CurrentLimits.SupplyTimeThreshold = 100d;
+
+        azimuthConfig.CurrentLimits.StatorCurrentLimitEnable = azimuthLimit > 0;
+        azimuthConfig.CurrentLimits.StatorCurrentLimit = azimuthLimit;
+
+
+        // this is kind of bad code, but it's the easiest way to set a ramp rate regardless of control type
+        azimuthConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = azimuthRR;
+        azimuthConfig.OpenLoopRamps.TorqueOpenLoopRampPeriod = azimuthRR;
+        azimuthConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = azimuthRR; 
+        azimuthConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = azimuthRR;
+        azimuthConfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = azimuthRR;
+        azimuthConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = azimuthRR;
+
+        //set feedback ratios
+        azimuthConfig.Feedback.SensorToMechanismRatio = 1d;
+        azimuthConfig.Feedback.RotorToSensorRatio = 1d;
+
+        azimuthConfig.ClosedLoopGeneral.ContinuousWrap = true;
+        azimuthConfig.Feedback.FeedbackRemoteSensorID = absoluteEncoderID;
+        azimuthConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+
+        this.azimuthMotor.getConfigurator().apply(azimuthConfig);
+
+        if(azimuthConfig.Slot0.kP != kP) {azimuthConfig.Slot0.kP = kP; apply = true;}
+        if(azimuthConfig.Slot0.kI != kI) {azimuthConfig.Slot0.kI = kI; apply = true;}
+        if(azimuthConfig.Slot0.kD != kD) {azimuthConfig.Slot0.kD = kD; apply = true;}
+        if(azimuthConfig.Slot0.kS != FF) {azimuthConfig.Slot0.kS = FF; apply = true;}
+        if(azimuthConfig.MotorOutput.PeakForwardDutyCycle != maxOut) {
+            azimuthConfig.MotorOutput.PeakForwardDutyCycle = maxOut;
+            azimuthConfig.MotorOutput.PeakReverseDutyCycle = -maxOut;
+            apply = true;
+        }
+        if(apply) {
+            this.azimuthMotor.getConfigurator().apply(azimuthConfig);
+        } 
+        azimuthDriveSpeedMultiplier = ADMult;
+
+        apply = false;
+        
         resetPod();
     }
 
@@ -110,45 +162,7 @@ public class TurdPod extends SubsystemBase {
      * 
      * @implNote this constructor is for azimuth motors only and uses fused CANcoders. If you are not using CANcoders or do not have phoenix pro, please use another constructor
      */
-    public TalonFX makeAzimuth(int id, boolean inverted, boolean isBrake, double statorLimit, double rampRate, double ENCODER_TO_MECHANISM_RATIO, double ROTOR_TO_ENCODER_RATIO, double P, double I, double D, double kF, double outputRange, int angleEncoderID, double ADMult) {
-        //I figured nobody had the guts to put a CANivore on a turdswerve, so i'm leaving out the CAN bus parameter
-        motor = new TalonFX(id);
-
-        //set neutral mode and inverts
-        azimuthConfig.MotorOutput.Inverted = inverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
-        azimuthConfig.MotorOutput.NeutralMode = isBrake ? NeutralModeValue.Brake : NeutralModeValue.Coast;
-
-        //set current limits; supply current limits are hardcoded because they are almost always the same
-        azimuthConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-        azimuthConfig.CurrentLimits.SupplyCurrentLimit = 40d;
-        azimuthConfig.CurrentLimits.SupplyCurrentThreshold = 40d;
-        azimuthConfig.CurrentLimits.SupplyTimeThreshold = 100d;
-
-        azimuthConfig.CurrentLimits.StatorCurrentLimitEnable = statorLimit > 0;
-        azimuthConfig.CurrentLimits.StatorCurrentLimit = statorLimit;
-
-
-        // this is kind of bad code, but it's the easiest way to set a ramp rate regardless of control type
-        azimuthConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = rampRate;
-        azimuthConfig.OpenLoopRamps.TorqueOpenLoopRampPeriod = rampRate;
-        azimuthConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = rampRate; 
-        azimuthConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = rampRate;
-        azimuthConfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = rampRate;
-        azimuthConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = rampRate;
-
-        //set feedback ratios
-        azimuthConfig.Feedback.SensorToMechanismRatio = ENCODER_TO_MECHANISM_RATIO;
-        azimuthConfig.Feedback.RotorToSensorRatio = ROTOR_TO_ENCODER_RATIO;
-
-        setPID(kF, P, I, D, outputRange, ADMult);
-        azimuthConfig.ClosedLoopGeneral.ContinuousWrap = true;
-        azimuthConfig.Feedback.FeedbackRemoteSensorID = angleEncoderID;
-        azimuthConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-
-        motor.getConfigurator().apply(azimuthConfig);
-
-        return motor;
-    }
+    
 
 
     /**
@@ -172,8 +186,7 @@ public class TurdPod extends SubsystemBase {
         return encoder;
     }
 
-
-    public void setPID(double kS, double P, double I, double D, double outputRange, double ADMult) {
+    public void setPID(double kS, double P, double I, double D, double outputRange, double ADMult, TalonFX motor) {
         if(azimuthConfig.Slot0.kP != P) {azimuthConfig.Slot0.kP = P; apply = true;}
         if(azimuthConfig.Slot0.kI != I) {azimuthConfig.Slot0.kI = I; apply = true;}
         if(azimuthConfig.Slot0.kD != D) {azimuthConfig.Slot0.kD = D; apply = true;}
@@ -184,7 +197,7 @@ public class TurdPod extends SubsystemBase {
             apply = true;
         }
         if(apply) {
-            azimuthMotor.getConfigurator().apply(azimuthConfig);
+            motor.getConfigurator().apply(azimuthConfig);
         } 
         azimuthDriveSpeedMultiplier = ADMult;
 
