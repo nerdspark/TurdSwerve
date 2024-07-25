@@ -21,6 +21,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.Constants.RobotConfig;
 /** This is a sample pod that uses a CANcoder and TalonFXes. */
 public class TurdPod extends SubsystemBase {
     public CANcoder absoluteEncoder;
@@ -46,7 +47,6 @@ public class TurdPod extends SubsystemBase {
 
     public TurdPod(int absoluteEncoderID, int azimuthID, int driveID, double absoluteEncoderOffset, boolean azimuthInvert, int azimuthLimit, double azimuthRotationsPerRot, boolean azimuthBrake, double azimuthRR, double kP, double kI, double kD, double FF, double maxOut, double ADMult, boolean driveInvert, int driveLimit, boolean driveBrake, double driveRR) {
         absoluteEncoder = makeCANCoder(absoluteEncoderID, false, absoluteEncoderOffset);
-        
         driveMotor = makeDrive(driveID, driveInvert, driveBrake, driveLimit, driveRR, 1d, 1d);
         
         this.azimuthMotor = new TalonFX(azimuthID);
@@ -149,22 +149,6 @@ public class TurdPod extends SubsystemBase {
     }
 
     /**
-     * Creates a new TurdonFX (please use this for azimuth with fused CANcoders only)
-     * @param id CAN ID for the motor
-     * @param inverted true for CW+, false for CCW+
-     * @param isBrake true for brake, false for coast
-     * @param statorLimit the stator current limit in amps
-     * @param rampRate time it takes for the motor to reach full power from zero power in seconds
-     * @param outputRange the min/max output of the motor
-     * @param angleEncoderID the id of the CANcoder used fused with the motor
-     * @param ENCODER_TO_MECHANISM_RATIO Ratio between the feedback encoder (CANcoder) and mechanism. This is usually 1 for azimuth motors.
-     * @param ROTOR_TO_ENCODER_RATIO Ratio between the rotor and the feedback encoder. This is depends on the gearbox.
-     * 
-     * @implNote this constructor is for azimuth motors only and uses fused CANcoders. If you are not using CANcoders or do not have phoenix pro, please use another constructor
-     */
-
-
-    /**
      * creates a new CANTurdCoder
      * @param inverted true for CW+, false for CCW+
      * @param offset the offset of the sensor in rotations
@@ -256,8 +240,8 @@ public class TurdPod extends SubsystemBase {
         driveMotor.set(speed + (azimuthMotor.getDutyCycle().getValue() * azimuthDriveSpeedMultiplier)); //should this be in setPodState?
         
         //TODO: dont use smartdashboard
-        SmartDashboard.putNumber("absolute encoder" + absoluteEncoder.getDeviceID(), absoluteEncoder.getAbsolutePosition().getValueAsDouble());
-        SmartDashboard.putNumber("azimuth pose " + absoluteEncoder.getDeviceID(), azimuthMotor.getPosition().getValueAsDouble());
+        //SmartDashboard.putNumber("absolute encoder" + absoluteEncoder.getDeviceID(), absoluteEncoder.getAbsolutePosition().getValueAsDouble());
+        //SmartDashboard.putNumber("azimuth pose " + absoluteEncoder.getDeviceID(), azimuthMotor.getPosition().getValueAsDouble());
         // SmartDashboard.putNumber("azimuth pose " + config.absoluteEncoderID, azimuthMotor.);
 
         // SmartDashboard.putNumber("drive pos " + driveMotor.getDeviceId(), driveEncoder.getPosition());

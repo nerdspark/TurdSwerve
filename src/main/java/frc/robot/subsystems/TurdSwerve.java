@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.security.KeyPair;
+
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -22,6 +24,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -54,7 +57,7 @@ public class TurdSwerve extends SubsystemBase {
     private Rotation2d gyroResetAngle = new Rotation2d();
     
     private SwerveDriveKinematics drivetrainKinematics;
-    private final double robotMaxSpeed;
+    private final double moduleMaxSpeed;
     
     private final Field2d field2d = new Field2d();
 
@@ -62,11 +65,10 @@ public class TurdSwerve extends SubsystemBase {
         
         this.gyroPID = RobotConfig.gyroPID;
         this.drivetrainKinematics = RobotConfig.drivetrainKinematics;
-        this.robotMaxSpeed = RobotConfig.robotMaxSpeed;
+        this.moduleMaxSpeed = RobotConfig.moduleMaxSpeed;
         gyroPID.enableContinuousInput(0.0, 2*Math.PI);
         
         gyro = new Pigeon2(RobotMap.pigeonID);
-        gyroPID.enableContinuousInput(0.0, 2*Math.PI);
         
         azimuthP = tab.add("azimuth P", RobotConfig.azimuthkP).getEntry();
         azimuthI = tab.add("azimuth I", RobotConfig.azimuthkI).getEntry();
@@ -147,7 +149,7 @@ public class TurdSwerve extends SubsystemBase {
         gyroPID.calculate(getGyro().getRadians(), targetAngle), getGyro());
 
         SwerveModuleState[] states = drivetrainKinematics.toSwerveModuleStates(chassisSpeeds);
-        SwerveDriveKinematics.desaturateWheelSpeeds(states, robotMaxSpeed);
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, moduleMaxSpeed);
         
         if (manualTurn) {
             targetAngle = getGyro().getRadians() + (chassisSpeeds.omegaRadiansPerSecond / 2.0); //TODO: magic number
@@ -160,12 +162,12 @@ public class TurdSwerve extends SubsystemBase {
     @Override
     public void periodic() {
         odometer.update(getGyro(), getModulePositions());
-        SmartDashboard.putNumber("pigeon", getGyro().getDegrees());
+        //SmartDashboard.putNumber("pigeon", getGyro().getDegrees());
         field2d.setRobotPose(odometer.getPoseMeters().transformBy(new Transform2d(new Translation2d(), new Rotation2d(odoAngleOffset + Math.PI))));
-
+        
         //uncomment these lines for azimuth tuning
-        // leftPod.setPID(azimuthkS.getDouble(SkywarpConfig.azimuthkS), azimuthP.getDouble(SkywarpConfig.azimuthkP), azimuthI.getDouble(SkywarpConfig.azimuthkI), azimuthD.getDouble(SkywarpConfig.azimuthkD), 1, ADMult.getDouble(SkywarpConfig.azimuthMaxOutput));
-        // rightPod.setPID(azimuthkS.getDouble(SkywarpConfig.azimuthkS), azimuthP.getDouble(SkywarpConfig.azimuthkP), azimuthI.getDouble(SkywarpConfig.azimuthkI), azimuthD.getDouble(SkywarpConfig.azimuthkD), 1, ADMult.getDouble(SkywarpConfig.azimuthMaxOutput));
+        //leftPod.setPID(azimuthkS.getDouble(SkywarpConfig.azimuthkS), azimuthP.getDouble(SkywarpConfig.azimuthkP), azimuthI.getDouble(SkywarpConfig.azimuthkI), azimuthD.getDouble(SkywarpConfig.azimuthkD), 1, ADMult.getDouble(SkywarpConfig.azimuthMaxOutput));
+        //rightPod.setPID(azimuthkS.getDouble(SkywarpConfig.azimuthkS), azimuthP.getDouble(SkywarpConfig.azimuthkP), azimuthI.getDouble(SkywarpConfig.azimuthkI), azimuthD.getDouble(SkywarpConfig.azimuthkD), 1, ADMult.getDouble(SkywarpConfig.azimuthMaxOutput));
     }
     
     private String getFomattedPose() {

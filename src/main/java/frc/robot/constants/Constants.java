@@ -33,7 +33,7 @@ public final class Constants {
         public static final boolean leftAzimuthInvert = false;
         public static final boolean rightAzimuthInvert = false;
         public static final boolean leftDriveInvert = false;
-        public static final boolean rightDriveInvert = false;
+        public static final boolean rightDriveInvert = true;
     }
 
     public final class RobotConfig {
@@ -44,8 +44,9 @@ public final class Constants {
         private static final Translation2d rightPodPosition = new Translation2d(Units.inchesToMeters(wheelBase), -Units.inchesToMeters(wheelBase));
         public static final SwerveDriveKinematics drivetrainKinematics = new SwerveDriveKinematics(leftPodPosition, rightPodPosition);
 
-        public static final double robotMaxSpeed = 3.99; //meters per second
-
+        public static final double maxSpeedXY = 0.25; //X And Y Gain
+        public static final double maxSpeedZ = 0.15; //Z Gain
+        public static final double moduleMaxSpeed = 3.99; //Meters Per Second
 
         // Azimuth Settings
         public static final boolean azimuthBrake = true;
@@ -54,15 +55,17 @@ public final class Constants {
         public static final double azimuthMaxOutput = 1;
 
 
-        public static final double azimuthkP = 1.2;
-        
-        public static final double azimuthkI = 0.02;
+        public static final double azimuthkP = 1.3; //1.2, 0.4, 0.4, 2, 1.2, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 2.1
+                                            //0.64615384615
+        public static final double azimuthkI = 0.0;
         public static final double azimuthkD = 0.001;
         public static final double azimuthkS = 0.0;
 
-        public static final double azimuthDriveSpeedMultiplier = 0.5;
+        public static final double azimuthDriveSpeedMultiplier = 1;
 
         public static final double azimuthMotorRampRate = 0.0;
+
+        public static final double steerGearRatio = 2.2;
 
         // Drive Settings
         public static final double podMaxSpeed = 1;
@@ -71,11 +74,11 @@ public final class Constants {
 
         public static final int driveAmpLimit = 80;
         public static final int boostDriveLimit = 90;
-        public static final double driveMotorRampRate = 0.2;
+        public static final double driveMotorRampRate = 0.0;
 
         public static final double azimuthRadiansPerMotorRotation = 2.200000047683716;
 
-        public static final double leftOffset = 0; 
-        public static final double rightOffset = 0;
+        public static final double leftOffset = 0.184326; 
+        public static final double rightOffset = -0.127930;
     }
 }

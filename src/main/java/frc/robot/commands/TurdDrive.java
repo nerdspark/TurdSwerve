@@ -23,7 +23,8 @@ public class TurdDrive extends Command {
     Supplier<Integer> DPAD;
     Supplier<Boolean> boost;
     Rotation2d rotation = new Rotation2d();
-    double maxSpeed = RobotConfig.robotMaxSpeed;
+    double maxSpeedXY = RobotConfig.maxSpeedXY;
+    double maxSpeedZ = RobotConfig.maxSpeedZ;
 
     
     private final SlewRateLimiter xLimiter = new SlewRateLimiter(0.75);
@@ -54,17 +55,17 @@ public class TurdDrive extends Command {
 
         if (boost.get()) {
             swerve.setAmpLimit(RobotConfig.boostDriveLimit);
-            maxSpeed = 1;
+            maxSpeedXY = 1;
         } else {
             swerve.setAmpLimit(RobotConfig.driveAmpLimit);
-            maxSpeed = RobotConfig.robotMaxSpeed;
+            maxSpeedXY = RobotConfig.maxSpeedXY;
         }
 
         //notice that X and Y are flipped - this is due to differences between WPILib field-based orientation (+Y is field "up") and conventional robot-based orientation (+Y is robot forward)
-        double speedX = MathUtil.applyDeadband(-joystickRight.get().getY(), 0.05) * maxSpeed; // Y is negated due to the way controllers work
-        double speedY = MathUtil.applyDeadband(-joystickRight.get().getX(), 0.05) * maxSpeed; // X is negated due to the way field oriented works (assuming a blue origin, "right" would be negative Y)
-
-        double speedOmega = MathUtil.applyDeadband(joystickLeft.get().getX(), 0.07);
+        double speedX = MathUtil.applyDeadband(joystickRight.get().getY(), 0.06) * maxSpeedXY; // Y is negated due to the way controllers work
+        double speedY = MathUtil.applyDeadband(-joystickRight.get().getX(), 0.06) * maxSpeedXY; // X is negated due to the way field oriented works (assuming a blue origin, "right" would be negative Y)
+        double speedOmega = MathUtil.applyDeadband(joystickLeft.get().getX(), 0.06) * maxSpeedZ;
+        
         ChassisSpeeds speeds = new ChassisSpeeds(xLimiter.calculate(speedX), yLimiter.calculate(speedY), speedOmega);
         swerve.setRobotSpeeds(speeds);
         
