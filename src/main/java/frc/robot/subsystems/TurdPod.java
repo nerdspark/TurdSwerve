@@ -28,6 +28,7 @@ public class TurdPod extends SubsystemBase {
     public TalonFX driveMotor;
     public double azimuthDriveSpeedMultiplier;
     private double speed = 0;
+    TalonFX motor;
 
     TalonFXConfiguration driveConfig = new TalonFXConfiguration();
     TalonFXConfiguration azimuthConfig = new TalonFXConfiguration();
@@ -113,7 +114,7 @@ public class TurdPod extends SubsystemBase {
      */
     public TalonFX makeDrive(int id, boolean inverted, boolean isBrake, double statorLimit, double rampRate, double ENCODER_TO_MECHANISM_RATIO, double ROTOR_TO_ENCODER_RATIO) {
         //I figured nobody had the guts to put a CANivore on a turdswerve, so i'm leaving out the CAN bus parameter
-        TalonFX motor = new TalonFX(id);
+        motor = new TalonFX(id);
 
         //set neutral mode and inverts
         driveConfig.MotorOutput.Inverted = inverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
@@ -161,7 +162,6 @@ public class TurdPod extends SubsystemBase {
      * 
      * @implNote this constructor is for azimuth motors only and uses fused CANcoders. If you are not using CANcoders or do not have phoenix pro, please use another constructor
      */
-    
 
 
     /**

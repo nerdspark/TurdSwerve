@@ -63,7 +63,7 @@ public class TurdSwerve extends SubsystemBase {
         this.gyroPID = RobotConfig.gyroPID;
         this.drivetrainKinematics = RobotConfig.drivetrainKinematics;
         this.robotMaxSpeed = RobotConfig.robotMaxSpeed;
-        
+        gyroPID.enableContinuousInput(0.0, 2*Math.PI);
         
         gyro = new Pigeon2(RobotMap.pigeonID);
         gyroPID.enableContinuousInput(0.0, 2*Math.PI);
@@ -75,9 +75,14 @@ public class TurdSwerve extends SubsystemBase {
         azimuthkS = tab.add("azimuth kS", RobotConfig.azimuthkS).getEntry();
         ADMult = tab.add("Drive Speed Multiplier", RobotConfig.azimuthDriveSpeedMultiplier).getEntry();
         
-
-        leftPod = new TurdPod(RobotMap.CAN_LeftAbsoluteEncoderID, RobotMap.leftAzimuthID, RobotMap.leftDriveID, RobotConfig.skywarpLeftOffset, RobotMap.leftAzimuthInvert, RobotConfig.azimuthAmpLimit, RobotConfig.azimuthRadiansPerMotorRotation, RobotConfig.azimuthBrake, RobotConfig.azimuthMotorRampRate, RobotConfig.azimuthkP, RobotConfig.azimuthkI, RobotConfig.azimuthkD, RobotConfig.azimuthkS, RobotConfig.azimuthMaxOutput, RobotConfig.azimuthDriveSpeedMultiplier, RobotMap.leftDriveInvert, RobotConfig.driveAmpLimit, RobotConfig.driveBrake, RobotConfig.driveMotorRampRate);
-        rightPod = new TurdPod(RobotMap.CAN_RightAbsoluteEncoderID, RobotMap.rightAzimuthID, RobotMap.rightDriveID, RobotConfig.skywarpRightOffset, RobotMap.rightAzimuthInvert, RobotConfig.azimuthAmpLimit, RobotConfig.azimuthRadiansPerMotorRotation, RobotConfig.azimuthBrake, RobotConfig.azimuthMotorRampRate, RobotConfig.azimuthkP, RobotConfig.azimuthkI, RobotConfig.azimuthkD, RobotConfig.azimuthkS, RobotConfig.azimuthMaxOutput, RobotConfig.azimuthDriveSpeedMultiplier, RobotMap.rightDriveInvert, RobotConfig.driveAmpLimit, RobotConfig.driveBrake, RobotConfig.driveMotorRampRate);
+        leftPod = new TurdPod(RobotMap.CAN_LeftAbsoluteEncoderID, RobotMap.leftAzimuthID, RobotMap.leftDriveID, RobotConfig.leftOffset, RobotMap.leftAzimuthInvert, 
+            RobotConfig.azimuthAmpLimit, RobotConfig.azimuthRadiansPerMotorRotation, RobotConfig.azimuthBrake, RobotConfig.azimuthMotorRampRate, RobotConfig.azimuthkP, 
+            RobotConfig.azimuthkI, RobotConfig.azimuthkD, RobotConfig.azimuthkS, RobotConfig.azimuthMaxOutput, RobotConfig.azimuthDriveSpeedMultiplier, RobotMap.leftDriveInvert, 
+            RobotConfig.driveAmpLimit, RobotConfig.driveBrake, RobotConfig.driveMotorRampRate);
+        rightPod = new TurdPod(RobotMap.CAN_RightAbsoluteEncoderID, RobotMap.rightAzimuthID, RobotMap.rightDriveID, RobotConfig.rightOffset, RobotMap.rightAzimuthInvert, 
+            RobotConfig.azimuthAmpLimit, RobotConfig.azimuthRadiansPerMotorRotation, RobotConfig.azimuthBrake, RobotConfig.azimuthMotorRampRate, RobotConfig.azimuthkP, 
+            RobotConfig.azimuthkI, RobotConfig.azimuthkD, RobotConfig.azimuthkS, RobotConfig.azimuthMaxOutput, RobotConfig.azimuthDriveSpeedMultiplier, RobotMap.rightDriveInvert, 
+            RobotConfig.driveAmpLimit, RobotConfig.driveBrake, RobotConfig.driveMotorRampRate);
 
         SwerveModulePosition positions[] = {leftPod.getPodPosition(), rightPod.getPodPosition()};
 
