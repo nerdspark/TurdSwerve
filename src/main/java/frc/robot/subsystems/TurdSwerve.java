@@ -43,12 +43,12 @@ public class TurdSwerve extends SubsystemBase {
     
     private final SwerveDriveOdometry odometer;
 
-    private ShuffleboardTab tab = Shuffleboard.getTab("PID");
-    private GenericEntry azimuthP;
-    private GenericEntry azimuthI;
-    private GenericEntry azimuthD;
-    private GenericEntry azimuthkS;
-    private GenericEntry ADMult;
+    //private ShuffleboardTab tab = Shuffleboard.getTab("PID");
+    //private GenericEntry azimuthP;
+    //private GenericEntry azimuthI;
+    //private GenericEntry azimuthD;
+    //private GenericEntry azimuthkS;
+    //private GenericEntry ADMult;
 
     private PIDController gyroPID;
     public double targetAngle = 0;
@@ -66,16 +66,16 @@ public class TurdSwerve extends SubsystemBase {
         this.gyroPID = RobotConfig.gyroPID;
         this.drivetrainKinematics = RobotConfig.drivetrainKinematics;
         this.moduleMaxSpeed = RobotConfig.moduleMaxSpeed;
-        gyroPID.enableContinuousInput(0.0, 2*Math.PI);
         
         gyro = new Pigeon2(RobotMap.pigeonID);
-        
-        azimuthP = tab.add("azimuth P", RobotConfig.azimuthkP).getEntry();
-        azimuthI = tab.add("azimuth I", RobotConfig.azimuthkI).getEntry();
-        azimuthD = tab.add("azimuth D", RobotConfig.azimuthkD).getEntry();
+        gyroPID.enableContinuousInput(0.0, 2*Math.PI);
+
+        //azimuthP = tab.add("azimuth P", RobotConfig.azimuthkP).getEntry();
+        //azimuthI = tab.add("azimuth I", RobotConfig.azimuthkI).getEntry();
+        //azimuthD = tab.add("azimuth D", RobotConfig.azimuthkD).getEntry();
         // change wildcard gain dependent on pod type
-        azimuthkS = tab.add("azimuth kS", RobotConfig.azimuthkS).getEntry();
-        ADMult = tab.add("Drive Speed Multiplier", RobotConfig.azimuthDriveSpeedMultiplier).getEntry();
+        //azimuthkS = tab.add("azimuth kS", RobotConfig.azimuthkS).getEntry();
+        //ADMult = tab.add("Drive Speed Multiplier", RobotConfig.azimuthDriveSpeedMultiplier).getEntry();
         
         leftPod = new TurdPod(RobotMap.CAN_LeftAbsoluteEncoderID, RobotMap.leftAzimuthID, RobotMap.leftDriveID, RobotConfig.leftOffset, RobotMap.leftAzimuthInvert, 
             RobotConfig.azimuthAmpLimit, RobotConfig.azimuthRadiansPerMotorRotation, RobotConfig.azimuthBrake, RobotConfig.azimuthMotorRampRate, RobotConfig.azimuthkP, 
@@ -139,6 +139,7 @@ public class TurdSwerve extends SubsystemBase {
     public void resetGyro() {
         gyroResetAngle = getGyro().plus(gyroResetAngle);
         targetAngle = 0;
+        gyro.setYaw(0);
     }
     
     public void setRobotSpeeds(ChassisSpeeds chassisSpeeds) {
@@ -165,7 +166,7 @@ public class TurdSwerve extends SubsystemBase {
         //SmartDashboard.putNumber("pigeon", getGyro().getDegrees());
         field2d.setRobotPose(odometer.getPoseMeters().transformBy(new Transform2d(new Translation2d(), new Rotation2d(odoAngleOffset + Math.PI))));
         
-        //uncomment these lines for azimuth tuning
+        //uncomment these lines for azimuth tuningF
         //leftPod.setPID(azimuthkS.getDouble(SkywarpConfig.azimuthkS), azimuthP.getDouble(SkywarpConfig.azimuthkP), azimuthI.getDouble(SkywarpConfig.azimuthkI), azimuthD.getDouble(SkywarpConfig.azimuthkD), 1, ADMult.getDouble(SkywarpConfig.azimuthMaxOutput));
         //rightPod.setPID(azimuthkS.getDouble(SkywarpConfig.azimuthkS), azimuthP.getDouble(SkywarpConfig.azimuthkP), azimuthI.getDouble(SkywarpConfig.azimuthkI), azimuthD.getDouble(SkywarpConfig.azimuthkD), 1, ADMult.getDouble(SkywarpConfig.azimuthMaxOutput));
     }
@@ -177,8 +178,8 @@ public class TurdSwerve extends SubsystemBase {
                         pose.getX(), pose.getY(), pose.getRotation().plus(new Rotation2d(odoAngleOffset)).getDegrees());
     }
     
-    public void addDashboardWidgets(ShuffleboardTab tab) {
-        tab.add("Field", field2d).withPosition(0, 0).withSize(6, 4);
-        tab.addString("Pose", this::getFomattedPose).withPosition(6, 2).withSize(2, 1);
-    }
+   // public void addDashboardWidgets(ShuffleboardTab tab) {
+        //tab.add("Field", field2d).withPosition(0, 0).withSize(6, 4);
+        //tab.addString("Pose", this::getFomattedPose).withPosition(6, 2).withSize(2, 1);
+    //}
 }

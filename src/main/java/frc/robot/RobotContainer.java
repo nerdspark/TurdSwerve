@@ -27,13 +27,13 @@ public class RobotContainer {
   
 
   public RobotContainer() {
-    final var Odometry = Shuffleboard.getTab("Odometry");
+    //final var Odometry = Shuffleboard.getTab("Odometry");
     configureBindings();
     Supplier<Translation2d> driverRightJoystick = () -> new Translation2d(driverRaw.getRightX(), driverRaw.getRightY());
     Supplier<Translation2d> driverLeftJoystick = () -> new Translation2d(driverRaw.getLeftX(), driverRaw.getLeftY());
     Supplier<Integer> DPAD = () -> driverRaw.getPOV();
     swerve.setDefaultCommand(new TurdDrive(swerve, driverLeftJoystick, driverRightJoystick, DPAD, driverRaw::getLeftBumper));
-    swerve.addDashboardWidgets(Odometry);
+    //swerve.addDashboardWidgets(Odometry);
   }
 
   private void configureBindings() {
