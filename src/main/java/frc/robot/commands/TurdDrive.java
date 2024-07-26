@@ -62,9 +62,9 @@ public class TurdDrive extends Command {
         }
 
         //notice that X and Y are flipped - this is due to differences between WPILib field-based orientation (+Y is field "up") and conventional robot-based orientation (+Y is robot forward)
-        double speedX = MathUtil.applyDeadband(-joystickRight.get().getY(), 0.06) * maxSpeedXY; // Y is negated due to the way controllers work
-        double speedY = MathUtil.applyDeadband(-joystickRight.get().getX(), 0.06) * maxSpeedXY; // X is negated due to the way field oriented works (assuming a blue origin, "right" would be negative Y)
-        double speedOmega = MathUtil.applyDeadband(joystickLeft.get().getX(), 0.06) * maxSpeedZ;
+        double speedX = MathUtil.applyDeadband(-joystickRight.get().getY(), 0.05) * maxSpeedXY; // Y is negated due to the way controllers work
+        double speedY = MathUtil.applyDeadband(-joystickRight.get().getX(), 0.05) * maxSpeedXY; // X is negated due to the way field oriented works (assuming a blue origin, "right" would be negative Y)
+        double speedOmega = MathUtil.applyDeadband(-joystickLeft.get().getX(), 0.07) * maxSpeedZ;
         
         ChassisSpeeds speeds = new ChassisSpeeds(xLimiter.calculate(speedX), yLimiter.calculate(speedY), speedOmega);
         swerve.setRobotSpeeds(speeds);

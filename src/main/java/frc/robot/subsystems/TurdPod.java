@@ -18,12 +18,10 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.Constants.RobotConfig;
+
 /** This is a sample pod that uses a CANcoder and TalonFXes. */
 public class TurdPod extends SubsystemBase {
     public CANcoder absoluteEncoder;
@@ -31,7 +29,6 @@ public class TurdPod extends SubsystemBase {
     public TalonFX driveMotor;
     public double azimuthDriveSpeedMultiplier;
     private double speed = 0;
-    TalonFX motor;
 
     TalonFXConfiguration driveConfig = new TalonFXConfiguration();
     TalonFXConfiguration azimuthConfig = new TalonFXConfiguration();
@@ -116,7 +113,7 @@ public class TurdPod extends SubsystemBase {
      */
     public TalonFX makeDrive(int id, boolean inverted, boolean isBrake, double statorLimit, double rampRate, double ENCODER_TO_MECHANISM_RATIO, double ROTOR_TO_ENCODER_RATIO) {
         //I figured nobody had the guts to put a CANivore on a turdswerve, so i'm leaving out the CAN bus parameter
-        motor = new TalonFX(id);
+        TalonFX motor = new TalonFX(id);
 
         //set neutral mode and inverts
         driveConfig.MotorOutput.Inverted = inverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
@@ -243,10 +240,8 @@ public class TurdPod extends SubsystemBase {
         
         //TODO: dont use smartdashboard
         SmartDashboard.putNumber("absolute encoder" + absoluteEncoder.getDeviceID(), absoluteEncoder.getAbsolutePosition().getValueAsDouble());
-        
-        //SmartDashboard.putNumber("azimuth pose " + absoluteEncoder.getDeviceID(), azimuthMotor.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("azimuth pose " + absoluteEncoder.getDeviceID(), azimuthMotor.getPosition().getValueAsDouble());
         // SmartDashboard.putNumber("azimuth pose " + config.absoluteEncoderID, azimuthMotor.);
-
         // SmartDashboard.putNumber("drive pos " + driveMotor.getDeviceId(), driveEncoder.getPosition());
         // SmartDashboard.putNumber("azimuth.getAppliedOutput()" + azimuthMotor.getDeviceId(), azimuthMotor.getAppliedOutput()); //getAppliedOutput());
     }

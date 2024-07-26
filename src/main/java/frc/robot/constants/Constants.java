@@ -16,7 +16,7 @@ public final class Constants {
     
     /** CAN ID, Invert, Pod Positions, Offsets, Conversion Rates */
     public final class RobotMap {
-        public static final double driveMetersPerMotorRotation = Units.inchesToMeters(2) * Math.PI / 1 / 0.36; //Wheel Diameter M * PI / Enc Count Per Rev / Gear Ratio
+        public static final double driveMetersPerMotorRotation = Units.inchesToMeters(2) * Math.PI * 33 / 45 / 15/13;
 
         public static final int pigeonID = 25;
 
@@ -51,17 +51,16 @@ public final class Constants {
         // Azimuth Settings
         public static final boolean azimuthBrake = true;
 
-        public static final int azimuthAmpLimit = 80;
+        public static final int azimuthAmpLimit = 25;
         public static final double azimuthMaxOutput = 1;
 
 
-        public static final double azimuthkP = 0.6; //1.2, 0.4, 0.4, 2, 1.2, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 2.1
-                                            //0.64615384615
-        public static final double azimuthkI = 0.0;
-        public static final double azimuthkD = 0.0;
+        public static final double azimuthkP = 1.2;
+        public static final double azimuthkI = 0.02;
+        public static final double azimuthkD = 0.001;
         public static final double azimuthkS = 0.0;
 
-        public static final double azimuthDriveSpeedMultiplier = 0.5;
+        public static final double azimuthDriveSpeedMultiplier = 0; //0.5
 
         public static final double azimuthMotorRampRate = 0.0;
 
@@ -70,11 +69,11 @@ public final class Constants {
 
         public static final boolean driveBrake = false;
 
-        public static final int driveAmpLimit = 80;
+        public static final int driveAmpLimit = 35;
         public static final int boostDriveLimit = 90;
-        public static final double driveMotorRampRate = 0.1;
+        public static final double driveMotorRampRate = 0.2;
 
-        public static final double azimuthRadiansPerMotorRotation = 2.200000047683716;
+        public static final double azimuthRadiansPerMotorRotation = 33d/15d;
 
         public static final double leftOffset = -0.417114; //ID 24
         public static final double rightOffset = -0.023193; //ID 22

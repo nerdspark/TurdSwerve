@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.security.KeyPair;
-
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -24,7 +22,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -139,7 +136,7 @@ public class TurdSwerve extends SubsystemBase {
     public void resetGyro() {
         gyroResetAngle = getGyro().plus(gyroResetAngle);
         targetAngle = 0;
-        gyro.setYaw(0);
+        //gyro.setYaw(0);
     }
     
     public void setRobotSpeeds(ChassisSpeeds chassisSpeeds) {
