@@ -6,9 +6,12 @@ package frc.robot;
 
 import java.util.function.Supplier;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -25,6 +28,7 @@ public class RobotContainer {
   public static final CommandXboxController driverCommand = new CommandXboxController(Constants.driverPort);
   public static final TurdSwerve swerve = new TurdSwerve();
   
+  private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
     final var Odometry = Shuffleboard.getTab("Odometry");
@@ -34,6 +38,14 @@ public class RobotContainer {
     Supplier<Integer> DPAD = () -> driverRaw.getPOV();
     swerve.setDefaultCommand(new TurdDrive(swerve, driverLeftJoystick, driverRightJoystick, DPAD, driverRaw::getLeftBumper));
     swerve.addDashboardWidgets(Odometry);
+
+    // configureNamedCommands();
+
+    // configureDefaultCommands();
+
+    // configureDashboard();
+    autoChooser = AutoBuilder.buildAutoChooser();
+    Shuffleboard.getTab("Autonomous").add(autoChooser);
   }
 
   private void configureBindings() {
@@ -43,6 +55,10 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return autoChooser.getSelected();
   }
+
+  // public Command getAutonomousCommand() {
+  //   return Commands.print("No autonomous command configured");
+  // }
 }

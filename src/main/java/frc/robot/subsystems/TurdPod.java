@@ -21,6 +21,9 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.Constants;
+import frc.robot.constants.Constants.RobotConfig;
+import frc.robot.constants.Constants.RobotMap;
 /** This is a sample pod that uses a CANcoder and TalonFXes. */
 public class TurdPod extends SubsystemBase {
     public CANcoder absoluteEncoder;
@@ -186,23 +189,23 @@ public class TurdPod extends SubsystemBase {
         return encoder;
     }
 
-    public void setPID(double kS, double P, double I, double D, double outputRange, double ADMult, TalonFX motor) {
-        if(azimuthConfig.Slot0.kP != P) {azimuthConfig.Slot0.kP = P; apply = true;}
-        if(azimuthConfig.Slot0.kI != I) {azimuthConfig.Slot0.kI = I; apply = true;}
-        if(azimuthConfig.Slot0.kD != D) {azimuthConfig.Slot0.kD = D; apply = true;}
-        if(azimuthConfig.Slot0.kS != kS) {azimuthConfig.Slot0.kS = kS; apply = true;}
-        if(azimuthConfig.MotorOutput.PeakForwardDutyCycle != outputRange) {
-            azimuthConfig.MotorOutput.PeakForwardDutyCycle = outputRange;
-            azimuthConfig.MotorOutput.PeakReverseDutyCycle = -outputRange;
-            apply = true;
-        }
-        if(apply) {
-            motor.getConfigurator().apply(azimuthConfig);
-        } 
-        azimuthDriveSpeedMultiplier = ADMult;
+    // public void setPID(double kS, double P, double I, double D, double outputRange, double ADMult, TalonFX motor) {
+    //     if(azimuthConfig.Slot0.kP != P) {azimuthConfig.Slot0.kP = P; apply = true;}
+    //     if(azimuthConfig.Slot0.kI != I) {azimuthConfig.Slot0.kI = I; apply = true;}
+    //     if(azimuthConfig.Slot0.kD != D) {azimuthConfig.Slot0.kD = D; apply = true;}
+    //     if(azimuthConfig.Slot0.kS != kS) {azimuthConfig.Slot0.kS = kS; apply = true;}
+    //     if(azimuthConfig.MotorOutput.PeakForwardDutyCycle != outputRange) {
+    //         azimuthConfig.MotorOutput.PeakForwardDutyCycle = outputRange;
+    //         azimuthConfig.MotorOutput.PeakReverseDutyCycle = -outputRange;
+    //         apply = true;
+    //     }
+    //     if(apply) {
+    //         motor.getConfigurator().apply(azimuthConfig);
+    //     } 
+    //     azimuthDriveSpeedMultiplier = ADMult;
 
-        apply = false;
-    }
+    //     apply = false;
+    // }
 
     public void setAmpLimit(int limit) {
         if(driveConfig.CurrentLimits.StatorCurrentLimit != limit) {
@@ -236,7 +239,15 @@ public class TurdPod extends SubsystemBase {
     }
 
     public SwerveModulePosition getPodPosition() {
-        return new SwerveModulePosition(driveMotor.getPosition().getValueAsDouble(), Rotation2d.fromRotations(azimuthMotor.getPosition().getValueAsDouble()));
+        return new SwerveModulePosition(driveMotor.getPosition().getValueAsDouble() * RobotConfig.kDriveEncoderRot2Meter, Rotation2d.fromRotations(azimuthMotor.getPosition().getValueAsDouble()));
+    }
+
+    public double getDriveVelocity() {
+        return driveMotor.getRotorVelocity().getValueAsDouble() * Constants.RobotMap.driveMetersPerMotorRotationSpeed;
+    }
+
+    public SwerveModuleState getState() {
+        return new SwerveModuleState(getDriveVelocity(), Rotation2d.fromRotations(azimuthMotor.getPosition().getValueAsDouble()));
     }
 
     public void setPodState(SwerveModuleState state) {

@@ -9,6 +9,12 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -84,9 +90,26 @@ public class TurdSwerve extends SubsystemBase {
             RobotConfig.azimuthkI, RobotConfig.azimuthkD, RobotConfig.azimuthkS, RobotConfig.azimuthMaxOutput, RobotConfig.azimuthDriveSpeedMultiplier, RobotMap.rightDriveInvert, 
             RobotConfig.driveAmpLimit, RobotConfig.driveBrake, RobotConfig.driveMotorRampRate);
 
-        SwerveModulePosition positions[] = {leftPod.getPodPosition(), rightPod.getPodPosition()};
+        SwerveModulePosition positions[] = {rightPod.getPodPosition(), leftPod.getPodPosition()};
 
         odometer = new SwerveDriveOdometry(drivetrainKinematics, new Rotation2d(0), positions);
+
+        AutoBuilder.configureHolonomic(
+            this::getPose,
+            this::resetOdometry,
+            () -> drivetrainKinematics.toChassisSpeeds(getModuleStates()),
+            this::setRobotSpeeds,
+            new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+                    new PIDConstants(0.5, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(0.5, 0.0, 0.0), // Rotation PID constants
+                    RobotConfig.robotMaxSpeed, // Max module speed, in m/s
+                    RobotConfig.driveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
+                    new ReplanningConfig(false, false) // Default path replanning config. See the API for the options here
+            ),
+                () ->
+                    DriverStation.getAlliance().isPresent()
+                        && DriverStation.getAlliance().get() == Alliance.Red,
+            this);
 
 
         // gyro.configAllSettings(new Pigeon2Configuration());
@@ -115,6 +138,20 @@ public class TurdSwerve extends SubsystemBase {
         resetOdometry(new Pose2d(new Translation2d(8.0, 4.2), new Rotation2d()));
     }
 
+    public Pose2d getPose() {
+        return odometer.getPoseMeters();
+    }
+
+    public SwerveModuleState[] getModuleStates() {
+        SwerveModuleState[] states = new SwerveModuleState[2];
+        // for (int i = 0; i < pods.length; i++) {
+        //   states[i] = pods[i].getState();
+        // }
+        states[0] = leftPod.getState();
+        states[1] = rightPod.getState();
+        return states;
+    }
+
     public void resetZero() {
         leftPod.resetZero();
         rightPod.resetZero();
@@ -131,7 +168,7 @@ public class TurdSwerve extends SubsystemBase {
     }
 
     public Rotation2d getGyro() {
-        return new Rotation2d(-gyro.getAngle()*Math.PI/180).minus(gyroResetAngle);
+        return new Rotation2d(gyro.getAngle()*Math.PI/180).minus(gyroResetAngle);
     }
 
     public void resetGyro() {

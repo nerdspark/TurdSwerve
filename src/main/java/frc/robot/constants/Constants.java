@@ -12,11 +12,12 @@ import edu.wpi.first.math.util.Units;
 
 /** Add your docs here. */
 public final class Constants {
-    public static final int driverPort = 0;
+    public static final int driverPort = 1;
     
     /** CAN ID, Invert, Pod Positions, Offsets, Conversion Rates */
     public final class RobotMap {
         public static final double driveMetersPerMotorRotation = Units.inchesToMeters(2) * Math.PI / 1 / 0.36; //Wheel Diameter M * PI / Enc Count Per Rev / Gear Ratio
+        public static final double driveMetersPerMotorRotationSpeed = Units.inchesToMeters(2) * Math.PI; //Used to convert motor rotations per second to meters per second
 
         public static final int pigeonID = 25;
 
@@ -39,12 +40,19 @@ public final class Constants {
     public final class RobotConfig {
         public static final PIDController gyroPID = new PIDController(0.046, 0d, 0.001);
 
-        private static final double wheelBase = 5.75;
+        public static final double driveBaseRadius = Units.inchesToMeters(8.0);
+        private static final double wheelBase = 12.5 / 2;
         private static final Translation2d leftPodPosition = new Translation2d(-Units.inchesToMeters(wheelBase), Units.inchesToMeters(wheelBase));
         private static final Translation2d rightPodPosition = new Translation2d(Units.inchesToMeters(wheelBase), -Units.inchesToMeters(wheelBase));
         public static final SwerveDriveKinematics drivetrainKinematics = new SwerveDriveKinematics(leftPodPosition, rightPodPosition);
 
-        public static final double robotMaxSpeed = 3.99; //meters per second
+        public static final double robotMaxSpeed = 4.5; //meters per second
+
+        public static final double kDriveMotorGearRatio = 0.36;
+        public static final double kWheelDiameterMeters = Units.inchesToMeters(2); // TODO: figure out right number
+        public static final double kDriveEncoderRot2Meter = kDriveMotorGearRatio * Math.PI * kWheelDiameterMeters;
+        public static final double kDriveEncoderTicks2Rot = 1d / 2048d;
+        public static final double kDriveTicks2Meters = kDriveEncoderRot2Meter * kDriveEncoderTicks2Rot;
 
 
         // Azimuth Settings
@@ -74,7 +82,7 @@ public final class Constants {
 
         public static final double azimuthRadiansPerMotorRotation = 2.200000047683716;
 
-        public static final double devastatorLeftOffset = 0.316; 
-        public static final double devastatorRightOffset = -0.245;
+        public static final double devastatorLeftOffset = 0.316; //0.316
+        public static final double devastatorRightOffset = -0.245 + 0.500; //-0.245
     }
 }
