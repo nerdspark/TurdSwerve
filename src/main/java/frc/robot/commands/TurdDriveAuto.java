@@ -20,6 +20,7 @@ public class TurdDriveAuto extends Command {
     double theta_deg = theta * Math.PI / 180;
     m_SpeedX = speed * Math.cos(theta_deg);
     m_SpeedY = speed * Math.sin(theta_deg);
+    addRequirements(swerve);
   }
 
   // Called when the command is initially scheduled.

@@ -19,6 +19,7 @@ import frc.robot.commands.ResetZeroes;
 import frc.robot.commands.RevertZeroes;
 import frc.robot.commands.TurdDrive;
 import frc.robot.commands.TurdDriveAuto;
+import frc.robot.commands.TurdFollowAprilTag;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.TurdSwerve;
 import frc.robot.subsystems.LimeLight;
@@ -42,6 +43,7 @@ public class RobotContainer {
     
     
     swerve.setDefaultCommand(new TurdDrive(swerve, ll, driverLeftJoystick, driverRightJoystick, DPAD, driverRaw::getLeftBumper));
+    A.onTrue(new TurdFollowAprilTag(swerve, ll));
     
 
     //A.onTrue(new MoveSequence(swerve));
