@@ -72,7 +72,7 @@ public final class Constants {
         public static final double azimuthMotorRampRate = 0.0;
 
         // Drive Settings
-        public static final double podMaxSpeed = 1;
+        public static final double podMaxSpeed = 1.0;
 
         public static final boolean driveBrake = false;
 
