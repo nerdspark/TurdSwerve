@@ -31,8 +31,8 @@ public class TunerConstants {
         .withKP(3).withKI(0).withKD(0)
         .withKS(0).withKV(0).withKA(0);
     //Slot Configs for Torque Current FOC
-    private static final Slot1Configs driveGainsTCFOC = new Slot1Configs()
-        .withKS(5).withKP(2.5).withKI(0).withKD(0);  
+    // private static final Slot1Configs driveGainsTCFOC = new Slot1Configs()
+    //     .withKS(5).withKP(2.5).withKI(0).withKD(0);  
 
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors
