@@ -27,5 +27,9 @@ public class LimeLight extends SubsystemBase {
   public double getTa() {
     return llTable.getEntry("ta").getDouble(0.0);
   }
+
+  public boolean hasTarget() {
+    return llTable.getEntry("tv").getDouble(0.0) == 1.0;
+  }
   
 }

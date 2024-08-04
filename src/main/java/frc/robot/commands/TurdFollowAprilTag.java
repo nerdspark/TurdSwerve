@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -11,14 +12,24 @@ import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.TurdSwerve;
 
 public class TurdFollowAprilTag extends Command {
+  private final PIDController pidFollowController;
+  private final PIDController pidAngleController;
   private final TurdSwerve swerve;
   private final LimeLight ll;
-  private final double kP_Aim = 0.05;
-  private final double min_aim_cmd = 0.01;
-  private double tX = 0, tY = 0;
+
+  private static final double kP_follow = 0.005;
+  private static final double kI_follow = 0.00;
+  private static final double kD_follow = 0.00;
+
+  private static final double kP_angle = 0.005;
+  private static final double kI_angle = 0.00;
+  private static final double kD_angle = 0.00;
+
   public TurdFollowAprilTag(TurdSwerve swerve, LimeLight ll) {
     this.swerve = swerve;
     this.ll = ll;
+    this.pidFollowController = new PIDController(kP_follow, kI_follow, kD_follow);
+    this.pidAngleController = new PIDController(kP_angle, kI_angle, kD_angle);
     addRequirements(swerve);
   }
 
@@ -31,41 +42,32 @@ public class TurdFollowAprilTag extends Command {
   @Override
   public void execute() {
     double speedOmega = 0.0;
+    double speedFollow = 0.0;
+    double speedX = 0.0;
+    double speedY = 0.0;
+
     double tX = ll.getTx();
-    if (tX != 0.00) {
-      if (tX < -9) {
-        speedOmega = 0.1;
-      } else if (tX > 9) {
-        speedOmega = -0.1;
-      } else {
-        end(false);
-      }
+    double tY = ll.getTy();
+
+    double gyro = swerve.getGyro().getRadians();
+
+    if (ll.hasTarget()) {
+      speedOmega = pidAngleController.calculate(tX, 0.0);
+      speedFollow = pidFollowController.calculate(tY, 0.0);
+
+      speedX = Math.sin(gyro) * speedFollow;
+      speedY = -Math.cos(gyro) * speedFollow;
+      
     } else {
-      end(false);
+      speedOmega = 0.0;
+      speedX = 0.0;
+      speedY = 0.0;
+      end(true);
     }
-    ChassisSpeeds corrections = new ChassisSpeeds(0,0, speedOmega);
+    ChassisSpeeds corrections = new ChassisSpeeds(speedX,speedY, speedOmega);
     swerve.setRobotSpeeds(corrections);
-    // tY = ll.getTy();
-    // double correctionXSpeed = 0, correctionYSpeed = 0;
-    // if (tX > 0.75) {
-    //   correctionXSpeed = -tX * kP_Aim - min_aim_cmd;
-    // }
-    // if (tX < -0.75) {
-    //   correctionXSpeed = tX * kP_Aim + min_aim_cmd;
-    // }
-    // if (tX >= -0.75 && tX <= 0.75) {
-    //   correctionXSpeed = 0;
-    // }
-    // if (tY < 0) {
-    //   correctionYSpeed = tY * kP_Aim + min_aim_cmd;
-    // }
-    // if (tY >= 0) {
-    //   correctionYSpeed = 0;
-    // }
-    // SmartDashboard.putNumber("CorrectX", correctionXSpeed);
-    // SmartDashboard.putNumber("CorrectY", correctionYSpeed);
-    // ChassisSpeeds correctionSpeed = new ChassisSpeeds(correctionXSpeed, correctionYSpeed, 0);
-    // swerve.setRobotSpeeds(correctionSpeed);
+    SmartDashboard.putNumber("Corr. SpeedX", speedX);
+    SmartDashboard.putNumber("Corr. SpeedY", speedY);
   }
 
   // Called once the command ends or is interrupted.
