@@ -16,7 +16,6 @@ public class TurdFollowAprilTag extends Command {
   private final PIDController pidAngleController;
   private final TurdSwerve swerve;
   private final LimeLight ll;
-
   private static final double kP_follow = 0.005;
   private static final double kI_follow = 0.00;
   private static final double kD_follow = 0.00;
@@ -48,6 +47,9 @@ public class TurdFollowAprilTag extends Command {
 
     double tX = ll.getTx();
     double tY = ll.getTy();
+    double tID = ll.getID();
+    
+    SmartDashboard.putNumber("tID", tID);
 
     double gyro = swerve.getGyro().getRadians();
 
@@ -62,7 +64,6 @@ public class TurdFollowAprilTag extends Command {
       speedOmega = 0.0;
       speedX = 0.0;
       speedY = 0.0;
-      end(true);
     }
     ChassisSpeeds corrections = new ChassisSpeeds(speedX,speedY, speedOmega);
     swerve.setRobotSpeeds(corrections);
