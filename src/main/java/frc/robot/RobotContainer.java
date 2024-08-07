@@ -4,7 +4,12 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -12,6 +17,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -39,8 +45,6 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
   // FollowPathCommand.warmupCommand().schedule();
-
-  
 
   private void configureBindings() {
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
