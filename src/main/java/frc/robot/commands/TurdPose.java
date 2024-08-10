@@ -42,7 +42,7 @@ public class TurdPose extends Command {
     this.ll = ll;
     this.pidFollowController = new PIDController(kP_follow, kI_follow, kD_follow);
     this.pidAngleController = new PIDController(kP_angle, kI_angle, kD_angle);
-    //addRequirements(swerve);
+    addRequirements(swerve);
   }
 
   // Called when the command is initially scheduled.
@@ -64,16 +64,13 @@ public class TurdPose extends Command {
       double robotX = currentTag[0] - tX;
       double robotY = currentTag[1] - tz;
 
-      if (-10 < gyro && gyro < 10) {
-        speedOmega = pidAngleController.calculate(gyro, 0.0);
-      } else {
-        speedOmega = 0.0;
-      }
+      speedOmega = pidAngleController.calculate(gyro, 0.0);
+
       double distance = Math.sqrt(robotX * robotX + robotY * robotY);
       double poseToRobotTheta = Math.atan2(robotX, robotY);
 
-      speedX = -pidFollowController.calculate(robotX, 0.0);
-      speedY = -pidFollowController.calculate(robotY, 0.0);
+      speedX = -pidFollowController.calculate(distance, 0.0) * Math.sin(poseToRobotTheta);
+      speedY = -pidFollowController.calculate(distance, 0.0) * Math.cos(poseToRobotTheta);
 
       SmartDashboard.putNumber("Yaw", yaw);
       SmartDashboard.putNumber("tID", tID);
@@ -82,6 +79,8 @@ public class TurdPose extends Command {
       SmartDashboard.putNumber("correctionX", speedX);
       SmartDashboard.putNumber("correctionY", speedY);
       SmartDashboard.putNumber("correctionOmega", speedOmega);
+      SmartDashboard.putNumber("distance", distance);
+      SmartDashboard.putNumber("poseToRobotTheta", poseToRobotTheta * 180 / Math.PI);
     }
 
     ChassisSpeeds corrections = new ChassisSpeeds(speedX, speedY, speedOmega);
