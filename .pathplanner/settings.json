@@ -2,7 +2,10 @@
   "robotWidth": 0.4191,
   "robotLength": 0.4191,
   "holonomicMode": true,
-  "pathFolders": [],
+  "pathFolders": [
+    "Blue6Note",
+    "BlueAmpAvoidant"
+  ],
   "autoFolders": [],
   "defaultMaxVel": 1.0,
   "defaultMaxAccel": 1.0,

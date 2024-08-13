@@ -58,13 +58,13 @@ public class TunerConstants {
 
     // Theoretical free speed (m/s) at 12v applied output;
     // This needs to be tuned to your individual robot
-    public static final double kSpeedAt12VoltsMps = 43.53;
+    public static final double kSpeedAt12VoltsMps = 11.4;
 
     // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
     // This may need to be tuned to your individual robot
     private static final double kCoupleRatio = 0;
 
-    private static final double kDriveGearRatio = 2.7278;  //0.3666
+    private static final double kDriveGearRatio = 0.7;  //0.3666, 2.7278
     private static final double kSteerGearRatio = 2.2;
     private static final double kWheelRadiusInches = 1;
 
@@ -122,7 +122,7 @@ public class TunerConstants {
     private static final int kFrontRightDriveMotorId = 13;
     private static final int kFrontRightSteerMotorId = 14;
     private static final int kFrontRightEncoderId = 22;
-    private static final double kFrontRightEncoderOffset = 0.244384765625;
+    private static final double kFrontRightEncoderOffset = 0.3642578125;
     private static final boolean kFrontRightSteerInvert = false;
 
     private static final double kFrontRightXPosInches = 6.25;
@@ -132,7 +132,7 @@ public class TunerConstants {
     private static final int kBackLeftDriveMotorId = 17;
     private static final int kBackLeftSteerMotorId = 18;
     private static final int kBackLeftEncoderId = 24;
-    private static final double kBackLeftEncoderOffset = -0.316650390625;
+    private static final double kBackLeftEncoderOffset = 0.434814453125;
     private static final boolean kBackLeftSteerInvert = false;
 
     private static final double kBackLeftXPosInches = -6.25;

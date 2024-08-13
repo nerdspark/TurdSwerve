@@ -1,0 +1,55 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.35,
+      "y": 5.43
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RE4noteCenter1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RE4noteCenter2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RE4noteCenter3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RE4noteCenter4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RE4noteCenter5"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RE4noteCenter6"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
