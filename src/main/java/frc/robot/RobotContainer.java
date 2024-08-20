@@ -23,6 +23,7 @@ import frc.robot.commands.TurdFollowAprilTag;
 import frc.robot.commands.TurdPose;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.TurdSwerve;
+import frc.robot.subsystems.Inventory;
 import frc.robot.subsystems.LimeLight;
 
 public class RobotContainer {
@@ -32,6 +33,7 @@ public class RobotContainer {
   // public static final TurdPod leftPod = new TurdPod(Constants.leftAzimuthID, Constants.leftDriveID, Constants.leftAbsoluteEncoderID, Constants.leftAzimuthInvert,Constants.rightAzimuthInvert, Constants.leftAbsoluteEncoderOffset);
   public static final TurdSwerve swerve = new TurdSwerve();
   public static final LimeLight ll = new LimeLight();
+  public static final Inventory inventory = new Inventory();
   JoystickButton A = new JoystickButton(driverRaw, 1);
   JoystickButton B = new JoystickButton(driverRaw, 2);
   
@@ -44,9 +46,14 @@ public class RobotContainer {
     Supplier<Integer> DPAD = () -> driverRaw.getPOV();
     
     
-    swerve.setDefaultCommand(new TurdDrive(swerve, ll, driverLeftJoystick, driverRightJoystick, DPAD, driverRaw::getLeftBumper));
-    A.toggleOnTrue(new TurdFollowAprilTag(swerve, ll));
-    B.toggleOnTrue(new TurdPose(swerve, ll));
+    swerve.setDefaultCommand(new TurdDrive(swerve, ll, driverLeftJoystick, driverRightJoystick, DPAD, driverRaw::getLeftBumper, inventory));
+    // A.toggleOnTrue(new TurdFollowAprilTag(swerve, ll));
+    // B.toggleOnTrue(new TurdPose(swerve, ll));
+
+    driverCommand.a().onTrue(new InstantCommand(() -> inventory.setAstatus(true)));
+    driverCommand.b().onTrue(new InstantCommand(() -> inventory.setBstatus(true)));
+    driverCommand.x().onTrue(new InstantCommand(() -> inventory.setXstatus(true)));
+    driverCommand.y().onTrue(new InstantCommand(() -> inventory.setYstatus(true)));
 
     //A.onTrue(new MoveSequence(swerve));
 

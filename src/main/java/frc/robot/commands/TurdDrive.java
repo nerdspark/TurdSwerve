@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants.Constants;
 import frc.robot.constants.RobotMap;
 import frc.robot.subsystems.TurdSwerve;
+import frc.robot.util.PIDToPosition;
+import frc.robot.subsystems.Inventory;
 import frc.robot.subsystems.LimeLight;
 
 public class TurdDrive extends Command {
@@ -27,14 +29,17 @@ public class TurdDrive extends Command {
   Supplier<Boolean> boost;
   Rotation2d rotation = new Rotation2d();
   double maxSpeed = Constants.robotMaxSpeed;
+  PIDToPosition PID = new PIDToPosition();
+  Inventory inventory;
 
-  public TurdDrive(TurdSwerve swerve, LimeLight ll, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight, Supplier<Integer> DPAD, Supplier<Boolean> boost) {
+  public TurdDrive(TurdSwerve swerve, LimeLight ll, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight, Supplier<Integer> DPAD, Supplier<Boolean> boost, Inventory inventory) {
     this.swerve = swerve;
     this.ll = ll;
     this.joystickRight = joystickRight;
     this.joystickLeft = joystickLeft;
     this.DPAD = DPAD;
     this.boost = boost;
+    this.inventory = inventory;
     addRequirements(swerve);
   }
 
@@ -47,6 +52,15 @@ public class TurdDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    Translation2d[] PIDVectors = PID.CalculatePID(swerve.odometer.getPoseMeters());
+    
+    double 
+
+    
+
+
+
     if (DPAD.get() != -1) {
       swerve.targetAngle = -Units.degreesToRadians(DPAD.get());
     }
