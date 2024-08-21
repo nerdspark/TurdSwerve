@@ -41,5 +41,9 @@ public class LimeLight extends SubsystemBase {
     NetworkTableEntry relbotpose = llTable.getEntry("targetpose_cameraspace");
     return relbotpose.getDoubleArray(new double[6]);
   }
+
+  public void setPipelineNumber(int i) {
+    llTable.getEntry("pipeline").setNumber(i);
+  }
   
 }

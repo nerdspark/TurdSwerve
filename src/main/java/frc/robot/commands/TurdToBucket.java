@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.TurdSwerve;
 
-public class TurdFollowAprilTag extends Command {
+public class TurdToBucket extends Command {
   private final PIDController pidFollowController;
   private final PIDController pidAngleController;
   private final TurdSwerve swerve;
@@ -24,7 +24,7 @@ public class TurdFollowAprilTag extends Command {
   private static final double kI_angle = 0.00;
   private static final double kD_angle = 0.00;
 
-  public TurdFollowAprilTag(TurdSwerve swerve, LimeLight ll) {
+  public TurdToBucket(TurdSwerve swerve, LimeLight ll) {
     this.swerve = swerve;
     this.ll = ll;
     this.pidFollowController = new PIDController(kP_follow, kI_follow, kD_follow);
@@ -34,13 +34,12 @@ public class TurdFollowAprilTag extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    ll.setPipelineNumber(0);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    ll.setPipelineNumber(1);
     double speedOmega = 0.0;
     double speedFollow = 0.0;
     double speedX = 0.0;
@@ -48,9 +47,6 @@ public class TurdFollowAprilTag extends Command {
 
     double tX = ll.getTx();
     double tY = ll.getTy();
-    double tID = ll.getID();
-    
-    SmartDashboard.putNumber("tID", tID);
 
     double gyro = swerve.getGyro().getRadians();
 

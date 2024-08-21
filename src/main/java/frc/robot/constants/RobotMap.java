@@ -31,8 +31,8 @@ public final class RobotMap {
     public static final Translation2d rightPodPosition = new Translation2d(Units.inchesToMeters(5.5), Units.inchesToMeters(5.5));
     public static final SwerveDriveKinematics drivetrainKinematics = new SwerveDriveKinematics(robotCenter.minus(leftPodPosition), robotCenter.minus(rightPodPosition));
 
-    public static final double leftAbsoluteEncoderOffset = 4.720014480901829;//absolute encoder reading at position
-    public static final double rightAbsoluteEncoderOffset = 4.807666689707978;// gears facing inwards: fwd/bck TODO: less janky alignment
+    public static final double leftAbsoluteEncoderOffset = 0.141906477055928;//absolute encoder reading at position
+    public static final double rightAbsoluteEncoderOffset = 3.161239450680035;// gears facing inwards: fwd/bck TODO: less janky alignment
 
     public static final double azimuthRadiansPerMotorRotation = 2*Math.PI*15/33;
     public static final double driveMetersPerMotorRotation = Units.inchesToMeters(2) * Math.PI * 33 / 45 / 15/13;

@@ -21,6 +21,7 @@ import frc.robot.commands.TurdDrive;
 import frc.robot.commands.TurdDriveAuto;
 import frc.robot.commands.TurdFollowAprilTag;
 import frc.robot.commands.TurdPose;
+import frc.robot.commands.TurdToBucket;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.TurdSwerve;
 import frc.robot.subsystems.LimeLight;
@@ -34,6 +35,7 @@ public class RobotContainer {
   public static final LimeLight ll = new LimeLight();
   JoystickButton A = new JoystickButton(driverRaw, 1);
   JoystickButton B = new JoystickButton(driverRaw, 2);
+  JoystickButton X = new JoystickButton(driverRaw, 3);
   
 
   public RobotContainer() {
@@ -47,7 +49,7 @@ public class RobotContainer {
     swerve.setDefaultCommand(new TurdDrive(swerve, ll, driverLeftJoystick, driverRightJoystick, DPAD, driverRaw::getLeftBumper));
     A.toggleOnTrue(new TurdFollowAprilTag(swerve, ll));
     B.toggleOnTrue(new TurdPose(swerve, ll));
-
+    X.toggleOnTrue(new TurdToBucket(swerve, ll));
     //A.onTrue(new MoveSequence(swerve));
 
       swerve.addDashboardWidgets(Odometry);
