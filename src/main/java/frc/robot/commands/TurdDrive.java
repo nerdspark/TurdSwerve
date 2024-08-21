@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -53,39 +54,42 @@ public class TurdDrive extends Command {
   @Override
   public void execute() {
 
+    boolean[] inventoryStatuses = {inventory.getAstatus(), inventory.getBstatus(), inventory.getXstatus(), inventory.getYstatus()};
     Translation2d[] PIDVectors = PID.CalculatePID(swerve.odometer.getPoseMeters());
+    PIDVectors = PID.FilterVectors(PIDVectors, inventoryStatuses);
+    Translation2d BestVector = PID.ChooseVector(swerve.odometer.getPoseMeters(), new Translation2d(joystickRight.get().getX(), joystickRight.get().getY()), PIDVectors);
+
+    // BestVector = BestVector.getNorm() > 0.2 ? new Translation2d(0.2, BestVector.getAngle()) : (BestVector.getNorm() < -0.2 ? new Translation2d(-0.2, BestVector.getAngle()) : BestVector);
+    swerve.setRobotSpeeds(new ChassisSpeeds(BestVector.getX(), BestVector.getY(), 0));
+
+
+
+
+    // if (DPAD.get() != -1) {
+    //   swerve.targetAngle = -Units.degreesToRadians(DPAD.get());
+    // }
+
+    // if (boost.get()) {
+    //   swerve.setAmpLimit(Constants.driveTopAmpLimit);
+    //   maxSpeed = 1;
+    // } else {
+    //   swerve.setAmpLimit(Constants.driveAmpLimit);
+    //   maxSpeed = Constants.robotMaxSpeed;
+    // }
     
-    double 
-
-    
-
-
-
-    if (DPAD.get() != -1) {
-      swerve.targetAngle = -Units.degreesToRadians(DPAD.get());
-    }
-
-    if (boost.get()) {
-      swerve.setAmpLimit(Constants.driveTopAmpLimit);
-      maxSpeed = 1;
-    } else {
-      swerve.setAmpLimit(Constants.driveAmpLimit);
-      maxSpeed = Constants.robotMaxSpeed;
-    }
-    
-    boolean deadband = Math.abs(joystickRight.get().getX()) + Math.abs(joystickRight.get().getY()) < 0.05;
-    double speedX = deadband ? 0 : -joystickRight.get().getX() * maxSpeed;
-    double speedY = deadband ? 0 : joystickRight.get().getY() * maxSpeed;
-    // double speedX = deadband ? 0 : 3.0 * Math.abs(joystickRight.get().getX()) * -joystickRight.get().getX();
-    // double speedY = deadband ? 0 : 3.0 * Math.abs(joystickRight.get().getY()) * joystickRight.get().getY();
-    double speedOmega = Math.abs(joystickLeft.get().getX()) > 0.07 ? -joystickLeft.get().getX() * Math.abs(joystickLeft.get().getX())*0.3 : 0;
-    ChassisSpeeds speeds = new ChassisSpeeds(speedX, speedY, speedOmega);
-    SmartDashboard.putNumber("Execute-SpeedX", speedX);
-    SmartDashboard.putNumber("Execute-SpeedY", speedY);
-    SmartDashboard.putNumber("tX", ll.getTx());
-    SmartDashboard.putNumber("tY", ll.getTy());
-    SmartDashboard.putNumber("tA", ll.getTa());
-    swerve.setRobotSpeeds(speeds);
+    // boolean deadband = Math.abs(joystickRight.get().getX()) + Math.abs(joystickRight.get().getY()) < 0.05;
+    // double speedX = deadband ? 0 : -joystickRight.get().getX() * maxSpeed;
+    // double speedY = deadband ? 0 : joystickRight.get().getY() * maxSpeed;
+    // // double speedX = deadband ? 0 : 3.0 * Math.abs(joystickRight.get().getX()) * -joystickRight.get().getX();
+    // // double speedY = deadband ? 0 : 3.0 * Math.abs(joystickRight.get().getY()) * joystickRight.get().getY();
+    // double speedOmega = Math.abs(joystickLeft.get().getX()) > 0.07 ? -joystickLeft.get().getX() * Math.abs(joystickLeft.get().getX())*0.3 : 0;
+    // ChassisSpeeds speeds = new ChassisSpeeds(speedX, speedY, speedOmega);
+    // SmartDashboard.putNumber("Execute-SpeedX", speedX);
+    // SmartDashboard.putNumber("Execute-SpeedY", speedY);
+    // SmartDashboard.putNumber("tX", ll.getTx());
+    // SmartDashboard.putNumber("tY", ll.getTy());
+    // SmartDashboard.putNumber("tA", ll.getTa());
+    // swerve.setRobotSpeeds(speeds);
   }
 
   // Called once the command ends or is interrupted.

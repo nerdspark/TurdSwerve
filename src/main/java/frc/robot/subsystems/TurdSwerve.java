@@ -91,7 +91,7 @@ public class TurdSwerve extends SubsystemBase {
     rightPod.resetPod();
     leftPod.setPID(azimuthP.getDouble(Constants.azimuthkP), azimuthI.getDouble(Constants.azimuthkI), azimuthD.getDouble(Constants.azimuthkD), azimuthIzone.getDouble(Constants.azimuthkIz), driveP.getDouble(Constants.drivekP), driveI.getDouble(Constants.drivekI), driveD.getDouble(Constants.drivekD), driveIzone.getDouble(Constants.drivekIz), Constants.azimuthMaxOutput, ADMult.getDouble(Constants.azimuthDriveSpeedMultiplier), DDMult.getDouble(Constants.driveDriveSpeedMultiplier));
     rightPod.setPID(azimuthP.getDouble(Constants.azimuthkP), azimuthI.getDouble(Constants.azimuthkI), azimuthD.getDouble(Constants.azimuthkD), azimuthIzone.getDouble(Constants.azimuthkIz), driveP.getDouble(Constants.drivekP), driveI.getDouble(Constants.drivekI), driveD.getDouble(Constants.drivekD), driveIzone.getDouble(Constants.drivekIz), Constants.azimuthMaxOutput, ADMult.getDouble(Constants.azimuthDriveSpeedMultiplier), DDMult.getDouble(Constants.driveDriveSpeedMultiplier));
-    resetOdometry(new Pose2d(new Translation2d(8.0, 4.2), new Rotation2d()));
+    resetOdometry(new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d()));
   }
 
   public void resetZero() {

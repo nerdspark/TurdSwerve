@@ -8,8 +8,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 /** Add your docs here. */
 public final class AutoDriveConstants {
-    public static Translation2d positionA = new Translation2d(10, 10);
-    public static Translation2d positionB = new Translation2d(-10, 10);
-    public static Translation2d positionX = new Translation2d(-10, -10);
-    public static Translation2d positionY = new Translation2d(10, -10);
+    public static Translation2d positionA = new Translation2d(1, 1);
+    public static Translation2d positionB = new Translation2d(-1, 1);
+    public static Translation2d positionX = new Translation2d(-1, -1);
+    public static Translation2d positionY = new Translation2d(1, -1);
 }

@@ -45,7 +45,7 @@ public final class Constants {
     public static final double driveSpeedToPower = 1.0;
     public static final double driveMotorRampRate = 0.2;
 
-    public static final double podMaxSpeed = 1;
+    public static final double podMaxSpeed = 0.4;
 
     public static boolean aPressed = false;
 

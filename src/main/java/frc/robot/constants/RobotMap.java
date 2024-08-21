@@ -24,7 +24,7 @@ public final class RobotMap {
     public static final boolean leftAzimuthInvert = false;
     public static final boolean rightAzimuthInvert = false;
     public static final boolean leftDriveInvert = false;
-    public static final boolean rightDriveInvert = true;
+    public static final boolean rightDriveInvert = false;
 
     public static final Translation2d robotCenter = new Translation2d(0, 0); // serves as "center of robot for calculations; robot will turn about this point
     public static final Translation2d leftPodPosition = new Translation2d(-Units.inchesToMeters(5.5), -Units.inchesToMeters(5.5)); // units in meters
@@ -35,7 +35,7 @@ public final class RobotMap {
     public static final double rightAbsoluteEncoderOffset = 4.807666689707978;// gears facing inwards: fwd/bck TODO: less janky alignment
 
     public static final double azimuthRadiansPerMotorRotation = 2*Math.PI*15/33;
-    public static final double driveMetersPerMotorRotation = Units.inchesToMeters(2) * Math.PI * 33 / 45 / 15/13;
+    public static final double driveMetersPerMotorRotation = Units.inchesToMeters(2) * Math.PI * 33 / 45 / 15/13*100;
     public static final double absoluteRadiansPerEncoderRotation = 2*Math.PI;
     
 
