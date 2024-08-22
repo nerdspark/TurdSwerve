@@ -15,7 +15,7 @@ import frc.robot.subsystems.Inventory;
 
 /** Add your docs here. */
 public class PIDToPosition {
-    private PIDController robotPID = new PIDController(3.0, 0, 0);
+    private PIDController robotPID = new PIDController(1.0, 0, 0);
 
     public Translation2d[] CalculatePID(Pose2d position) {
         Translation2d[] translations = new Translation2d[4];
@@ -42,16 +42,23 @@ public class PIDToPosition {
         }
 
         double minRotation = Math.PI;
-        int bestValue = 10000;
+        int bestValue = 10;
         for (int i = 0; i < 4; i++) {
             if (differences[i] < minRotation) {
-                minRotation = differences[i];
-                if (!translations[i].equals(new Translation2d())) {
+                if (Math.abs(translations[i].getNorm()) > 0.01 && ActivationZone(position, drive)[i]) {
+                    minRotation = differences[i];
                     bestValue = i;
                 }
             }
         }
-        return bestValue == 10000 ? new Translation2d() : translations[bestValue];
+        return bestValue == 10 ? new Translation2d() : translations[bestValue];
+    }
+    public boolean[] ActivationZone(Pose2d position, Translation2d drive){
+        boolean activateA = position.getTranslation().getDistance(AutoDriveConstants.positionA) < 3;
+        boolean activateB = position.getTranslation().getDistance(AutoDriveConstants.positionB) < 3;
+        boolean activateX = position.getTranslation().getDistance(AutoDriveConstants.positionX) < 3;
+        boolean activateY = position.getTranslation().getDistance(AutoDriveConstants.positionY) < 3;
+        return new boolean[] {activateA, activateB, activateX, activateY};
     }
 
 

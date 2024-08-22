@@ -12,4 +12,5 @@ public final class AutoDriveConstants {
     public static Translation2d positionB = new Translation2d(-1, 1);
     public static Translation2d positionX = new Translation2d(-1, -1);
     public static Translation2d positionY = new Translation2d(1, -1);
+    public static double zone = 0.1;
 }

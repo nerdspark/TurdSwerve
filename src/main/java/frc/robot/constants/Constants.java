@@ -24,7 +24,7 @@ public final class Constants {
     public static final int azimuthAmpLimit = 70;
     public static final double azimuthMaxOutput = 0.25;
 
-    public static final double azimuthkP = 0.4;
+    public static final double azimuthkP = 0.35;
     public static final double azimuthkI = 0.0;
     public static final double azimuthkD = 0.003;
     public static final double azimuthkIz = 0;
@@ -45,7 +45,7 @@ public final class Constants {
     public static final double driveSpeedToPower = 1.0;
     public static final double driveMotorRampRate = 0.2;
 
-    public static final double podMaxSpeed = 0.4;
+    public static final double podMaxSpeed = 0.15;
 
     public static boolean aPressed = false;
 

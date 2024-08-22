@@ -50,15 +50,15 @@ public class RobotContainer {
     // A.toggleOnTrue(new TurdFollowAprilTag(swerve, ll));
     // B.toggleOnTrue(new TurdPose(swerve, ll));
 
-    driverCommand.a().whileTrue(new InstantCommand(() -> inventory.setAstatus(true)));
-    driverCommand.b().whileTrue(new InstantCommand(() -> inventory.setBstatus(true)));
-    driverCommand.x().whileTrue(new InstantCommand(() -> inventory.setXstatus(true)));
-    driverCommand.y().whileTrue(new InstantCommand(() -> inventory.setYstatus(true)));
+    driverCommand.a().onTrue(new InstantCommand(() -> inventory.setAstatus(true)));
+    driverCommand.b().onTrue(new InstantCommand(() -> inventory.setBstatus(true)));
+    driverCommand.x().onTrue(new InstantCommand(() -> inventory.setXstatus(true)));
+    driverCommand.y().onTrue(new InstantCommand(() -> inventory.setYstatus(true)));
 
-    driverCommand.a().whileFalse(new InstantCommand(() -> inventory.setAstatus(false)));
-    driverCommand.b().whileFalse(new InstantCommand(() -> inventory.setBstatus(false)));
-    driverCommand.x().whileFalse(new InstantCommand(() -> inventory.setXstatus(false)));
-    driverCommand.y().whileFalse(new InstantCommand(() -> inventory.setYstatus(false)));
+    // driverCommand.a().onFalse(new InstantCommand(() -> inventory.setAstatus(false)));
+    // driverCommand.b().onFalse(new InstantCommand(() -> inventory.setBstatus(false)));
+    // driverCommand.x().onFalse(new InstantCommand(() -> inventory.setXstatus(false)));
+    // driverCommand.y().onFalse(new InstantCommand(() -> inventory.setYstatus(false)));
     //A.onTrue(new MoveSequence(swerve));
 
       swerve.addDashboardWidgets(Odometry);
