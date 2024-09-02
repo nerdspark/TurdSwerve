@@ -70,9 +70,10 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
         AutoBuilder.configureHolonomic(
             ()->this.getState().Pose, // Supplier of current robot pose
+            // this::NerdOdometrySubsystem.deadWheelEstimator.returnDeadWheelPose(),
             this::seedFieldRelative,  // Consumer for seeding pose against auto
             this::getCurrentRobotChassisSpeeds,
-            (speeds)->this.setControl(AutoRequest.withSpeeds(speeds)), // Consumer of ChassisSpeeds to drive the robot
+            (speeds)->this.setControl(AutoRequest.withSpeeds(speeds).withDriveRequestType(DriveRequestType.Velocity)), // Consumer of ChassisSpeeds to drive the robot
             new HolonomicPathFollowerConfig(new PIDConstants(10, 0, 0),
                                             new PIDConstants(10, 0, 0),
                                             TunerConstants.kSpeedAt12VoltsMps,
@@ -87,11 +88,6 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     }
 
     public ChassisSpeeds getCurrentRobotChassisSpeeds() {
-        // SignalLogger.writeDoubleArray("Odometry", new double[] {
-        //     this.getState().Pose.getX(),
-        //     this.getState().Pose.getY(),
-        //     this.getState().Pose.getRotation().getDegrees()
-        // });
         return m_kinematics.toChassisSpeeds(getState().ModuleStates);
     }
 

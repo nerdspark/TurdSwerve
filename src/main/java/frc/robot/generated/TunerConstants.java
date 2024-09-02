@@ -26,16 +26,20 @@ public class TunerConstants {
         .withKS(0).withKV(1.5).withKA(0);
     // When using closed-loop control, the drive motor uses the control
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
+//     private static final Slot0Configs driveGains = new Slot0Configs()
+//         .withKP(3).withKI(0).withKD(0)
+//         .withKS(0).withKV(0).withKA(0);
+
     private static final Slot0Configs driveGains = new Slot0Configs()
         .withKP(3).withKI(0).withKD(0)
-        .withKS(0).withKV(0).withKA(0);
+        .withKS(2.1947).withKV(0).withKA(0.86711);
 
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors
     private static final ClosedLoopOutputType steerClosedLoopOutput = ClosedLoopOutputType.Voltage;
     // The closed-loop output type to use for the drive motors;
     // This affects the PID/FF gains for the drive motors
-    private static final ClosedLoopOutputType driveClosedLoopOutput = ClosedLoopOutputType.Voltage;
+    private static final ClosedLoopOutputType driveClosedLoopOutput = ClosedLoopOutputType.TorqueCurrentFOC;
 
     // The stator current at which the wheels start to slip;
     // This needs to be tuned to your individual robot
@@ -122,7 +126,7 @@ public class TunerConstants {
     private static final int kFrontRightDriveMotorId = 13;
     private static final int kFrontRightSteerMotorId = 14;
     private static final int kFrontRightEncoderId = 22;
-    private static final double kFrontRightEncoderOffset = 0.3642578125;
+    private static final double kFrontRightEncoderOffset = 0.247314453125;  //0.3642578125
     private static final boolean kFrontRightSteerInvert = false;
 
     private static final double kFrontRightXPosInches = 6.25;
@@ -132,7 +136,7 @@ public class TunerConstants {
     private static final int kBackLeftDriveMotorId = 17;
     private static final int kBackLeftSteerMotorId = 18;
     private static final int kBackLeftEncoderId = 24;
-    private static final double kBackLeftEncoderOffset = 0.434814453125;
+    private static final double kBackLeftEncoderOffset = -0.379150390625;  //0.434814453125
     private static final boolean kBackLeftSteerInvert = false;
 
     private static final double kBackLeftXPosInches = -6.25;

@@ -45,7 +45,6 @@ public class NerdOdometryRunnable implements Runnable {
     private double robotGlobalXCoordinatePosition= 0.0;
     private double robotGlobalYCoordinatePosition = 0.0;
 
-    // private ElapsedTime odoElapsedTime = new ElapsedTime();
     private double prevOdoTime = 0.0;
     private double robotSpeed = 0.0;
     private double robotSpeedX = 0.0;
@@ -163,7 +162,6 @@ public class NerdOdometryRunnable implements Runnable {
 
 
 
-
     /**
      * Returns the robot's global x coordinate
      * @return global x coordinate
@@ -206,11 +204,17 @@ public class NerdOdometryRunnable implements Runnable {
      */
     public double returnRobotSpeedMAveY(){ return robotSpeedMAveY; }
 
-        /**
+    /**
      * Returns the robot's speed in the Z direction as observed by gyro
      * @return global robot vector, in degrees
      */
     public double returnRobotSpeedMAveZ(){ return robotSpeedMAveZ; }
+
+    /**
+     * Returns the robot's speed in the Z direction as observed by gyro
+     * @return global robot vector, in degrees
+     */
+    public Pose2d returnDeadWheelPose(){ return new Pose2d(robotGlobalXCoordinatePosition, robotGlobalYCoordinatePosition, odoGyro.getRotation2d()); }
 
     /**
      * Stops the position update thread
@@ -224,11 +228,11 @@ public class NerdOdometryRunnable implements Runnable {
     public void run() {
         while(isRunning) {
             nerdOdometryUpdate();
-            try {
-                Thread.sleep(sleepTime);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            // try {
+            //     Thread.sleep(sleepTime);
+            // } catch (InterruptedException e) {
+            //     e.printStackTrace();
+            // }
         }
     }
     

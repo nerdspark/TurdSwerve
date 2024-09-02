@@ -112,6 +112,10 @@ public class NerdOdometrySubsystem extends SubsystemBase {
 
     public void updateNerdOdo(NerdOdometryRunnable nerd){
 
+        var deadWheelX = nerd.returnXCoordinate();
+        var deadWheelY = nerd.returnYCoordinate();
+        var deadWheelPose = nerd.returnDeadWheelPose();
+
     };
     
 }
