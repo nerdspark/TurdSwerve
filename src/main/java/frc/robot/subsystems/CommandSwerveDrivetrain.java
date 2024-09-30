@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.generated.TunerConstants;
+import frc.robot.utils.NerdOdometrySubsystem;
 
 /**
  * Class that extends the Phoenix SwerveDrivetrain class and implements
@@ -44,6 +45,9 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     private final Rotation2d RedAlliancePerspectiveRotation = Rotation2d.fromDegrees(180);
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean hasAppliedOperatorPerspective = false;
+
+    /*Nerd Odometry Subsystem uses a deadwheel odometry calculation and enables other control system features, like crash recovery*/
+    private NerdOdometrySubsystem nerdOdometrySubsystem;
 
     private final SwerveRequest.ApplyChassisSpeeds AutoRequest = new SwerveRequest.ApplyChassisSpeeds();
 
@@ -71,6 +75,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         AutoBuilder.configureHolonomic(
             ()->this.getState().Pose, // Supplier of current robot pose
             // this::NerdOdometrySubsystem.deadWheelEstimator.returnDeadWheelPose(),
+            // this::NerdOdometrySubsystem.updateNerdOdo.deadWheelPose();
             this::seedFieldRelative,  // Consumer for seeding pose against auto
             this::getCurrentRobotChassisSpeeds,
             (speeds)->this.setControl(AutoRequest.withSpeeds(speeds).withDriveRequestType(DriveRequestType.Velocity)), // Consumer of ChassisSpeeds to drive the robot
@@ -140,6 +145,10 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
         var dashboardPose = this.getState().Pose;
         field2d.setRobotPose(dashboardPose);
+    }
+
+    public void setNerdOdometrySubsystem(NerdOdometrySubsystem nerdOdometry) {
+        this.nerdOdometrySubsystem = nerdOdometry;
     }
 
 }

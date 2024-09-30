@@ -43,7 +43,7 @@ public class RobotContainer {
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-  private final NerdOdometrySubsystem nerdOdometry = new NerdOdometrySubsystem(drivetrain);
+  private final NerdOdometrySubsystem nerdOdometrySubsystem = new NerdOdometrySubsystem(drivetrain);
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
@@ -78,7 +78,7 @@ public class RobotContainer {
 
     FollowPathCommand.warmupCommand().schedule();
 
-    // nerdOdometry.run(null);
+    drivetrain.setNerdOdometrySubsystem(nerdOdometrySubsystem);
   }
 
   public Command getAutonomousCommand() {

@@ -32,7 +32,7 @@ public class NerdOdometrySubsystem extends SubsystemBase {
     private static Notifier odoNotifier;
 
     private OriginPosition originPosition = kBlueAllianceWallRightSide;
-
+    
 
     public NerdOdometrySubsystem(CommandSwerveDrivetrain driveTrainGyro){
 
