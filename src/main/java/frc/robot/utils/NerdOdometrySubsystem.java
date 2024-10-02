@@ -32,7 +32,7 @@ public class NerdOdometrySubsystem extends SubsystemBase {
     private static Notifier odoNotifier;
 
     private OriginPosition originPosition = kBlueAllianceWallRightSide;
-    
+
 
     public NerdOdometrySubsystem(CommandSwerveDrivetrain driveTrainGyro){
 
@@ -68,7 +68,8 @@ public class NerdOdometrySubsystem extends SubsystemBase {
         }
 
         // Set the pose on the dashboard
-        var dashboardPose = getCurrentPose();
+        // var dashboardPose = getCurrentPose();
+        var dashboardPose = deadWheelEstimator.returnDeadWheelPose();
         field2dOdo.setRobotPose(dashboardPose);
     }
 
@@ -81,6 +82,10 @@ public class NerdOdometrySubsystem extends SubsystemBase {
 
     public Pose2d getCurrentPose() {
         return driveTrainGyro.getState().Pose;
+    }
+
+    public Pose2d getCurrentPoseOdo() {
+        return deadWheelEstimator.returnDeadWheelPose();
     }
 
     /**
@@ -116,6 +121,6 @@ public class NerdOdometrySubsystem extends SubsystemBase {
         var deadWheelY = nerd.returnYCoordinate();
         var deadWheelPose = nerd.returnDeadWheelPose();
 
-    };
+    }
     
 }

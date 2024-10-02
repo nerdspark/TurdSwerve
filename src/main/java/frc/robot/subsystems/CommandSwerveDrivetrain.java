@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.generated.TunerConstants;
+import frc.robot.utils.NerdOdometryRunnable;
 import frc.robot.utils.NerdOdometrySubsystem;
 
 /**
@@ -111,6 +112,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 
+    // /**** Vision Pose ****/
     public void addDashboardWidgets(ShuffleboardTab tab) {
         tab.add("Field", field2d).withPosition(0, 0).withSize(6, 4);
         tab.addString("Pose", this::getFomattedPose).withPosition(6, 2).withSize(2, 1);
@@ -122,6 +124,24 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
                 "(%.3f, %.3f) %.2f degrees",
                 pose.getX(), pose.getY(), pose.getRotation().getDegrees());
     }
+
+
+    // /**** Dead Wheel Odometry Pose ****/
+    public void addDashboardWidgetsOdo(ShuffleboardTab tab) {
+        tab.add("FieldOdo", field2d).withPosition(0, 0).withSize(6, 4);
+        tab.addString("PoseOdo", this::getFomattedPoseOdo).withPosition(6, 2).withSize(2, 1);
+    }
+
+    private String getFomattedPoseOdo() {
+        // var poseOdo = this.getState().Pose;
+        // var poseOdo = nerdOdometrySubsystem.getCurrentPose();
+        var poseOdo = nerdOdometrySubsystem.getCurrentPoseOdo();
+        return String.format(
+                "(%.3f, %.3f) %.2f degrees",
+                poseOdo.getX(), poseOdo.getY(), poseOdo.getRotation().getDegrees());
+    }
+
+
 
     public Pose2d getCurrentPose() {
         return this.getState().Pose;

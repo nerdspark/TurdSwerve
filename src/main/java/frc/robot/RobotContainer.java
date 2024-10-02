@@ -95,5 +95,12 @@ public class RobotContainer {
 
     // Pose estimation
     drivetrain.addDashboardWidgets(visionTab);
+
+    // /**** Dead Wheel tab ****/
+    final var odometryTab = Shuffleboard.getTab("Odometry");
+
+    // Dead Wheel estimation
+    drivetrain.addDashboardWidgetsOdo(odometryTab);
+
   }
 }
