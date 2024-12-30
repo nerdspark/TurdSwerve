@@ -12,15 +12,17 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants.Constants;
 import frc.robot.constants.RobotMap;
 import frc.robot.subsystems.TurdSwerve;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.LimeLight;
 
 public class TurdDrive extends Command {
   
-  TurdSwerve swerve;
+  CommandSwerveDrivetrain swerve;
   LimeLight ll;
   Supplier<Translation2d> joystickRight, joystickLeft;
   Supplier<Integer> DPAD;
@@ -28,7 +30,7 @@ public class TurdDrive extends Command {
   Rotation2d rotation = new Rotation2d();
   double maxSpeed = Constants.robotMaxSpeed;
 
-  public TurdDrive(TurdSwerve swerve, LimeLight ll, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight, Supplier<Integer> DPAD, Supplier<Boolean> boost) {
+  public TurdDrive(CommandSwerveDrivetrain swerve, LimeLight ll, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight, Supplier<Integer> DPAD, Supplier<Boolean> boost) {
     this.swerve = swerve;
     this.ll = ll;
     this.joystickRight = joystickRight;
@@ -41,7 +43,7 @@ public class TurdDrive extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    swerve.resetGyro();
+    // swerve.resetGyro();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

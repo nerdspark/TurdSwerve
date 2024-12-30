@@ -49,4 +49,10 @@ public final class Constants {
 
     public static boolean aPressed = false;
 
+    public final class OdometryConstants {
+        
+        public static boolean USE_DEADWHEEL = true;
+        
+    }
+
 }
