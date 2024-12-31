@@ -6,7 +6,7 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 
-import edu.wpi.first.math.geometry.Rotation2d;
+/* import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
@@ -14,29 +14,66 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.constants.Constants;
+
 import frc.robot.constants.RobotMap;
-import frc.robot.subsystems.TurdSwerve;
+import frc.robot.subsystems.TurdSwerve; */
+import com.ctre.phoenix6.Orchestra;
+import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathCommand;
+
+import frc.robot.Telemetry;
+import frc.robot.constants.Constants;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.utils.NerdOdometrySubsystem;
 import frc.robot.subsystems.LimeLight;
 
 public class TurdDrive extends Command {
   
   CommandSwerveDrivetrain swerve;
   LimeLight ll;
-  Supplier<Translation2d> joystickRight, joystickLeft;
-  Supplier<Integer> DPAD;
-  Supplier<Boolean> boost;
-  Rotation2d rotation = new Rotation2d();
-  double maxSpeed = Constants.robotMaxSpeed;
+  CommandXboxController joystick = new CommandXboxController(1);
+  // Supplier<Translation2d> joystickRight, joystickLeft;
 
-  public TurdDrive(CommandSwerveDrivetrain swerve, LimeLight ll, Supplier<Translation2d> joystickLeft, Supplier<Translation2d> joystickRight, Supplier<Integer> DPAD, Supplier<Boolean> boost) {
+  // double maxSpeed = Constants.robotMaxSpeed;
+  double MaxSpeed = TunerConstants.kSpeedAt12VoltsMps;
+  double MaxAngularRate = 1.5 * Math.PI;
+  SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+      .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
+  NerdOdometrySubsystem odo = new NerdOdometrySubsystem(swerve);
+
+  Telemetry logger = new Telemetry(MaxSpeed);
+
+  
+
+  public TurdDrive(CommandSwerveDrivetrain swerve, LimeLight ll, CommandXboxController joystick, SwerveRequest.FieldCentric drive, NerdOdometrySubsystem odo, Telemetry logger) {
     this.swerve = swerve;
     this.ll = ll;
-    this.joystickRight = joystickRight;
+    this.joystick = joystick;
+    this.drive = drive;
+    this.odo = odo;
+    this.logger = logger;
+/*     this.joystickRight = joystickRight;
     this.joystickLeft = joystickLeft;
     this.DPAD = DPAD;
-    this.boost = boost;
+    this.boost = boost; */
     addRequirements(swerve);
   }
 
@@ -49,7 +86,12 @@ public class TurdDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (DPAD.get() != -1) {
+    swerve.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
+                                                                                           // negative Y (forward)
+            .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+        );
+    /* if (DPAD.get() != -1) {
       swerve.targetAngle = -Units.degreesToRadians(DPAD.get());
     }
 
@@ -73,7 +115,7 @@ public class TurdDrive extends Command {
     SmartDashboard.putNumber("tX", ll.getTx());
     SmartDashboard.putNumber("tY", ll.getTy());
     SmartDashboard.putNumber("tA", ll.getTa());
-    swerve.setRobotSpeeds(speeds);
+    swerve.setRobotSpeeds(speeds); */
   }
 
   // Called once the command ends or is interrupted.
