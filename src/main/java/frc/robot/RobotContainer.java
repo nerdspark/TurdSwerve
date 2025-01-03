@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.*;
 
 public class RobotContainer {
   private double MaxSpeed = 0.1 * TunerConstants.kSpeedAt12VoltsMps; // kSpeedAt12VoltsMps desired top speed
@@ -24,6 +24,9 @@ public class RobotContainer {
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
+  private final LimeLight ll = new LimeLight();
+  private final Gyro gyro = new Gyro();
+  private final Annum04 april = new Annum04(ll, gyro);
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -42,7 +45,11 @@ public class RobotContainer {
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));
 
-    joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+    joystick.a().toggleOnTrue(drivetrain.applyRequest(() -> drive.withVelocityX(april.getVY() * TunerConstants.kSpeedAt12VoltsMps) // Drive forward with
+                                                                                           // negative Y (forward)
+            .withVelocityY(april.getVX() * TunerConstants.kSpeedAt12VoltsMps) // Drive left with negative X (left)
+            .withRotationalRate(april.getVA() * TunerConstants.kSpeedAt12VoltsMps) // Drive counterclockwise with negative X (left)
+        ));
     joystick.b().whileTrue(drivetrain
         .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
 
@@ -52,7 +59,7 @@ public class RobotContainer {
     if (Utils.isSimulation()) {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
     }
-    drivetrain.registerTelemetry(logger::telemeterize);
+    //drivetrain.registerTelemetry(logger::telemeterize);
   }
 
   public RobotContainer() {
