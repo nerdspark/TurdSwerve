@@ -21,25 +21,27 @@ public class Annum04 extends SubsystemBase {
   static final double MaxSpeed = TunerConstants.kSpeedAt12VoltsMps;
   static final double MaxAngularRate = TunerConstants.kSpeedAt12VoltsMps * Math.PI;
 
-  private static final double kP_follow = 0.005;
+  private static final double kP_follow = 0.5;
   private static final double kI_follow = 0.00;
   private static final double kD_follow = 0.00;
 
-  private static final double kP_turn = 0.005;
-  private static final double kI_turn = 0.00;
-  private static final double kD_turn = 0.00;
+  private static final double kP_turn = 0.007;
+  private static final double kI_turn = 0.02;
+  private static final double kD_turn = 0.2;
 
   double va;
   double vf;
   double vx;
   double vy;
 
-  public Annum04( LimeLight ll, Gyro gyro) {
+  public Annum04(LimeLight ll, Gyro gyro) {
     this.ll = ll;
     this.gyro = gyro;
     this.follow = new PIDController(kP_follow, kI_follow, kD_follow);
     this.turn = new PIDController(kP_turn, kI_turn, kD_turn);
     ll.setPipelineNumber(0);
+    turn.setTolerance(0.25);
+    turn.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   @Override
@@ -63,7 +65,7 @@ public class Annum04 extends SubsystemBase {
       vy = -Math.cos(a) * vf;
 
     } else {
-      va = turn.calculate(tx,0);
+      va = turn.calculate(a,0);
 
       vx = 0.0;
       vy = 0.0;
@@ -73,6 +75,8 @@ public class Annum04 extends SubsystemBase {
     SmartDashboard.putNumber("ID:", tid);
     SmartDashboard.putNumber("vx", vx);
     SmartDashboard.putNumber("vy", vy);
+    SmartDashboard.putNumber("va", va);
+    SmartDashboard.putNumber("gyro", gyro.getGyro().getDegrees());
   }
 
   public double getVX() {
