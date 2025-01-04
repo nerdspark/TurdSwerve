@@ -26,7 +26,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.utils.NerdOdometrySubsystem;
+// import frc.robot.subsystems.DeadWheelSubsystem;
+// import frc.robot.utils.NerdOdometrySubsystem;
 
 public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12VoltsMps; // kSpeedAt12VoltsMps desired top speed
@@ -43,7 +44,8 @@ public class RobotContainer {
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-  private final NerdOdometrySubsystem nerdOdometrySubsystem = new NerdOdometrySubsystem(drivetrain);
+  // private final NerdOdometrySubsystem nerdOdometrySubsystem = new NerdOdometrySubsystem(drivetrain);
+  // private final DeadWheelSubsystem deadWheelSubsystem = new DeadWheelSubsystem();
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
@@ -78,7 +80,7 @@ public class RobotContainer {
 
     FollowPathCommand.warmupCommand().schedule();
 
-    drivetrain.setNerdOdometrySubsystem(nerdOdometrySubsystem);
+    // drivetrain.setNerdOdometrySubsystem(nerdOdometrySubsystem);
   }
 
   public Command getAutonomousCommand() {
@@ -97,10 +99,10 @@ public class RobotContainer {
     drivetrain.addDashboardWidgets(visionTab);
 
     // /**** Dead Wheel tab ****/
-    final var odometryTab = Shuffleboard.getTab("Odometry");
+    // final var odometryTab = Shuffleboard.getTab("Odometry");
 
     // Dead Wheel estimation
-    drivetrain.addDashboardWidgetsOdo(odometryTab);
+    // drivetrain.addDashboardWidgetsOdo(odometryTab);
 
   }
 }
