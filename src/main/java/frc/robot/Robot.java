@@ -4,11 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.util.datalog.BooleanLogEntry;
-import edu.wpi.first.util.datalog.DataLog;
-import edu.wpi.first.util.datalog.DoubleLogEntry;
-import edu.wpi.first.util.datalog.StringLogEntry;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -16,27 +11,15 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
-  private RobotContainer m_robotContainer;
+  private final RobotContainer m_robotContainer;
 
-  DoubleLogEntry rightAmps;
-  DoubleLogEntry leftAmps;
-  
-  @Override
-  public void robotInit() {
+  public Robot() {
     m_robotContainer = new RobotContainer();
-
-    DataLogManager.start();
-    DataLog log = DataLogManager.getLog();
-    rightAmps = new DoubleLogEntry(log, "left drive amps");
-    leftAmps = new DoubleLogEntry(log, "right drive amps");
   }
 
   @Override
   public void robotPeriodic() {
-    CommandScheduler.getInstance().run();
-    leftAmps.append(RobotContainer.swerve.getDriveAmps()[0]);
-    rightAmps.append(RobotContainer.swerve.getDriveAmps()[1]);
-
+    CommandScheduler.getInstance().run(); 
   }
 
   @Override
@@ -50,11 +33,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    // if (m_autonomousCommand != null) {
-    //   m_autonomousCommand.schedule();
-    // }
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.schedule();
+    }
   }
 
   @Override
@@ -65,9 +48,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    // if (m_autonomousCommand != null) {
-    //   m_autonomousCommand.cancel();
-    // }
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
+    }
   }
 
   @Override
@@ -86,4 +69,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testExit() {}
+
+  @Override
+  public void simulationPeriodic() {}
 }
