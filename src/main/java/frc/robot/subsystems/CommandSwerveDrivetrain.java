@@ -11,6 +11,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -18,6 +19,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -32,6 +36,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
+    private final Field2d field2d = new Field2d();
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -126,7 +131,21 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             startSimThread();
         }
     }
+    public void addDashboardWidgets(ShuffleboardTab tab) {
+        tab.add("Field", field2d).withPosition(0, 0).withSize(6, 4);
+        tab.addString("Pose", this::getFomattedPose).withPosition(6, 2).withSize(2, 1);
+    }
+    private String getFomattedPose() {
+        var pose = this.getState().Pose;
+        return String.format(
+                "(%.3f, %.3f) %.2f degrees",
+                pose.getX(), pose.getY(), pose.getRotation().getDegrees());
+    }
 
+    public Pose2d getCurrentPose(){
+        return this.getState().Pose; 
+    }
+    
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
      * <p>
@@ -234,6 +253,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+        var dashboardPose = this.getState().Pose;
+        field2d.setRobotPose(dashboardPose);
+        SmartDashboard.putData("Robot field pose", field2d);
+        SmartDashboard.putString("robot pose", getFomattedPose());
     }
 
     private void startSimThread() {
