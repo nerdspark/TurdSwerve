@@ -8,10 +8,12 @@ import static edu.wpi.first.units.Units.*;
 
 import java.util.function.Supplier;
 
+import org.w3c.dom.ls.LSException;
+
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-
+import frc.robot.util.PIDToPosition;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.Odometry;
@@ -23,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AutoDriveCommand;
+import frc.robot.constants.AutoDriveConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Inventory;
@@ -41,30 +44,35 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
     public static final XboxController driverRaw = new XboxController(0);
     private final CommandXboxController joystick = new CommandXboxController(0);
-
+    public final PIDToPosition PID = new PIDToPosition();
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     public RobotContainer() {
         
         //drivetrain.setDefaultCommand(new AutoDriveCommand(drivetrain, driverLeftJoystick, driverRightJoystick, inventory, drive));
-        driverCommand.a().onTrue(new InstantCommand(() -> inventory.setAstatus(true)));
-        driverCommand.b().onTrue(new InstantCommand(() -> inventory.setBstatus(true)));
-        driverCommand.x().onTrue(new InstantCommand(() -> inventory.setXstatus(true)));
-        driverCommand.y().onTrue(new InstantCommand(() -> inventory.setYstatus(true)));
+        
         configureBindings();
     }
 
     private void configureBindings() {
-        // Supplier<Translation2d> driverRightJoystick = () -> new Translation2d(driverRaw.getRightX(), driverRaw.getRightY());
-        // Supplier<Translation2d> driverLeftJoystick = () -> new Translation2d(driverRaw.getLeftX(), driverRaw.getLeftY());
-        drivetrain.setDefaultCommand(new AutoDriveCommand(drivetrain, () -> new Translation2d(driverRaw.getRightX(), driverRaw.getRightY()), () -> new Translation2d(driverRaw.getLeftX(), driverRaw.getLeftY()), inventory));
-        if (joystick.leftTrigger().getAsBoolean() == true){
-            SmartDashboard.putBoolean("command supposed to be activated", true);
-        } else{
-            SmartDashboard.putBoolean("command supposed to be activated", false);
-        }
-        
+        //drivetrain.setDefaultCommand(new AutoDriveCommand(drivetrain, () -> new Translation2d(driverRaw.getRightX(), driverRaw.getRightY()), () -> new Translation2d(driverRaw.getLeftX(), driverRaw.getLeftY()), inventory));
+        drivetrain.setDefaultCommand(drivetrain.applyRequest(() ->
+            drive.withVelocityX(XMergeCommand() * MaxSpeed*0.1)
+                          .withVelocityY(YMergeCommand() * MaxSpeed*0.1)
+                          .withRotationalRate(ZMergeCommand())));
 
+        
+        //drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> drive.withVelocityX(-AutoDrive().getY() * MaxSpeed*0.1).withVelocityY(-AutoDrive().getX() * MaxSpeed*0.1).withRotationalRate(0.0)));
+        // if (AutoDrive().getNorm() > 0.01) {
+        //     drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> drive.withVelocityX(-AutoDrive().getY() * MaxSpeed*0.1).withVelocityY(-AutoDrive().getX() * MaxSpeed*0.1).withRotationalRate(0.0)));
+        //     SmartDashboard.putBoolean("bool2", true);
+        //   } else {
+        //     drivetrain.setDefaultCommand(drivetrain.applyRequest(() ->
+        //     drive.withVelocityX(-joystick.getLeftY() * MaxSpeed*0.1)
+        //                   .withVelocityY(-joystick.getLeftX() * MaxSpeed*0.1)
+        //                   .withRotationalRate(-joystick.getRightX() * MaxAngularRate)));
+        //                   SmartDashboard.putBoolean("bool2", false);
+        // }
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         // drivetrain.setDefaultCommand(
@@ -83,6 +91,10 @@ public class RobotContainer {
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
+        joystick.a().onTrue(new InstantCommand(() -> inventory.setAstatus(true)));
+        joystick.b().onTrue(new InstantCommand(() -> inventory.setBstatus(true)));
+        joystick.x().onTrue(new InstantCommand(() -> inventory.setXstatus(true)));
+        joystick.y().onTrue(new InstantCommand(() -> inventory.setYstatus(true)));
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
         joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
@@ -93,7 +105,51 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
+    public Translation2d AutoDrive(){
+        boolean[] inventoryStatuses = {inventory.getAstatus(), inventory.getBstatus(), inventory.getXstatus(), inventory.getYstatus()};
+        Translation2d[] PIDVectors = PID.CalculatePID(drivetrain.getState().Pose);
+        PIDVectors = PID.FilterVectors(PIDVectors, inventoryStatuses);
+        Translation2d BestVector = PID.ChooseVector(drivetrain.getState().Pose, new Translation2d(joystick.getLeftY(), -joystick.getLeftX()), PIDVectors);
+        boolean deadzoneA = drivetrain.getState().Pose.getTranslation().getDistance(AutoDriveConstants.positionA) < AutoDriveConstants.zone;
+        boolean deadzoneB = drivetrain.getState().Pose.getTranslation().getDistance(AutoDriveConstants.positionB) < AutoDriveConstants.zone;
+        boolean deadzoneX = drivetrain.getState().Pose.getTranslation().getDistance(AutoDriveConstants.positionX) < AutoDriveConstants.zone;
+        boolean deadzoneY = drivetrain.getState().Pose.getTranslation().getDistance(AutoDriveConstants.positionY) < AutoDriveConstants.zone;
+        if (deadzoneA == true){
+        inventory.setAstatus(false);
+        }
+        if (deadzoneB == true){
+        inventory.setBstatus(false);
+        }
+        if (deadzoneX == true){
+        inventory.setXstatus(false);
+        }
+        if (deadzoneY == true){
+        inventory.setYstatus(false);
+        }
+        return BestVector;
+    }
+    public double XMergeCommand() {
+        if (AutoDrive().getNorm() > 0.01){
 
+            return AutoDrive().getY(); 
+        } else{
+            return -joystick.getLeftY(); 
+        }
+    }
+    public double YMergeCommand() {
+        if (AutoDrive().getNorm() > 0.01){
+            return -AutoDrive().getX(); 
+        } else{
+            return -joystick.getLeftX(); 
+        }
+    }
+    public double ZMergeCommand() {
+        if (AutoDrive().getNorm() > 0.01){
+            return 0.0; 
+        } else{
+            return -joystick.getRightX() * MaxAngularRate; 
+        }
+    }
     public Command getAutonomousCommand() {
         return Commands.print("No autonomous command configured");
     }
