@@ -9,16 +9,17 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.Vision.*;
+import frc.robot.constants.AutoDriveConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-
-
-
+import frc.robot.subsystems.Inventory;
+import frc.robot.util.PIDToPosition;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -27,7 +28,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 public class DriveToPoseCommand extends Command {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final CommandSwerveDrivetrain drivetrainSubsystem;
-
+    PIDToPosition PID = new PIDToPosition();
     private final Supplier<Pose2d> targetPoseSupplier;
 
     private final Supplier<Pose2d> currentPoseProvider;
@@ -51,7 +52,7 @@ public class DriveToPoseCommand extends Command {
             OMEGA_CONSTRATINTS);
 
     private final SwerveRequest.ApplyRobotSpeeds driveToPoseRequest = new SwerveRequest.ApplyRobotSpeeds();
-
+        //Supplier<Translation2d> joystick;
     /**
      * Creates a new ExampleCommand.
      *
@@ -83,7 +84,8 @@ public class DriveToPoseCommand extends Command {
             CommandSwerveDrivetrain drivetrainSubsystem,
             Supplier<Pose2d> poseProvider,
             Pose2d pose,
-            Supplier<Rotation2d> robotAngle) {
+            Supplier<Rotation2d> robotAngle,
+            Inventory inventory) {
         this(drivetrainSubsystem, poseProvider, () -> pose, robotAngle);
     }
 
@@ -118,7 +120,7 @@ public class DriveToPoseCommand extends Command {
     public void execute() {
 
         // SmartDashboard.putString("DriveToPoseCommand", "Execute");
-
+        
         var robotPose = currentPoseProvider.get();
         SmartDashboard.putNumber("DriveToPoseCommand robotPose.X", robotPose.getX());
         SmartDashboard.putNumber("DriveToPoseCommand robotPose.Y", robotPose.getY());
@@ -132,7 +134,7 @@ public class DriveToPoseCommand extends Command {
         SmartDashboard.putNumber(
                 "DriveToPoseCommand goalPose.Angle",
                 targetPoseSupplier.get().getRotation().getDegrees());
-
+        
         var xSpeed = xController.calculate(robotPose.getX());
         if (xController.atGoal()) {
             xSpeed = 0;

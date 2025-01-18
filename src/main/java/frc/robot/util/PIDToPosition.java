@@ -11,6 +11,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.AutoDriveConstants;
 import frc.robot.subsystems.Inventory;
 
@@ -18,49 +19,56 @@ import frc.robot.subsystems.Inventory;
 public class PIDToPosition {
     private PIDController robotPID = new PIDController(1.0, 0, 0);
 
-    public Translation2d[] CalculatePID(Pose2d position) {
-        Translation2d[] translations = new Translation2d[4];
-        translations[0] = new Translation2d(-robotPID.calculate(position.getX(), AutoDriveConstants.positionA.getX()), -robotPID.calculate(position.getY(), AutoDriveConstants.positionA.getY()));
-        translations[1] = new Translation2d(-robotPID.calculate(position.getX(), AutoDriveConstants.positionB.getX()), -robotPID.calculate(position.getY(), AutoDriveConstants.positionB.getY()));
-        translations[2] = new Translation2d(-robotPID.calculate(position.getX(), AutoDriveConstants.positionX.getX()), -robotPID.calculate(position.getY(), AutoDriveConstants.positionX.getY()));
-        translations[3] = new Translation2d(-robotPID.calculate(position.getX(), AutoDriveConstants.positionY.getX()), -robotPID.calculate(position.getY(), AutoDriveConstants.positionY.getY()));
-        return translations;
-    }
+    // public Translation2d CalculatePID(Pose2d position) {
+    //     // Translation2d[] translations = new Translation2d[1];
+    //     //Translation2d translations = new Translation2d(-robotPID.calculate(position.getX(), AutoDriveConstants.positionA.getX()), -robotPID.calculate(position.getY(), AutoDriveConstants.positionA.getY()));
+    //     // translations[1] = new Translation2d(-robotPID.calculate(position.getX(), AutoDriveConstants.positionB.getX()), -robotPID.calculate(position.getY(), AutoDriveConstants.positionB.getY()));
+    //     // translations[2] = new Translation2d(-robotPID.calculate(position.getX(), AutoDriveConstants.positionX.getX()), -robotPID.calculate(position.getY(), AutoDriveConstants.positionX.getY()));
+    //     // translations[3] = new Translation2d(-robotPID.calculate(position.getX(), AutoDriveConstants.positionY.getX()), -robotPID.calculate(position.getY(), AutoDriveConstants.positionY.getY()));
+    //     //return translations;
+    // }
 
-    public Translation2d[] FilterVectors(Translation2d[] translations, boolean[] inventory) {
-        for (int i = 0; i < translations.length; i++) {
-            if (!inventory[i]) {
-                translations[i] = new Translation2d();
-            }
-        }
-        return translations;
-    }
 
-    public Translation2d ChooseVector(Pose2d position, Translation2d drive, Translation2d[] translations) {
-        double[] differences = new double[4];
-        for (int i = 0; i < 4; i++) {
-            differences[i] = Math.abs(translations[i].getAngle().minus(drive.getAngle()).getRadians());
-        }
-
-        double minRotation = Math.PI;
-        int bestValue = 10;
-        for (int i = 0; i < 4; i++) {
-            if (differences[i] < minRotation) {
-                if (Math.abs(translations[i].getNorm()) > 0.01 && ActivationZone(position, drive)[i]) {
-                    minRotation = differences[i];
-                    bestValue = i;
+    public Translation2d ChooseVector(Pose2d position, boolean inventory) {
+        if (inventory == true){
+            Translation2d[] positions = new Translation2d[3];
+            positions[0] = AutoDriveConstants.position1;
+            positions[1] = AutoDriveConstants.position2;
+            positions[2] = AutoDriveConstants.position3;
+            double[] differences = new double[3];
+            differences[0] = position.getTranslation().getDistance(AutoDriveConstants.position1);
+            differences[1] = position.getTranslation().getDistance(AutoDriveConstants.position2);
+            differences[2] = position.getTranslation().getDistance(AutoDriveConstants.position3);
+            SmartDashboard.putNumber("1, 0", differences[0]);
+            SmartDashboard.putNumber("-1, 0", differences[1]);
+            SmartDashboard.putNumber("0, 1", differences[2]);
+            double bestDistance = differences[1];
+            int selecter = 0;
+            for (int i = 0; i < differences.length; i++){
+                if(differences[i] < bestDistance){
+                    bestDistance = differences[i];
+                    selecter = i;
                 }
             }
+            if(bestDistance < 2){
+                return positions[selecter];
+            }else{
+                return position.getTranslation();
+            }
         }
-        return bestValue == 10 ? new Translation2d() : translations[bestValue];
+        return position.getTranslation();
+        
+
     }
-    public boolean[] ActivationZone(Pose2d position, Translation2d drive){
-        boolean activateA = position.getTranslation().getDistance(AutoDriveConstants.positionA) < 3;
-        boolean activateB = position.getTranslation().getDistance(AutoDriveConstants.positionB) < 3;
-        boolean activateX = position.getTranslation().getDistance(AutoDriveConstants.positionX) < 3;
-        boolean activateY = position.getTranslation().getDistance(AutoDriveConstants.positionY) < 3;
-        return new boolean[] {activateA, activateB, activateX, activateY};
-    }
+    // public boolean ActivationZone(Pose2d position, Translation2d drive){
+    //     boolean activateA = position.getTranslation().getDistance(AutoDriveConstants.position1) < 0.5;
+    //     boolean activateB = position.getTranslation().getDistance(AutoDriveConstants.position2) < 0.5;
+    //     boolean activateC = position.getTranslation().getDistance(AutoDriveConstants.position3) < 0.5;
+    //     // boolean activateB = position.getTranslation().getDistance(AutoDriveConstants.positionB) < 3;
+    //     // boolean activateX = position.getTranslation().getDistance(AutoDriveConstants.positionX) < 3;
+    //     // boolean activateY = position.getTranslation().getDistance(AutoDriveConstants.positionY) < 3;
+    //     return activ;
+    // }
 
 
 

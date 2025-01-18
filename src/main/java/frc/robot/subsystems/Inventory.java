@@ -25,29 +25,9 @@ public class Inventory extends SubsystemBase {
     return A;
     
   }
-  public boolean getBstatus() {
-    return B;
-  }
-  public boolean getXstatus() {
-    return X;
-  }
-  public boolean getYstatus() {
-    return Y;
-  }
+
 
   public void setAstatus(boolean status) {
     A = status;
-  }
-
-  public void setBstatus(boolean status) {
-    B = status;
-  }
-
-  public void setXstatus(boolean status) {
-    X = status;
-  }
-
-  public void setYstatus(boolean status) {
-    Y = status;
   }
 }

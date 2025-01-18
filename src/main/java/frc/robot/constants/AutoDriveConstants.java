@@ -8,9 +8,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 /** Add your docs here. */
 public final class AutoDriveConstants {
-    public static Translation2d positionA = new Translation2d(1, 1);
-    public static Translation2d positionB = new Translation2d(-1, 1);
-    public static Translation2d positionX = new Translation2d(-1, -1);
-    public static Translation2d positionY = new Translation2d(1, -1);
+    public static Translation2d position1 = new Translation2d(1, 0);
+    public static Translation2d position2 = new Translation2d(-1, 0);
+    public static Translation2d position3 = new Translation2d(0, 1);
+    // public static Translation2d positionB = new Translation2d(-2, 2);
+    // public static Translation2d positionX = new Translation2d(-2, -2);
+    // public static Translation2d positionY = new Translation2d(2, -2);
     public static double zone = 0.1;
 }
