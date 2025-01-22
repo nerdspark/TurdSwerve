@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -27,7 +29,7 @@ public class Inventory extends SubsystemBase {
   }
 
 
-  public void setAstatus(boolean status) {
+  public BooleanSupplier setAstatus(boolean status) {
     A = status;
   }
 }

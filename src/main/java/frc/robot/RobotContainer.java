@@ -24,7 +24,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.AStatus;
 import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.constants.AutoDriveConstants;
 import frc.robot.generated.TunerConstants;
@@ -59,10 +61,9 @@ public class RobotContainer {
     private void configureBindings() {
         //drivetrain.setDefaultCommand(new AutoDriveCommand(drivetrain, () -> new Translation2d(driverRaw.getRightX(), driverRaw.getRightY()), () -> new Translation2d(driverRaw.getLeftX(), driverRaw.getLeftY()), inventory));
         drivetrain.setDefaultCommand(drivetrain.applyRequest(() ->
-            drive.withVelocityX(XMergeCommand() * MaxSpeed*0.1)
-                          .withVelocityY(YMergeCommand() * MaxSpeed*0.1)
-                          .withRotationalRate(ZMergeCommand())));
-
+        drive.withVelocityX(-joystick.getLeftY() * MaxSpeed*0.1)
+                  .withVelocityY(-joystick.getLeftX() * MaxSpeed*0.1)
+                  .withRotationalRate(-joystick.getRightX() * MaxAngularRate)));
         
         //drivetrain.setDefaultCommand(drivetrain.applyRequest(() -> drive.withVelocityX(-AutoDrive().getY() * MaxSpeed*0.1).withVelocityY(-AutoDrive().getX() * MaxSpeed*0.1).withRotationalRate(0.0)));
         // if (AutoDrive().getNorm() > 0.01) {
@@ -77,23 +78,16 @@ public class RobotContainer {
         // }
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        // drivetrain.setDefaultCommand(
-        //     // Drivetrain will execute this command periodically
-        //     drivetrain.applyRequest(() ->
-        //         drive.withVelocityX(-joystick.getLeftY() * MaxSpeed*0.1) // Drive forward with negative Y (forward)
-        //             .withVelocityY(-joystick.getLeftX() * MaxSpeed*0.1) // Drive left with negative X (left)
-        //             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-        //     )
-        // );
 
         // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         // joystick.b().whileTrue(drivetrain.applyRequest(() ->
         //     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         // ));
-
+        Trigger AStatus = new Trigger(() -> inventory.getAstatus());
+        AStatus.onTrue(new DriveToPoseCommand(drivetrain, () -> poseEstimatorSubsystem.getCurrentPose(), 
+        () -> AutoDrive(() -> poseEstimatorSubsystem.getCurrentPose()), ()->drivetrain.getState().Pose.getRotation()).until(() -> joystick.y().getAsBoolean()));
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.a().onTrue(new InstantCommand(() -> inventory.setAstatus(true)));
         // joystick.b().onTrue(new InstantCommand(() -> inventory.setBstatus(true)));
         // joystick.x().onTrue(new InstantCommand(() -> inventory.setXstatus(true)));
         // joystick.y().onTrue(new InstantCommand(() -> inventory.setYstatus(true)));
@@ -109,7 +103,6 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
     }
     public Pose2d AutoDrive(Supplier<Pose2d> robotPose){
-
         boolean inventoryStatuses = inventory.getAstatus();
         Translation2d BestVector = PID.ChooseVector(robotPose.get(), inventoryStatuses);
         boolean deadzoneA = robotPose.get().getTranslation().getDistance(AutoDriveConstants.position1) < AutoDriveConstants.zone;
@@ -118,20 +111,28 @@ public class RobotContainer {
         }
         return new Pose2d(BestVector.getX(), BestVector.getY(), new Rotation2d(0.0));
     }
-    public double XMergeCommand() {
-        
-            return -joystick.getLeftY(); 
-        
-    }
-    public double YMergeCommand() {
-        
-            return -joystick.getLeftX(); 
-        
-    }
-    public double ZMergeCommand() {
-        
-            return -joystick.getRightX() * MaxAngularRate; 
-        
+    // public Supplier<Command> AutoChooser(Supplier<Pose2d> robotPose){
+    //     boolean inventoryStatuses = inventory.getAstatus();
+    //     Translation2d BestVector = PID.ChooseVector(robotPose.get(), inventory.getAstatus());
+    //     SmartDashboard.putNumber("robotPose to bestvector", robotPose.get().getTranslation().getDistance(BestVector));
+    //     SmartDashboard.putNumber("bestVector to bestvector", BestVector.getDistance(BestVector));
+    //     if(robotPose.get().getTranslation().getDistance(BestVector) > BestVector.getDistance(BestVector)) {
+    //             return () -> new DriveToPoseCommand(drivetrain, () -> poseEstimatorSubsystem.getCurrentPose(), 
+    //             () -> AutoDrive(() -> poseEstimatorSubsystem.getCurrentPose()), ()->drivetrain.getState().Pose.getRotation()).until(() -> joystick.y().getAsBoolean());
+    //         } else{
+    //            return () -> drivetrain.applyRequest(() ->
+    //             drive.withVelocityX(-joystick.getLeftY() * MaxSpeed*0.1)
+    //                       .withVelocityY(-joystick.getLeftX() * MaxSpeed*0.1)
+    //                       .withRotationalRate(-joystick.getRightX() * MaxAngularRate)); 
+    //         }
+        // if(inventoryStatuses == true){
+            
+        // }else{
+        //     return () -> drivetrain.applyRequest(() ->
+        //     drive.withVelocityX(XMergeCommand() * MaxSpeed*0.1)
+        //               .withVelocityY(YMergeCommand() * MaxSpeed*0.1)
+        //               .withRotationalRate(ZMergeCommand())); 
+        // } 
     }
     public Command getAutonomousCommand() {
         return Commands.print("No autonomous command configured");
