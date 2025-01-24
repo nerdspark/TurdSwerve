@@ -20,16 +20,17 @@ public class Inventory extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putBoolean("inventory", A);
+
   }
 
   public boolean getAstatus() {
-    SmartDashboard.putBoolean("inventory", A);
     return A;
     
   }
 
 
-  public BooleanSupplier setAstatus(boolean status) {
+  public void setAstatus(boolean status) {
     A = status;
   }
 }

@@ -83,8 +83,9 @@ public class RobotContainer {
         // joystick.b().whileTrue(drivetrain.applyRequest(() ->
         //     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         // ));
-        Trigger AStatus = new Trigger(() -> inventory.getAstatus());
-        AStatus.onTrue(new DriveToPoseCommand(drivetrain, () -> poseEstimatorSubsystem.getCurrentPose(), 
+        joystick.a().whileTrue(new InstantCommand(() -> inventory.setAstatus(true)));
+        Trigger AStatus = new Trigger(() -> (inventory.getAstatus()&&PID.InsideRange(() -> poseEstimatorSubsystem.getCurrentPose())));
+        AStatus.whileTrue(new DriveToPoseCommand(drivetrain, () -> poseEstimatorSubsystem.getCurrentPose(), 
         () -> AutoDrive(() -> poseEstimatorSubsystem.getCurrentPose()), ()->drivetrain.getState().Pose.getRotation()).until(() -> joystick.y().getAsBoolean()));
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -105,8 +106,11 @@ public class RobotContainer {
     public Pose2d AutoDrive(Supplier<Pose2d> robotPose){
         boolean inventoryStatuses = inventory.getAstatus();
         Translation2d BestVector = PID.ChooseVector(robotPose.get(), inventoryStatuses);
+        SmartDashboard.putNumber("positionsX", PID.ChooseVector(robotPose.get(), inventoryStatuses).getX());
         boolean deadzoneA = robotPose.get().getTranslation().getDistance(AutoDriveConstants.position1) < AutoDriveConstants.zone;
-        if (deadzoneA == true){
+        boolean deadzoneB = robotPose.get().getTranslation().getDistance(AutoDriveConstants.position2) < AutoDriveConstants.zone;
+        boolean deadzoneC = robotPose.get().getTranslation().getDistance(AutoDriveConstants.position3) < AutoDriveConstants.zone;
+        if (deadzoneA || deadzoneB || deadzoneC == true){
             inventory.setAstatus(false);
         }
         return new Pose2d(BestVector.getX(), BestVector.getY(), new Rotation2d(0.0));
@@ -133,7 +137,7 @@ public class RobotContainer {
         //               .withVelocityY(YMergeCommand() * MaxSpeed*0.1)
         //               .withRotationalRate(ZMergeCommand())); 
         // } 
-    }
+    //}
     public Command getAutonomousCommand() {
         return Commands.print("No autonomous command configured");
     }

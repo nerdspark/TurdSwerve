@@ -6,6 +6,7 @@ package frc.robot.util;
 
 /** Add your docs here. */
 import java.lang.reflect.Array;
+import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -50,15 +51,16 @@ public class PIDToPosition {
                     selecter = i;
                 }
             }
-            if(bestDistance < 2){
-                return positions[selecter];
-            }else{
-                return position.getTranslation();
-            }
+            return positions[selecter];
         }
         return position.getTranslation();
-        
-
+    }
+    public boolean InsideRange(Supplier<Pose2d> position){
+        if (ChooseVector(position.get(), true).getDistance(position.get().getTranslation()) < 2){
+            return true;
+        }else{
+            return false;
+        }
     }
     // public boolean ActivationZone(Pose2d position, Translation2d drive){
     //     boolean activateA = position.getTranslation().getDistance(AutoDriveConstants.position1) < 0.5;
