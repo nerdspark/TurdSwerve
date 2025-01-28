@@ -5,12 +5,27 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.math.util.Units;
+
+import java.io.IOException;
+import java.util.List;
+
+import org.json.simple.parser.ParseException;
+
+// import frc.robot.commands.PathFindFollow;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
+import com.pathplanner.lib.util.FileVersionException;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -34,17 +49,16 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
+    private final CommandXboxController joystick = new CommandXboxController(1);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    /* Path follower */
-    private final SendableChooser<Command> autoChooser;
+    private SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
-        autoChooser = AutoBuilder.buildAutoChooser("Tests");
-        SmartDashboard.putData("Auto Mode", autoChooser);
         configureBindings();
+
+        configureAutoChooser();
     }
 
     private void configureBindings() {
@@ -53,8 +67,8 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed*0.1) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed*0.1) // Drive left with negative X (left)
+                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
@@ -75,9 +89,91 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
+
+    // SmartDashboard.putData("Pathfind to Pickup Pos", AutoBuilder.pathfindToPose(
+    //   new Pose2d(5.289, 5.069, Rotation2d.fromDegrees(-120)), 
+    //   new PathConstraints(
+    //     5.0, 3.0, 
+    //     Units.degreesToRadians(360), Units.degreesToRadians(540)
+    //   ), 
+    //   0
+    // ));
+
+    // joystick.x().whileTrue(AutoBuilder.pathfindToPose(
+    //   new Pose2d(5.289, 5.069, Rotation2d.fromDegrees(-120)), 
+    //   new PathConstraints(
+    //     5.0, 3.0, 
+    //     Units.degreesToRadians(360), Units.degreesToRadians(540)
+    //   ), 
+    //   0
+    // ));
+
+    // // Add a button to SmartDashboard that will create and follow an on-the-fly path
+    // SmartDashboard.putData("On-the-fly path", Commands.runOnce(() -> {
+    //   Pose2d currentPose = drivetrain.getState().Pose;
+      
+    //   // The rotation component in these poses represents the direction of travel
+    //   Pose2d startPos = new Pose2d(currentPose.getTranslation(), new Rotation2d());
+    //   Pose2d midPosA = new Pose2d(2.692, 6.034, new Rotation2d());
+    //   Pose2d midPosB = new Pose2d(5.425, 6.034, new Rotation2d());
+    //   Pose2d endPos = new Pose2d(5.289, 5.069, new Rotation2d());
+
+    //   List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startPos, midPosA, midPosB, endPos);
+    //   PathPlannerPath path = new PathPlannerPath(
+    //     waypoints, 
+    //     new PathConstraints(
+    //       4.0, 4.0, 
+    //       Units.degreesToRadians(360), Units.degreesToRadians(540)
+    //     ),
+    //     null, // Ideal starting state can be null for on-the-fly paths
+    //     new GoalEndState(0.0, Rotation2d.fromDegrees(-120))
+    //   );
+
+    //   // Prevent this path from being flipped on the red alliance, since the given positions are already correct
+    //   path.preventFlipping = true;
+
+    //   AutoBuilder.followPath(path).schedule();
+    // }));
+  
+    
+    // try {
+    //   joystick.y().whileTrue(AutoBuilder.pathfindThenFollowPath(
+    //     PathPlannerPath.fromPathFile("BlueTeleopHighPath"), 
+    //     new PathConstraints(
+    //       5.0, 3.0, 
+    //       Units.degreesToRadians(360), Units.degreesToRadians(540)
+    //     )
+    //   ));
+    // } catch (FileVersionException e) {
+    //   // TODO Auto-generated catch block
+    //   e.printStackTrace();
+    // } catch (IOException e) {
+    //   // TODO Auto-generated catch block
+    //   e.printStackTrace();
+    // } catch (ParseException e) {
+    //   // TODO Auto-generated catch block
+    //   e.printStackTrace();
+    // }
+
+    // joystick.rightBumper().whileTrue(new PathFindFollow());
+
+    // joystick.rightBumper().whileTrue(drivetrain.scoreReef);
+
+    // SmartDashboard.putData("Pathfind and Follow Path", AutoBuilder.pathfindThenFollowPath(
+    //   new PathPlannerPath.fromPathFile("BlueTeleopHigh1", 
+    //   new PathConstraints(1.0, 1.0, Units.degreesToRadians(360), Units.degreesToRadians(540))
+    // )));
     }
 
+    private void configureAutoChooser() {
+    DataLogManager.log("Configuring auto chooser");
+    autoChooser = AutoBuilder.buildAutoChooser();
+
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+  }
+
     public Command getAutonomousCommand() {
+        // return Commands.print("No autonomous command configured");
         return autoChooser.getSelected();
     }
 }
