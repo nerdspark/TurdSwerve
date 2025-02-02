@@ -134,15 +134,24 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * @param drivetrainConstants   Drivetrain-wide constants for the swerve drive
      * @param modules               Constants for each specific module
      */
+    // public CommandSwerveDrivetrain(
+    //     SwerveDrivetrainConstants drivetrainConstants,
+    //     SwerveModuleConstants<?, ?, ?>... modules
+    // ) {
+    //     super(drivetrainConstants, modules);
+    //     if (Utils.isSimulation()) {
+    //         startSimThread();
+    //     }
+    //     configureAutoBuilder();
+    // }
+
     public CommandSwerveDrivetrain(
-        SwerveDrivetrainConstants drivetrainConstants,
-        SwerveModuleConstants<?, ?, ?>... modules
-    ) {
-        super(drivetrainConstants, modules);
-        if (Utils.isSimulation()) {
-            startSimThread();
-        }
-        configureAutoBuilder();
+        SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants<?, ?, ?>... modules) {
+    super(drivetrainConstants, MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(modules));
+    if (Utils.isSimulation()) {
+        startSimThread();
+    }
+    configureAutoBuilder();
     }
 
     /**
@@ -158,16 +167,30 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      *                                CAN FD, and 100 Hz on CAN 2.0.
      * @param modules                 Constants for each specific module
      */
+    // public CommandSwerveDrivetrain(
+    //     SwerveDrivetrainConstants drivetrainConstants,
+    //     double odometryUpdateFrequency,
+    //     SwerveModuleConstants<?, ?, ?>... modules
+    // ) {
+    //     super(drivetrainConstants, odometryUpdateFrequency, modules);
+    //     if (Utils.isSimulation()) {
+    //         startSimThread();
+    //     }
+    //     configureAutoBuilder();
+    // }
+
     public CommandSwerveDrivetrain(
         SwerveDrivetrainConstants drivetrainConstants,
         double odometryUpdateFrequency,
-        SwerveModuleConstants<?, ?, ?>... modules
-    ) {
-        super(drivetrainConstants, odometryUpdateFrequency, modules);
-        if (Utils.isSimulation()) {
-            startSimThread();
-        }
-        configureAutoBuilder();
+        SwerveModuleConstants<?, ?, ?>... modules) {
+    super(
+            drivetrainConstants,
+            odometryUpdateFrequency,
+            MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(modules));
+    if (Utils.isSimulation()) {
+        startSimThread();
+    }
+    configureAutoBuilder();
     }
 
     /**
@@ -189,18 +212,36 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      *                                  and radians
      * @param modules                   Constants for each specific module
      */
+    // public CommandSwerveDrivetrain(
+    //     SwerveDrivetrainConstants drivetrainConstants,
+    //     double odometryUpdateFrequency,
+    //     Matrix<N3, N1> odometryStandardDeviation,
+    //     Matrix<N3, N1> visionStandardDeviation,
+    //     SwerveModuleConstants<?, ?, ?>... modules
+    // ) {
+    //     super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, modules);
+    //     if (Utils.isSimulation()) {
+    //         startSimThread();
+    //     }
+    //     configureAutoBuilder();
+    // }
+
     public CommandSwerveDrivetrain(
         SwerveDrivetrainConstants drivetrainConstants,
         double odometryUpdateFrequency,
         Matrix<N3, N1> odometryStandardDeviation,
         Matrix<N3, N1> visionStandardDeviation,
-        SwerveModuleConstants<?, ?, ?>... modules
-    ) {
-        super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, modules);
-        if (Utils.isSimulation()) {
-            startSimThread();
-        }
-        configureAutoBuilder();
+        SwerveModuleConstants<?, ?, ?>... modules) {
+    super(
+            drivetrainConstants,
+            odometryUpdateFrequency,
+            odometryStandardDeviation,
+            visionStandardDeviation,
+            MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(modules));
+    if (Utils.isSimulation()) {
+        startSimThread();
+    }
+    configureAutoBuilder();
     }
 
     private void configureAutoBuilder() {
