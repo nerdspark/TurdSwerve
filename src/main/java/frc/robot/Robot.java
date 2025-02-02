@@ -9,6 +9,8 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.pathfinding.LocalADStar;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 
+import dev.doglog.DogLog;
+import dev.doglog.DogLogOptions;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,12 +32,12 @@ public class Robot extends TimedRobot {
 
     SignalLogger.setPath("/media/sda1/");
 
-    // DogLog.setOptions(new DogLogOptions()
-    //         .withLogExtras(true)
-    //         .withCaptureDs(true)
-    //         .withNtPublish(true)
-    //         .withCaptureNt(true));
-    // DogLog.setPdh(new PowerDistribution());
+    DogLog.setOptions(new DogLogOptions()
+            .withLogExtras(true)
+            .withCaptureDs(true)
+            .withNtPublish(true)
+            .withCaptureNt(true));
+    DogLog.setPdh(new PowerDistribution());
 
     PathfindingCommand.warmupCommand().schedule();
   }
