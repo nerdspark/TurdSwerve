@@ -99,14 +99,14 @@ public class RobotContainer {
     //   0
     // ));
 
-    joystick.x().whileTrue(AutoBuilder.pathfindToPose(
-      new Pose2d(5.289, 5.069, Rotation2d.fromDegrees(-120)), 
-      new PathConstraints(
-        5.0, 3.0, 
-        Units.degreesToRadians(360), Units.degreesToRadians(540)
-      ), 
-      0
-    ));
+    // joystick.x().whileTrue(AutoBuilder.pathfindToPose(
+    //   new Pose2d(5.289, 5.069, Rotation2d.fromDegrees(-120)), 
+    //   new PathConstraints(
+    //     5.0, 3.0, 
+    //     Units.degreesToRadians(360), Units.degreesToRadians(540)
+    //   ), 
+    //   0
+    // ));
 
     // // Add a button to SmartDashboard that will create and follow an on-the-fly path
     // SmartDashboard.putData("On-the-fly path", Commands.runOnce(() -> {
@@ -134,11 +134,30 @@ public class RobotContainer {
 
     //   AutoBuilder.followPath(path).schedule();
     // }));
+
+    try {
+      joystick.b().whileTrue(AutoBuilder.pathfindThenFollowPath(
+        PathPlannerPath.fromPathFile("Test_NemesisPrime_Teleop2"), 
+        new PathConstraints(
+          5.0, 3.0, 
+          Units.degreesToRadians(360), Units.degreesToRadians(540)
+        )
+      ));
+    } catch (FileVersionException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (ParseException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   
     
     try {
       joystick.y().whileTrue(AutoBuilder.pathfindThenFollowPath(
-        PathPlannerPath.fromPathFile("BlueTeleopHighPath"), 
+        PathPlannerPath.fromPathFile("Test_NemesisPrime_Teleop1"), 
         new PathConstraints(
           5.0, 3.0, 
           Units.degreesToRadians(360), Units.degreesToRadians(540)

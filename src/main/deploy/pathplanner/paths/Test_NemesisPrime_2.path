@@ -1,0 +1,70 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.0,
+        "y": 4.02
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.033096590909091,
+        "y": 4.378991477272727
+      },
+      "isLocked": false,
+      "linkedName": "ScoreFirstCoral"
+    },
+    {
+      "anchor": {
+        "x": 4.537073863636363,
+        "y": 4.977286931818182
+      },
+      "prevControl": {
+        "x": 5.382417685690743,
+        "y": 5.060435504479268
+      },
+      "nextControl": {
+        "x": 3.3205397727272725,
+        "y": 4.857627840909092
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.9,
+        "y": 5.5
+      },
+      "prevControl": {
+        "x": 3.3077319115913033,
+        "y": 4.938805168486579
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "LoadCoral"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 1.0,
+    "maxAcceleration": 1.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 126.0
+  },
+  "reversed": false,
+  "folder": "Test_NemesisPrime",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": false
+}

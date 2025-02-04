@@ -32,14 +32,14 @@ public class Robot extends TimedRobot {
     Pathfinding.setPathfinder(new LocalADStar());
         
 
-    SignalLogger.setPath("/media/sda1/");
+    // SignalLogger.setPath("/media/sda1/");
 
-    DogLog.setOptions(new DogLogOptions()
-            .withLogExtras(true)
-            .withCaptureDs(true)
-            .withNtPublish(true)
-            .withCaptureNt(true));
-    DogLog.setPdh(new PowerDistribution());
+    // DogLog.setOptions(new DogLogOptions()
+    //         .withLogExtras(true)
+    //         .withCaptureDs(true)
+    //         .withNtPublish(true)
+    //         .withCaptureNt(true));
+    // DogLog.setPdh(new PowerDistribution());
 
     PathfindingCommand.warmupCommand().schedule();
   }
@@ -79,8 +79,8 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    SignalLogger.setPath("/media/sda1/");
-    SignalLogger.start();
+    // SignalLogger.setPath("/media/sda1/");
+    // SignalLogger.start();
   }
 
   @Override
