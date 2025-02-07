@@ -88,7 +88,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopExit() {
-    SignalLogger.stop();
+    // SignalLogger.stop();
   }
 
   @Override
@@ -104,7 +104,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationPeriodic() {
-      DogLog.log("Simulation/CoralPoses", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
-      DogLog.log("Simulation/AlgaePoses", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
+      // DogLog.log("Simulation/CoralPoses", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
+      // DogLog.log("Simulation/AlgaePoses", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
   }
 }
