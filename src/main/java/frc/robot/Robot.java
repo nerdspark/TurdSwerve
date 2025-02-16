@@ -32,7 +32,7 @@ public class Robot extends TimedRobot {
     Pathfinding.setPathfinder(new LocalADStar());
         
 
-    // SignalLogger.setPath("/media/sda1/");
+    SignalLogger.setPath("/media/sda1/");
 
     // DogLog.setOptions(new DogLogOptions()
     //         .withLogExtras(true)
@@ -65,13 +65,18 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+
+    SignalLogger.setPath("/media/sda1/");
+    SignalLogger.start();
   }
 
   @Override
   public void autonomousPeriodic() {}
 
   @Override
-  public void autonomousExit() {}
+  public void autonomousExit() {
+    SignalLogger.stop();
+  }
 
   @Override
   public void teleopInit() {
@@ -79,17 +84,13 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    // SignalLogger.setPath("/media/sda1/");
-    // SignalLogger.start();
   }
 
   @Override
   public void teleopPeriodic() {}
 
   @Override
-  public void teleopExit() {
-    // SignalLogger.stop();
-  }
+  public void teleopExit() {}
 
   @Override
   public void testInit() {
