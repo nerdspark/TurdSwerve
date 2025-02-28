@@ -3,80 +3,61 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 7.827698863636364,
+        "y": 7.15109375
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.75,
-        "y": 7.0
+        "x": 7.152528409090909,
+        "y": 6.823551136363636
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.5,
-        "y": 6.0
+        "x": 3.3105681818181814,
+        "y": 4.708053977272727
       },
       "prevControl": {
-        "x": 2.772102272727273,
-        "y": 6.004360795454545
+        "x": 3.914078619071236,
+        "y": 5.047962154576172
       },
       "nextControl": {
-        "x": 4.301069318262611,
-        "y": 5.9952008375476815
+        "x": 2.443039772727273,
+        "y": 4.219446022727272
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.0,
-        "y": 7.0
+        "x": 1.4857670454545455,
+        "y": 5.4260085227272725
       },
       "prevControl": {
-        "x": 4.25,
-        "y": 7.0
-      },
-      "nextControl": {
-        "x": 5.75,
-        "y": 7.0
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 6.5,
-        "y": 6.0
-      },
-      "prevControl": {
-        "x": 5.75,
-        "y": 6.0
-      },
-      "nextControl": {
-        "x": 7.25,
-        "y": 6.0
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 8.0,
-        "y": 7.0
-      },
-      "prevControl": {
-        "x": 7.25,
-        "y": 7.0
+        "x": 1.9252130681818143,
+        "y": 4.745759943181818
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "BlueCenterFirstPickup"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.6323268206039071,
+      "rotationDegrees": -59.99999999999999
+    },
+    {
+      "waypointRelativePos": 0.9626998223800985,
+      "rotationDegrees": -59.99999999999999
+    },
+    {
+      "waypointRelativePos": 1.7584369449378625,
+      "rotationDegrees": 119.99999999999999
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -90,10 +71,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 119.99999999999999
   },
   "reversed": false,
-  "folder": null,
+  "folder": "NemesisPrime",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

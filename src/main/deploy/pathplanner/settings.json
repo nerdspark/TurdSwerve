@@ -3,13 +3,14 @@
   "robotLength": 0.4064,
   "holonomicMode": true,
   "pathFolders": [
+    "NemesisPrime",
     "Test_NemesisPrime"
   ],
   "autoFolders": [
     "Test_NemesisPrime"
   ],
-  "defaultMaxVel": 3.0,
-  "defaultMaxAccel": 3.0,
+  "defaultMaxVel": 5.45,
+  "defaultMaxAccel": 4.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
