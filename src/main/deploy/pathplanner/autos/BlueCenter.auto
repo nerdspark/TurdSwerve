@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BlueCenter1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BlueCenter2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BlueCenter3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BlueCenter4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BlueCenter5"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BlueCenter6"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "NemesisPrime",
+  "choreoAuto": false
+}

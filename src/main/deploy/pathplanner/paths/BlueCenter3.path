@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.2806534090909087,
+        "y": 4.1995028409090915
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.7521590909090907,
+        "y": 4.049928977272727
+      },
+      "isLocked": false,
+      "linkedName": "BlueCenterFirstReef"
+    },
+    {
+      "anchor": {
+        "x": 1.7151136363636363,
+        "y": 4.020014204545454
+      },
+      "prevControl": {
+        "x": 2.7151136363636352,
+        "y": 4.020014204545454
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "BlueCenterSecondPickup"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.45,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "reversed": false,
+  "folder": "NemesisPrime",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
+}
