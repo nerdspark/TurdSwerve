@@ -7,7 +7,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "firts path"
+            "pathName": "Working Path 1"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Working Path 2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Working Path 3 "
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "filler path"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Working Path 4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Working Path 5"
           }
         }
       ]
