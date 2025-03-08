@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.4857670454545455,
-        "y": 5.4260085227272725
+        "x": 1.455852272727273,
+        "y": 5.445951704545455
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1040056818181814,
-        "y": 4.598366477272727
+        "x": 2.074090909090909,
+        "y": 4.618309659090909
       },
       "isLocked": false,
       "linkedName": "BlueCenterFirstPickup"
@@ -48,7 +48,7 @@
   "folder": "NemesisPrime",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": 140.0
   },
   "useDefaultConstraints": true
 }

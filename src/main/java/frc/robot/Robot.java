@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
+  // private final RobotContainer m_robotContainer;
   private final RobotContainer m_robotContainer;
 
   public Robot() {
@@ -29,6 +30,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+
+    // m_robotContainer = new RobotContainer();
     Pathfinding.setPathfinder(new LocalADStar());
         
 
@@ -41,7 +44,6 @@ public class Robot extends TimedRobot {
     //         .withCaptureNt(true));
     // DogLog.setPdh(new PowerDistribution());
 
-    PathfindingCommand.warmupCommand().schedule();
   }
 
   @Override
@@ -66,7 +68,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.schedule();
     }
 
-    SignalLogger.setPath("/media/sda1/");
+    // SignalLogger.setPath("/media/sda1/");
     SignalLogger.start();
   }
 

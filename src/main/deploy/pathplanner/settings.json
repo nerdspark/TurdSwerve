@@ -4,10 +4,12 @@
   "holonomicMode": true,
   "pathFolders": [
     "NemesisPrime",
+    "CenterAuton",
     "Test_NemesisPrime"
   ],
   "autoFolders": [
     "NemesisPrime",
+    "CenterAuton",
     "Test_NemesisPrime"
   ],
   "defaultMaxVel": 5.45,

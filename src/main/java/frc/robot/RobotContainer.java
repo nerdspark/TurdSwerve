@@ -19,6 +19,8 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -58,9 +60,18 @@ public class RobotContainer {
     private SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
+        configureNamedCommands();
+      
         configureBindings();
 
         configureAutoChooser();
+
+        PathfindingCommand.warmupCommand().schedule();
+    }
+
+    private void configureNamedCommands() {
+      NamedCommands.registerCommand("printTest", Commands.print("[Path Planner] Marker Auto Action Test"));
+      NamedCommands.registerCommand("printTestTeleop", Commands.print("[Path Planner] Marker Teleop Auto Action Test"));
     }
 
     private void configureBindings() {
@@ -148,7 +159,7 @@ public class RobotContainer {
           2.0, 1.0, 
           Units.degreesToRadians(360), Units.degreesToRadians(540)
         )
-      ));
+      ).andThen(Commands.print("[Non-Markers] Teleop Auto Action Test")));
     } catch (FileVersionException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -168,7 +179,7 @@ public class RobotContainer {
           2.0, 1.0, 
           Units.degreesToRadians(360), Units.degreesToRadians(540)
         )
-      ));
+      ).andThen(Commands.print("[Non-Markers] Teleop Auto Action Test")));
     } catch (FileVersionException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();

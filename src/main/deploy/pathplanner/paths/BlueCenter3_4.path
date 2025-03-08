@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.49,
-        "y": 5.2
+        "x": 1.591,
+        "y": 2.398
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.49,
-        "y": 4.95
+        "x": 2.6875554635761585,
+        "y": 2.2525670529801323
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.49,
-        "y": 4.5
+        "x": 3.7337334437086094,
+        "y": 3.1605753311258273
       },
       "prevControl": {
-        "x": 4.49,
-        "y": 4.75
+        "x": 3.1598716887417218,
+        "y": 2.746523178807945
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,31 +31,24 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "printTestTeleop",
-      "waypointRelativePos": 0.5,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 1.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -90.0
+    "velocity": 0.0,
+    "rotation": -124.69515353123373
   },
   "reversed": false,
-  "folder": "Test_NemesisPrime",
+  "folder": "CenterAuton",
   "idealStartingState": {
-    "velocity": 1.0,
-    "rotation": -90.0
+    "velocity": 0,
+    "rotation": -147.65300000000002
   },
   "useDefaultConstraints": false
 }
