@@ -7,43 +7,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Working Path 1"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0
+            "pathName": "BlueBottom1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Working Path 2"
+            "pathName": "BlueBottom2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Working Path 3 "
+            "pathName": "BlueBottom3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "filler path"
+            "pathName": "BlueBottom4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Working Path 4"
+            "pathName": "BlueBottom3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Working Path 5"
+            "pathName": "BlueBottom4"
           }
         }
       ]
