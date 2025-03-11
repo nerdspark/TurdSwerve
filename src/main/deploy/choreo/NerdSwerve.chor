@@ -1,0 +1,78 @@
+{
+ "name":"NerdSwerve",
+ "version":1,
+ "type":"Swerve",
+ "variables":{
+  "expressions":{},
+  "poses":{}
+ },
+ "config":{
+  "frontLeft":{
+   "x":{
+    "exp":"5.5 in",
+    "val":0.1397
+   },
+   "y":{
+    "exp":"5.5 in",
+    "val":0.1397
+   }
+  },
+  "backLeft":{
+   "x":{
+    "exp":"-5.5 in",
+    "val":-0.1397
+   },
+   "y":{
+    "exp":"5.5 in",
+    "val":0.1397
+   }
+  },
+  "mass":{
+   "exp":"35 lbs",
+   "val":15.875732950000002
+  },
+  "inertia":{
+   "exp":"4 kg m ^ 2",
+   "val":4.0
+  },
+  "gearing":{
+   "exp":"6.5",
+   "val":6.5
+  },
+  "radius":{
+   "exp":"2 in",
+   "val":0.0508
+  },
+  "vmax":{
+   "exp":"5800 RPM",
+   "val":607.3745796940267
+  },
+  "tmax":{
+   "exp":"9.4 N * m",
+   "val":9.4
+  },
+  "cof":{
+   "exp":"0.96",
+   "val":0.96
+  },
+  "bumper":{
+   "front":{
+    "exp":"8 in",
+    "val":0.2032
+   },
+   "side":{
+    "exp":"8 in",
+    "val":0.2032
+   },
+   "back":{
+    "exp":"8 in",
+    "val":0.2032
+   }
+  },
+  "differentialTrackWidth":{
+   "exp":"22 in",
+   "val":0.5588
+  }
+ },
+ "generationFeatures":[]
+}

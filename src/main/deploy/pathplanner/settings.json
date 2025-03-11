@@ -8,8 +8,9 @@
     "Test_NemesisPrime"
   ],
   "autoFolders": [
-    "NemesisPrime",
     "CenterAuton",
+    "NemesisPrime",
+    "Choreo Autos",
     "Test_NemesisPrime"
   ],
   "defaultMaxVel": 5.45,

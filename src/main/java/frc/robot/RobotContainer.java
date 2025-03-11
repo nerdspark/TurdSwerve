@@ -70,7 +70,7 @@ public class RobotContainer {
     }
 
     private void configureNamedCommands() {
-      NamedCommands.registerCommand("printTest", Commands.print("[Path Planner] Marker Auto Action Test"));
+      NamedCommands.registerCommand("printTest", Commands.print("[Path Planner Auto with Choreo Path] Marker Auto Action Test"));
       NamedCommands.registerCommand("printTestTeleop", Commands.print("[Path Planner] Marker Teleop Auto Action Test"));
     }
 
