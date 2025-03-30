@@ -20,6 +20,7 @@ import dev.doglog.DogLog;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -342,6 +343,19 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     // }
     SmartDashboard.putData("Robot Field Pose", field);
     SmartDashboard.putString("Robot Pose", getFomattedPose()); 
+    }
+
+    public ChassisSpeeds getCurrentRobotChassisSpeeds() {
+        // SignalLogger.writeDoubleArray("Odometry", new double[] {
+        //     this.getState().Pose.getX(),
+        //     this.getState().Pose.getY(),
+        //     this.getState().Pose.getRotation().getDegrees()
+        // });
+
+        
+
+        return this.getState().Speeds;
+        // return kinematics.toChassisSpeeds(getState().ModuleStates);
     }
 
     // private void startSimThread() {

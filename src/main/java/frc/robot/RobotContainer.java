@@ -36,13 +36,16 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
+import frc.robot.commands.DriveToCoral;
+import frc.robot.commands.DriveToPose;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.PoseEstimatorSubsystem;
+import frc.robot.subsystems.Vision;
 
 public class RobotContainer {
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.75; // kSpeedAt12Volts desired top speed
+    private double MaxAngularRate = RotationsPerSecond.of(0.25).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -58,6 +61,9 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     private SendableChooser<Command> autoChooser;
+
+    public final Vision vision = new Vision(Constants.Vision.kCameraNameFront, Constants.Vision.kRobotToCamFront);
+    public final PoseEstimatorSubsystem poseEstimatorSubsystem = new PoseEstimatorSubsystem(drivetrain);
 
     public RobotContainer() {
         configureNamedCommands();
@@ -85,6 +91,13 @@ public class RobotContainer {
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
+
+        if (Constants.Vision.USE_LIMELIGHT) {    
+          //joystick.y().whileTrue(new DriveToPoseCommand(drivetrain, () -> poseEstimatorSubsystem.getCurrentPose(), () -> new Pose2d(-2.0, -2.0, new Rotation2d(0)), () -> poseEstimatorSubsystem.getCurrentPose().getRotation()));
+          //joystick.y().whileTrue(new DriveToPose(drivetrain, () -> new Pose2d(1.0, 1.0, new Rotation2d(0))));
+          //joystick.y().toggleOnTrue(new DriveToCoral(drivetrain, () -> new Pose2d(2.0, 2.0, new Rotation2d(0))));
+          joystick.y().whileTrue(new DriveToCoral(drivetrain, () -> poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose()));
+        }
 
         // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         // joystick.b().whileTrue(drivetrain.applyRequest(() ->
@@ -152,44 +165,44 @@ public class RobotContainer {
     //   AutoBuilder.followPath(path).schedule();
     // }));
 
-    try {
-      joystick.b().whileTrue(AutoBuilder.pathfindThenFollowPath(
-        PathPlannerPath.fromPathFile("Test_NemesisPrime_Teleop2"), 
-        new PathConstraints(
-          2.0, 1.0, 
-          Units.degreesToRadians(360), Units.degreesToRadians(540)
-        )
-      ).andThen(Commands.print("[Non-Markers] Teleop Auto Action Test")));
-    } catch (FileVersionException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (ParseException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    // try {
+    //   joystick.b().whileTrue(AutoBuilder.pathfindThenFollowPath(
+    //     PathPlannerPath.fromPathFile("Test_NemesisPrime_Teleop2"), 
+    //     new PathConstraints(
+    //       2.0, 1.0, 
+    //       Units.degreesToRadians(360), Units.degreesToRadians(540)
+    //     )
+    //   ).andThen(Commands.print("[Non-Markers] Teleop Auto Action Test")));
+    // } catch (FileVersionException e) {
+    //   // TODO Auto-generated catch block
+    //   e.printStackTrace();
+    // } catch (IOException e) {
+    //   // TODO Auto-generated catch block
+    //   e.printStackTrace();
+    // } catch (ParseException e) {
+    //   // TODO Auto-generated catch block
+    //   e.printStackTrace();
+    // }
   
     
-    try {
-      joystick.y().whileTrue(AutoBuilder.pathfindThenFollowPath(
-        PathPlannerPath.fromPathFile("Test_NemesisPrime_Teleop1"), 
-        new PathConstraints(
-          2.0, 1.0, 
-          Units.degreesToRadians(360), Units.degreesToRadians(540)
-        )
-      ).andThen(Commands.print("[Non-Markers] Teleop Auto Action Test")));
-    } catch (FileVersionException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (ParseException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    // try {
+    //   joystick.y().whileTrue(AutoBuilder.pathfindThenFollowPath(
+    //     PathPlannerPath.fromPathFile("Test_NemesisPrime_Teleop1"), 
+    //     new PathConstraints(
+    //       2.0, 1.0, 
+    //       Units.degreesToRadians(360), Units.degreesToRadians(540)
+    //     )
+    //   ).andThen(Commands.print("[Non-Markers] Teleop Auto Action Test")));
+    // } catch (FileVersionException e) {
+    //   // TODO Auto-generated catch block
+    //   e.printStackTrace();
+    // } catch (IOException e) {
+    //   // TODO Auto-generated catch block
+    //   e.printStackTrace();
+    // } catch (ParseException e) {
+    //   // TODO Auto-generated catch block
+    //   e.printStackTrace();
+    // }
 
     // joystick.rightBumper().whileTrue(new PathFindFollow());
 
