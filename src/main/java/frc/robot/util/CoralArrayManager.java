@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+
 /** Add your docs here. */
 public class CoralArrayManager {
 
@@ -76,6 +79,85 @@ public class CoralArrayManager {
                 i--;
                 sizeCorals = corals.size();
             }
+        }
+
+        return corals;
+    }
+
+    public List<CoralObject> displacementFilter(List<CoralObject> corals) {
+        double maxDisplacement = 0.0508;
+        int sizeCorals = corals.size();
+
+        for (int i = 0; i < sizeCorals - 1; i++) {
+            for (int j = i + 1; j < sizeCorals; j++) {
+                CoralObject coral1 = corals.get(i);
+                CoralObject coral2 = corals.get(j);
+
+                if (!coral1.getIgnored() && !coral2.getIgnored()) {
+                    double poseX1 = coral1.getPose().getX();
+                    double poseY1 = coral1.getPose().getY();
+
+                    double poseX2 = coral2.getPose().getX();
+                    double poseY2 = coral2.getPose().getY();
+
+                    double distance = Math.sqrt(Math.pow((poseX2 - poseX1),2) + Math.pow((poseY2 - poseY1), 2));
+
+                    if (distance <= maxDisplacement) {
+                        double hb1 = coral1.getHB();
+                        double hb2 = coral2.getHB();
+
+                        if (hb1 < hb2) {
+                            CoralObject coralIgnored = coral1;
+                            coralIgnored.setCoralIgnored(true);
+                            corals.set(i, coralIgnored);
+                        } else {
+                            CoralObject coralIgnored = coral2;
+                            coralIgnored.setCoralIgnored(true);
+                            corals.set(j, coralIgnored);
+                        }
+                    }
+                } else if (coral1.getIgnored()) {
+                    break;
+                }
+            }
+        }
+
+        for (int i = 0; i < sizeCorals; i++) {
+            CoralObject coralChecked = corals.get(i);
+            if (coralChecked.getIgnored()) {
+                corals.remove(i);
+                i--;
+                sizeCorals = corals.size();
+            }
+        }
+
+        return corals;
+    }
+
+    public List<CoralObject> distanceAndYawUpdate(List<CoralObject> corals, Pose2d pose) {
+        double poseX = pose.getX();
+        double poseY = pose.getY();
+        Rotation2d poseYaw = pose.getRotation();
+        
+        int sizeCorals = corals.size();
+
+        for (int i = 0; i < sizeCorals; i++) {
+            CoralObject coralToUpdate = corals.get(i);
+
+            Pose2d coralPose = coralToUpdate.getPose();
+            
+            double coralX = coralPose.getX();
+            double coralY = coralPose.getY();
+
+            double distance = Math.sqrt(Math.pow((coralX - poseX), 2) + 
+            Math.pow(coralY - poseY, 2));
+
+            Pose2d updatedCoralPose = new Pose2d(coralX, coralY, poseYaw);
+
+            coralToUpdate.setCoralPose(updatedCoralPose);
+            coralToUpdate.setCoralDistance(distance);
+
+            corals.set(i, coralToUpdate);
         }
 
         return corals;

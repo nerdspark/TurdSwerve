@@ -271,7 +271,9 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             double hb = visionFront.getHB();
             double fps = visionFront.getFPS();
             corals.add(newCoral);
+            coralManager.distanceAndYawUpdate(corals, getCurrentPose());
             coralManager.expiryFilter(corals, hb, fps);
+            coralManager.displacementFilter(corals);
             return corals;
         } else {
             if (visionFront.hasTarget()) {
