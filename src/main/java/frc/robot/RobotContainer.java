@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.DriveToCoral;
 import frc.robot.commands.DriveToPose;
@@ -81,8 +82,11 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
+        
+      Trigger coralInRange = new Trigger(() -> poseEstimatorSubsystem.coralInRange());
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
+        // if (!poseEstimatorSubsystem.coralInRange()){
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
@@ -91,6 +95,13 @@ public class RobotContainer {
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
+
+        coralInRange.onTrue(new DriveToCoral(drivetrain, () -> poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose()));
+        // } else if (poseEstimatorSubsystem.coralInRange()) {
+        //     drivetrain.setDefaultCommand(new DriveToCoral(drivetrain, () -> poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose()));
+        // }
+
+        
 
         if (Constants.Vision.USE_LIMELIGHT) {    
           //joystick.y().whileTrue(new DriveToPoseCommand(drivetrain, () -> poseEstimatorSubsystem.getCurrentPose(), () -> new Pose2d(-2.0, -2.0, new Rotation2d(0)), () -> poseEstimatorSubsystem.getCurrentPose().getRotation()));

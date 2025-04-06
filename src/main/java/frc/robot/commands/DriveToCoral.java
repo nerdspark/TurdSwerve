@@ -230,7 +230,6 @@ private final ProfiledPIDController driveController =
   @Override
   public void end(boolean interrupted) {
     running = false;
-
     Constants.Vision.kCoralTargeted = false;
     drive.applyRequest(() -> new SwerveRequest.SwerveDriveBrake());
     if (Vision.DOGLOG_ENABLED){

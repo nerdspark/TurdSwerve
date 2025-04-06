@@ -48,6 +48,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     private static List<CoralObject> corals = new ArrayList<>();
     private static List<CoralObject> zero = new ArrayList<>();
     private static CoralArrayManager coralManager = new CoralArrayManager();
+    static boolean coralInRange = false;
        
         private Field2d field = new Field2d(); 
           
@@ -130,8 +131,9 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             
 
             corals = coralArrayUpdateReturn();
-            if (corals.size() > 0) {
             SmartDashboard.putNumber("size", corals.size());
+            coralInRange = coralInRange();
+            if (corals.size() > 0) {
             SmartDashboard.putNumber("coralX", corals.get(corals.size() - 1).getPose().getX());
             SmartDashboard.putNumber("coralY", corals.get(corals.size() - 1).getPose().getY());
         }
@@ -274,7 +276,6 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             coralManager.distanceAndYawUpdate(corals, getCurrentPose());
             coralManager.expiryFilter(corals, hb, fps);
             coralManager.displacementFilter(corals);
-            SmartDashboard.putBoolean("coralInRange", coralManager.getCoralInRange(corals, getCurrentPose()));
             return corals;
         } else {
             if (visionFront.hasTarget()) {
@@ -287,6 +288,11 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
                 return coralManager.selectCoral(corals);
             }
         }
+    }
+
+    public boolean coralInRange() {
+        coralInRange = coralManager.getCoralInRange(corals, getCurrentPose());
+        return coralInRange; 
     }
 
     /**

@@ -171,7 +171,7 @@ public class CoralArrayManager {
 
         int sizeCoral = corals.size();
 
-        double minRange = 0.6096; //2 ft in m
+        double minRange = 1; //2 ft in m
 
         for (int i = 0; i < sizeCoral; i++) {
             CoralObject coralChecked = corals.get(i);
@@ -190,6 +190,31 @@ public class CoralArrayManager {
         }
 
         return coralInRange;
+    }
+
+    public CoralObject getClosestCoral(List<CoralObject> corals) {
+        ArrayList<DoubleSupplier> distances = new ArrayList<>();
+        int sizeCorals = corals.size();
+        for (int i = 0; i < sizeCorals - 1; i++) {
+            double distanceNew = corals.get(i).getDistance();
+            distances.add(() -> distanceNew);
+        }
+        int sizeDistances = distances.size();
+        int indexMinDistance = 0;
+
+        for (int i = 1; i < sizeDistances; i++) {
+            double distanceMinCurrent = distances.get(indexMinDistance).getAsDouble();
+            double distanceMinProspective = distances.get(i).getAsDouble();
+
+            if (distanceMinProspective < distanceMinCurrent) {
+                indexMinDistance = i;
+            }
+            
+        }
+
+        CoralObject coralClosest = corals.get(indexMinDistance);
+        
+        return coralClosest;
     }
 
 

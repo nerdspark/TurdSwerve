@@ -197,6 +197,7 @@ public static class Vision {
         // public static final double kLimeLightAOD = -15.0;
 
         public static boolean kCoralTargeted = false;
+        public static boolean kCoralInRange = false;
 
         public static final boolean USE_LIMELIGHT = true;
 
