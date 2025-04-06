@@ -274,6 +274,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             coralManager.distanceAndYawUpdate(corals, getCurrentPose());
             coralManager.expiryFilter(corals, hb, fps);
             coralManager.displacementFilter(corals);
+            SmartDashboard.putBoolean("coralInRange", coralManager.getCoralInRange(corals, getCurrentPose()));
             return corals;
         } else {
             if (visionFront.hasTarget()) {

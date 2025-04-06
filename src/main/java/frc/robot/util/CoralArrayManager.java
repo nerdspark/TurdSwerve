@@ -162,4 +162,35 @@ public class CoralArrayManager {
 
         return corals;
     }
+
+    public boolean getCoralInRange(List<CoralObject> corals, Pose2d pose) {
+        boolean coralInRange = false;
+        
+        double poseX = pose.getX();
+        double poseY = pose.getY();
+
+        int sizeCoral = corals.size();
+
+        double minRange = 0.6096; //2 ft in m
+
+        for (int i = 0; i < sizeCoral; i++) {
+            CoralObject coralChecked = corals.get(i);
+
+            Pose2d coralPose = coralChecked.getPose();
+
+            double coralX = coralPose.getX();
+            double coralY = coralPose.getY();
+
+            double distance = Math.sqrt(Math.pow((coralX - poseX), 2) + 
+            Math.pow(coralY - poseY, 2));
+
+            if (distance <= minRange) {
+                coralInRange = true;
+            }
+        }
+
+        return coralInRange;
+    }
+
+
 }
