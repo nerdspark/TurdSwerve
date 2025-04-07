@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -45,8 +46,8 @@ import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.Vision;
 
 public class RobotContainer {
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.75; // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.03).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.75 * 0.5; // kSpeedAt12Volts desired top speed
+    private double MaxAngularRate = RotationsPerSecond.of(0.1).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -84,31 +85,30 @@ public class RobotContainer {
     private void configureBindings() {
         
       Trigger coralInRange = new Trigger(() -> poseEstimatorSubsystem.coralInRange());
+      Trigger coralAutoTarget = new Trigger(() -> Constants.Vision.kCoralAutoTarget);
+      Trigger coralInList = new Trigger(() -> poseEstimatorSubsystem.coralInList());
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         // if (!poseEstimatorSubsystem.coralInRange()){
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed * 0.25) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed * 0.25) // Drive left with negative X (left)
+                drive.withVelocityX(joystick.getLeftY() * MaxSpeed * 0.25) // Drive forward with negative Y (forward)
+                    .withVelocityY(joystick.getLeftX() * MaxSpeed * 0.25) // Drive left with negative X (left)
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
 
-        coralInRange.onTrue(new DriveToCoral(drivetrain, () -> poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose()));
+        coralInRange.and(coralAutoTarget).and(coralInList).onTrue(new DriveToCoral(drivetrain, () -> new Pose2d(poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose().getX(), 
+        poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose().getY(), 
+        poseEstimatorSubsystem.getCurrentPose().getRotation())));
         // } else if (poseEstimatorSubsystem.coralInRange()) {
         //     drivetrain.setDefaultCommand(new DriveToCoral(drivetrain, () -> poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose()));
-        // }
-
-        
-
-        if (Constants.Vision.USE_LIMELIGHT) {    
+        // } 
           //joystick.y().whileTrue(new DriveToPoseCommand(drivetrain, () -> poseEstimatorSubsystem.getCurrentPose(), () -> new Pose2d(-2.0, -2.0, new Rotation2d(0)), () -> poseEstimatorSubsystem.getCurrentPose().getRotation()));
           //joystick.y().whileTrue(new DriveToPose(drivetrain, () -> new Pose2d(1.0, 1.0, new Rotation2d(0))));
           //joystick.y().toggleOnTrue(new DriveToCoral(drivetrain, () -> new Pose2d(2.0, 2.0, new Rotation2d(0))));
-          joystick.y().whileTrue(new DriveToCoral(drivetrain, () -> poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose()));
-        }
+        joystick.y().onTrue(new InstantCommand(() -> Constants.Vision.kCoralAutoTarget = true));
 
         // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         // joystick.b().whileTrue(drivetrain.applyRequest(() ->

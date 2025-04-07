@@ -132,6 +132,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
             corals = coralArrayUpdateReturn();
             SmartDashboard.putNumber("size", corals.size());
+            SmartDashboard.putBoolean("targeting", Constants.Vision.kCoralTargeted);
             coralInRange = coralInRange();
             if (corals.size() > 0) {
             SmartDashboard.putNumber("coralX", corals.get(corals.size() - 1).getPose().getX());
@@ -293,6 +294,10 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     public boolean coralInRange() {
         coralInRange = coralManager.getCoralInRange(corals, getCurrentPose());
         return coralInRange; 
+    }
+
+    public boolean coralInList() {
+        return (corals.size() > 0);
     }
 
     /**

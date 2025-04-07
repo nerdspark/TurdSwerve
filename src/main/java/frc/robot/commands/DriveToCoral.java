@@ -59,7 +59,7 @@ private final ProfiledPIDController driveController =
           15, 0, 0.1, new TrapezoidProfile.Constraints(Constants.Vision.MAX_VELOCITY,Constants.Vision.MAX_ACCELARATION), loopPeriodSecs); //10, 0, 0
   private final ProfiledPIDController thetaController =
       new ProfiledPIDController(
-          7, 0,0, new TrapezoidProfile.Constraints(Math.toRadians(Constants.Vision.MAX_VELOCITY_ROTATION), Math.toRadians(Constants.Vision.MAX_ACCELARATION_ROTATION)), loopPeriodSecs); //3, 10, 0
+          0.7, 0,0.201892, new TrapezoidProfile.Constraints(Math.toRadians(Constants.Vision.MAX_VELOCITY_ROTATION), Math.toRadians(Constants.Vision.MAX_ACCELARATION_ROTATION)), loopPeriodSecs); //3, 10, 0
  private double driveErrorAbs;
   private double thetaErrorAbs;
   private Translation2d lastSetpointTranslation;
@@ -175,7 +175,7 @@ private final ProfiledPIDController driveController =
             .getTranslation();
 
     // Scale feedback velocities by input ff
-    final double linearS = linearFF.get().getNorm() * 3.0;
+    final double linearS = linearFF.get().getNorm() * 6.0;
     final double thetaS = Math.abs(omegaFF.getAsDouble()) * 3.0;
     if (Vision.DOGLOG_ENABLED){
     DogLog.log("DriveToPose/driveVelocity.X", driveVelocity.getX());
@@ -188,7 +188,7 @@ private final ProfiledPIDController driveController =
 
     if(linearS >0)
     driveVelocity =
-        driveVelocity.interpolate(linearFF.get().times(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond)), linearS);
+        driveVelocity.interpolate(linearFF.get().times(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond)), linearS).times(3);
     if(thetaS >0 )
     thetaVelocity =
         MathUtil.interpolate(
@@ -231,6 +231,7 @@ private final ProfiledPIDController driveController =
   public void end(boolean interrupted) {
     running = false;
     Constants.Vision.kCoralTargeted = false;
+    Constants.Vision.kCoralAutoTarget = false;
     drive.applyRequest(() -> new SwerveRequest.SwerveDriveBrake());
     if (Vision.DOGLOG_ENABLED){
 

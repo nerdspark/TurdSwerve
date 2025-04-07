@@ -146,10 +146,10 @@ public static class Vision {
 
         public static final double TRANSLATION_TOLERANCE_X = 0.01; // Changed from 0.05 3/8/25
         public static final double TRANSLATION_TOLERANCE_Y = 0.01; // Changed from 0.05 3/8/25
-        public static final double ROTATION_TOLERANCE = Math.toRadians(1.0); // /deg
+        public static final double ROTATION_TOLERANCE = Math.toRadians(1); // /deg
 
         //Below same as pathplanner constants
-        public static final double MAX_VELOCITY = 4.5; 
+        public static final double MAX_VELOCITY = 15; 
         public static final double MAX_ACCELARATION = 2; 
         public static final double MAX_VELOCITY_ROTATION = 540; 
         public static final double MAX_ACCELARATION_ROTATION = 720;
@@ -198,6 +198,7 @@ public static class Vision {
 
         public static boolean kCoralTargeted = false;
         public static boolean kCoralInRange = false;
+        public static boolean kCoralAutoTarget = false;
 
         public static final boolean USE_LIMELIGHT = true;
 
