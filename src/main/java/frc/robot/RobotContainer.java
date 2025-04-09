@@ -39,7 +39,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.DriveToCoral;
-import frc.robot.commands.DriveToPose;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
@@ -99,9 +98,7 @@ public class RobotContainer {
             )
         );
 
-        coralInRange.and(coralAutoTarget).and(coralInList).onTrue(new DriveToCoral(drivetrain, () -> new Pose2d(poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose().getX(), 
-        poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose().getY(), 
-        poseEstimatorSubsystem.getCurrentPose().getRotation())));
+        coralInRange.and(coralAutoTarget).and(coralInList).onTrue(new DriveToCoral(drivetrain, () -> poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose()));
         // } else if (poseEstimatorSubsystem.coralInRange()) {
         //     drivetrain.setDefaultCommand(new DriveToCoral(drivetrain, () -> poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose()));
         // } 

@@ -11,9 +11,10 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
-/** Add your docs here. */
+/** Manages a coral list. */
 public class CoralArrayManager {
 
+    /** Chooses a coral to target and clears out others. */
     public List<CoralObject> selectCoral(List<CoralObject> corals) {
         ArrayList<DoubleSupplier> distances = new ArrayList<>();
         int sizeCorals = corals.size();
@@ -56,7 +57,7 @@ public class CoralArrayManager {
 
         return corals;
     }
-
+    /** Filters outdated corals from the list. */
     public List<CoralObject> expiryFilter(List<CoralObject> corals, double hb, double fps) {
         double expiryFrameDiff = fps * 5;
         int sizeCorals = corals.size();
@@ -84,8 +85,9 @@ public class CoralArrayManager {
         return corals;
     }
 
+    /** Filters out corals that are too close together to be considered distinct, removing the older version. */
     public List<CoralObject> displacementFilter(List<CoralObject> corals) {
-        double maxDisplacement = 0.0508;
+        double maxDisplacement = 0.3;
         int sizeCorals = corals.size();
 
         for (int i = 0; i < sizeCorals - 1; i++) {
@@ -134,10 +136,10 @@ public class CoralArrayManager {
         return corals;
     }
 
+    /** Updates the distance and angle to each coral in the list. */
     public List<CoralObject> distanceAndYawUpdate(List<CoralObject> corals, Pose2d pose) {
         double poseX = pose.getX();
         double poseY = pose.getY();
-        Rotation2d poseYaw = pose.getRotation();
         
         int sizeCorals = corals.size();
 
@@ -152,7 +154,9 @@ public class CoralArrayManager {
             double distance = Math.sqrt(Math.pow((coralX - poseX), 2) + 
             Math.pow(coralY - poseY, 2));
 
-            Pose2d updatedCoralPose = new Pose2d(coralX, coralY, poseYaw);
+            Rotation2d coralYawNew = new Rotation2d(Math.atan2(coralY - poseY, coralX - poseX));
+
+            Pose2d updatedCoralPose = new Pose2d(coralX, coralY, coralYawNew);
 
             coralToUpdate.setCoralPose(updatedCoralPose);
             coralToUpdate.setCoralDistance(distance);
@@ -163,6 +167,7 @@ public class CoralArrayManager {
         return corals;
     }
 
+    /** Detects if a coral is within a certain distance. */
     public boolean getCoralInRange(List<CoralObject> corals, Pose2d pose) {
         boolean coralInRange = false;
         
@@ -192,6 +197,7 @@ public class CoralArrayManager {
         return coralInRange;
     }
 
+    /** Returns the closest coral in the list. */
     public CoralObject getClosestCoral(List<CoralObject> corals) {
         ArrayList<DoubleSupplier> distances = new ArrayList<>();
         int sizeCorals = corals.size();

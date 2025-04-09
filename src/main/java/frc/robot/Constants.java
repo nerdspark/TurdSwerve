@@ -146,7 +146,7 @@ public static class Vision {
 
         public static final double TRANSLATION_TOLERANCE_X = 0.01; // Changed from 0.05 3/8/25
         public static final double TRANSLATION_TOLERANCE_Y = 0.01; // Changed from 0.05 3/8/25
-        public static final double ROTATION_TOLERANCE = Math.toRadians(1); // /deg
+        public static final double ROTATION_TOLERANCE = Math.toRadians(10); // /deg
 
         //Below same as pathplanner constants
         public static final double MAX_VELOCITY = 15; 

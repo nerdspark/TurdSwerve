@@ -59,7 +59,7 @@ private final ProfiledPIDController driveController =
           15, 0, 0.1, new TrapezoidProfile.Constraints(Constants.Vision.MAX_VELOCITY,Constants.Vision.MAX_ACCELARATION), loopPeriodSecs); //10, 0, 0
   private final ProfiledPIDController thetaController =
       new ProfiledPIDController(
-          0.7, 0,0.201892, new TrapezoidProfile.Constraints(Math.toRadians(Constants.Vision.MAX_VELOCITY_ROTATION), Math.toRadians(Constants.Vision.MAX_ACCELARATION_ROTATION)), loopPeriodSecs); //3, 10, 0
+          0.5, 0,0, new TrapezoidProfile.Constraints(Math.toRadians(Constants.Vision.MAX_VELOCITY_ROTATION), Math.toRadians(Constants.Vision.MAX_ACCELARATION_ROTATION)), loopPeriodSecs); //3, 10, 0
  private double driveErrorAbs;
   private double thetaErrorAbs;
   private Translation2d lastSetpointTranslation;
@@ -92,7 +92,7 @@ private final ProfiledPIDController driveController =
   public void initialize() {
 
     driveController.setTolerance(Constants.Vision.TRANSLATION_TOLERANCE_X, Constants.Vision.VELOCITY_TOLERANCE_X);
-    thetaController.setTolerance(Constants.Vision.ROTATION_TOLERANCE,Constants.Vision.VELOCITY_TOLERANCE_OMEGA);
+    thetaController.setTolerance(Constants.Vision.ROTATION_TOLERANCE, Constants.Vision.VELOCITY_TOLERANCE_OMEGA);
     // Reset all controllers
     var currentPose = drive.getState().Pose;
 
@@ -128,7 +128,7 @@ private final ProfiledPIDController driveController =
         SignalLogger.writeDouble("Y", error.getY());
         SignalLogger.writeDouble("O", error.getRotation().getDegrees());
 
-        System.out.println("x: " + error.getX() + "; Y: " + error.getY() + "; O: " + error.getRotation().getDegrees());
+        System.out.println("x: " + error.getX() + "; Y: " + error.getY() + "; O: " + Math.abs((currentPose.getRotation().getRadians()) - (targetPose.getRotation().getRadians()) + Math.PI));
         
     // Calculate drive speed
     double currentDistance =
@@ -163,7 +163,7 @@ private final ProfiledPIDController driveController =
          thetaController.calculate(
                 currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
     thetaErrorAbs =
-        Math.abs((currentPose.getRotation().minus(targetPose.getRotation())).getRadians());
+        Math.abs((currentPose.getRotation().getRadians()) - (targetPose.getRotation().getRadians()) + Math.PI);
     if (thetaErrorAbs < thetaController.getPositionTolerance()) thetaVelocity = 0.0;
 
 
@@ -242,12 +242,14 @@ private final ProfiledPIDController driveController =
 
   /** Checks if the robot is stopped at the final pose. */
   public boolean atGoal() {
+    thetaErrorAbs =
+        Math.abs((drive.getState().Pose.getRotation().getRadians()) - (poseSupplier.get().getRotation().getRadians()) + Math.PI);
+    //boolean thetaAtGoal = (Math.abs(drive.getState().Pose.getRotation().getDegrees() - poseSupplier.get().getRotation().getDegrees()) < 20);
     if (Vision.DOGLOG_ENABLED){
-
     DogLog.log("DriveToPose/DriveControllerAtGoal1", driveController.atGoal());
     DogLog.log("DriveToPose/ThetaControllerAtGoal1", thetaController.atGoal());
     }
-    return running && driveController.atGoal() && thetaController.atGoal();
+    return running && driveController.atGoal() && (thetaErrorAbs < thetaController.getPositionTolerance());
   }
 
   /** Checks if the robot pose is within the allowed drive and theta tolerances. */
