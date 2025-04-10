@@ -36,12 +36,12 @@
    "val":4.0
   },
   "gearing":{
-   "exp":"6.5",
-   "val":6.5
+   "exp":"1.38",
+   "val":1.38
   },
   "radius":{
-   "exp":"2 in",
-   "val":0.0508
+   "exp":"1 in",
+   "val":0.0254
   },
   "vmax":{
    "exp":"5800 RPM",

@@ -3,9 +3,10 @@
   "robotLength": 0.4064,
   "holonomicMode": true,
   "pathFolders": [
-    "NemesisPrime",
+    "4 Piece",
     "CenterAuton",
-    "Test_NemesisPrime"
+    "LoliPops",
+    "SourceAuton"
   ],
   "autoFolders": [
     "CenterAuton",
