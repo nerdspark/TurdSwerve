@@ -26,7 +26,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Test_NemesisPrime_Teleop2"
+            "pathName": "Test_Interrupt"
           }
         }
       ]
