@@ -267,7 +267,7 @@ private final ProfiledPIDController driveController =
       // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return this.atGoal();
+        return this.atGoal() || !Constants.Vision.kCoralAutoTarget;
     }
 
   
