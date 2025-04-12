@@ -10,6 +10,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 /** Manages a coral list. */
 public class CoralArrayManager {
@@ -176,7 +177,7 @@ public class CoralArrayManager {
 
         int sizeCoral = corals.size();
 
-        double minRange = 1; //2 ft in m
+        double maxRange = 1.52; //2 ft in m
 
         for (int i = 0; i < sizeCoral; i++) {
             CoralObject coralChecked = corals.get(i);
@@ -189,7 +190,7 @@ public class CoralArrayManager {
             double distance = Math.sqrt(Math.pow((coralX - poseX), 2) + 
             Math.pow(coralY - poseY, 2));
 
-            if (distance <= minRange) {
+            if (distance <= maxRange) {
                 coralInRange = true;
             }
         }
@@ -221,6 +222,15 @@ public class CoralArrayManager {
         CoralObject coralClosest = corals.get(indexMinDistance);
         
         return coralClosest;
+    }
+
+    public void coralMap(List<CoralObject> corals, Field2d field) {
+        int sizeCorals = corals.size();
+
+        for (int i = 0; i < sizeCorals; i++) {
+            CoralObject coralMapped = corals.get(i);
+            field.getObject("Coral " + i).setPose(coralMapped.getPose());
+        }
     }
 
 

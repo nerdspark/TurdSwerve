@@ -135,7 +135,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             SmartDashboard.putBoolean("targeting", Constants.Vision.kCoralTargeted);
             coralInRange = coralInRange();
             
-            
+            coralManager.coralMap(corals, field);
 
             if (corals.size() > 0) {
                 Pose2d coralPose = corals.get(corals.size() - 1).getPose();
