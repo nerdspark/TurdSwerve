@@ -177,7 +177,7 @@ public class CoralArrayManager {
 
         int sizeCoral = corals.size();
 
-        double maxRange = 1.52; //2 ft in m
+        double maxRange = 1.52; //5 ft in m
 
         for (int i = 0; i < sizeCoral; i++) {
             CoralObject coralChecked = corals.get(i);

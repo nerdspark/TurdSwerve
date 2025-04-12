@@ -39,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.DriveToCoral;
+import frc.robot.commands.DriveToCoralAuto;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
@@ -66,6 +67,10 @@ public class RobotContainer {
     public final Vision vision = new Vision(Constants.Vision.kCameraNameFront, Constants.Vision.kRobotToCamFront);
     public final PoseEstimatorSubsystem poseEstimatorSubsystem = new PoseEstimatorSubsystem(drivetrain);
 
+    Trigger coralInRange = new Trigger(() -> poseEstimatorSubsystem.coralInRange());
+    Trigger coralAutoTarget = new Trigger(() -> Constants.Vision.kCoralAutoTarget);
+    Trigger coralInList = new Trigger(() -> poseEstimatorSubsystem.coralInList());
+
     public RobotContainer() {
         configureNamedCommands();
       
@@ -79,14 +84,12 @@ public class RobotContainer {
     private void configureNamedCommands() {
       NamedCommands.registerCommand("printTest", Commands.print("[Path Planner Auto with Choreo Path] Marker Auto Action Test"));
       NamedCommands.registerCommand("printTestTeleop", Commands.print("[Path Planner] Marker Teleop Auto Action Test"));
-      NamedCommands.registerCommand("driveToCoral", new DriveToCoral(drivetrain, () -> poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose()));
+      NamedCommands.registerCommand("driveToCoral", new DriveToCoralAuto(drivetrain, () -> poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose()));
     }
 
     private void configureBindings() {
         
-      Trigger coralInRange = new Trigger(() -> poseEstimatorSubsystem.coralInRange());
-      Trigger coralAutoTarget = new Trigger(() -> Constants.Vision.kCoralAutoTarget);
-      Trigger coralInList = new Trigger(() -> poseEstimatorSubsystem.coralInList());
+      
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         // if (!poseEstimatorSubsystem.coralInRange()){
