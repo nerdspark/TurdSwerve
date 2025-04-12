@@ -106,7 +106,7 @@ public class RobotContainer {
           //joystick.y().whileTrue(new DriveToPoseCommand(drivetrain, () -> poseEstimatorSubsystem.getCurrentPose(), () -> new Pose2d(-2.0, -2.0, new Rotation2d(0)), () -> poseEstimatorSubsystem.getCurrentPose().getRotation()));
           //joystick.y().whileTrue(new DriveToPose(drivetrain, () -> new Pose2d(1.0, 1.0, new Rotation2d(0))));
           //joystick.y().toggleOnTrue(new DriveToCoral(drivetrain, () -> new Pose2d(2.0, 2.0, new Rotation2d(0))));
-        joystick.y().onTrue(new InstantCommand(() -> Constants.Vision.kCoralAutoTarget = true));
+        joystick.y().onTrue(new InstantCommand(() -> Constants.Vision.kCoralAutoTarget = !Constants.Vision.kCoralAutoTarget));
 
         // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         // joystick.b().whileTrue(drivetrain.applyRequest(() ->
