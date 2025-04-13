@@ -44,6 +44,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.Vision;
+import frc.robot.util.CoralArrayManager;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.75; // kSpeedAt12Volts desired top speed
@@ -84,7 +85,8 @@ public class RobotContainer {
     private void configureNamedCommands() {
       NamedCommands.registerCommand("printTest", Commands.print("[Path Planner Auto with Choreo Path] Marker Auto Action Test"));
       NamedCommands.registerCommand("printTestTeleop", Commands.print("[Path Planner] Marker Teleop Auto Action Test"));
-      NamedCommands.registerCommand("driveToCoral", new DriveToCoralAuto(drivetrain, () -> poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose()));
+      //NamedCommands.registerCommand("driveToCoral", new DriveToCoralAuto(drivetrain, () -> new Pose2d(1.0, 6.0, new Rotation2d(Math.PI))));
+      NamedCommands.registerCommand("driveToCoral", new DriveToCoralAuto(drivetrain, () -> (poseEstimatorSubsystem.coralArrayUpdateReturn().size() > 0) ? poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose() : poseEstimatorSubsystem.getCurrentPose()));
     }
 
     private void configureBindings() {
@@ -97,12 +99,12 @@ public class RobotContainer {
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
                 drive.withVelocityX(joystick.getLeftY() * MaxSpeed * 0.25) // Drive forward with negative Y (forward)
-                    .withVelocityY(joystick.getLeftX() * MaxSpeed * 0.25) // Drive left with negative X (left)
+                    .withVelocityY(-joystick.getLeftX() * MaxSpeed * 0.25) // Drive left with negative X (left)
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
 
-        coralInRange.and(coralAutoTarget).and(coralInList).onTrue(new DriveToCoral(drivetrain, () -> poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose()));
+        coralAutoTarget.and(coralInList).onTrue(new DriveToCoral(drivetrain, () -> poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose()));
         // } else if (poseEstimatorSubsystem.coralInRange()) {
         //     drivetrain.setDefaultCommand(new DriveToCoral(drivetrain, () -> poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose()));
         // } 

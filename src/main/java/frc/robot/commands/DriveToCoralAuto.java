@@ -59,7 +59,7 @@ private final ProfiledPIDController driveController =
           15, 0, 0.1, new TrapezoidProfile.Constraints(Constants.Vision.MAX_VELOCITY,Constants.Vision.MAX_ACCELARATION), loopPeriodSecs); //10, 0, 0
   private final ProfiledPIDController thetaController =
       new ProfiledPIDController(
-          0.5, 0,0, new TrapezoidProfile.Constraints(Math.toRadians(Constants.Vision.MAX_VELOCITY_ROTATION), Math.toRadians(Constants.Vision.MAX_ACCELARATION_ROTATION)), loopPeriodSecs); //3, 10, 0
+          7, 0,0, new TrapezoidProfile.Constraints(Math.toRadians(Constants.Vision.MAX_VELOCITY_ROTATION), Math.toRadians(Constants.Vision.MAX_ACCELARATION_ROTATION)), loopPeriodSecs); //3, 10, 0
  private double driveErrorAbs;
   private double thetaErrorAbs;
   private Translation2d lastSetpointTranslation;
@@ -249,7 +249,7 @@ private final ProfiledPIDController driveController =
     DogLog.log("DriveToPose/DriveControllerAtGoal1", driveController.atGoal());
     DogLog.log("DriveToPose/ThetaControllerAtGoal1", thetaController.atGoal());
     }
-    return running && driveController.atGoal() && (thetaErrorAbs < thetaController.getPositionTolerance());
+    return running && driveController.atGoal() && (thetaController.atGoal());
   }
 
   /** Checks if the robot pose is within the allowed drive and theta tolerances. */

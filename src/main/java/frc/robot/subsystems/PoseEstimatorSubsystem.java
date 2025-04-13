@@ -4,6 +4,7 @@ import static frc.robot.Constants.Vision.USE_VISION;
 import static frc.robot.Constants.Vision.kCameraNameBack;
 import static frc.robot.Constants.Vision.kCameraNameFront;
 import static frc.robot.Constants.Vision.kLimeLightHeight;
+import static frc.robot.Constants.Vision.kLimeLightYOffset;
 import static frc.robot.Constants.Vision.kRobotToCamBack;
 import static frc.robot.Constants.Vision.kRobotToCamFront;
 
@@ -212,7 +213,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
         SmartDashboard.putNumber("poseX", poseX);
         SmartDashboard.putNumber("poseY", poseY);
-        SmartDashboard.putNumber("yaw", -yaw.getDegrees());
+        SmartDashboard.putNumber("yaw", yaw.getDegrees());
 
         double tx = visionFront.getTx();
         double ty = visionFront.getTy();
@@ -221,7 +222,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         boolean ignored = false;
         boolean targeted = false;
 
-        Translation2d offset = new Translation2d();
+        Translation2d offset = new Translation2d(-Constants.Vision.kLimeLightYOffset, yaw);
         //Translation2d offset = new Translation2d(-0.90, new Rotation2d((-yaw.getDegrees() + tx) * Math.PI / 180));
 
         //DriverStation.getMatchTime();
@@ -243,7 +244,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             upfall = false;
             ignored = true;
         } else if (boundingHeight <= boundingWidth && boundingHeight != 0.0) {
-            distance = (Constants.Vision.kCoralCenterFallenHeight - kLimeLightHeight) / Math.tan((Constants.Vision.kLimeLightAOD+ty) * (Math.PI / 180)) / Math.cos((tx) * Math.PI / 180);
+            distance = ((Constants.Vision.kCoralCenterFallenHeight - kLimeLightHeight) / Math.tan((Constants.Vision.kLimeLightAOD+ty) * (Math.PI / 180))) / Math.cos((tx) * Math.PI / 180);
             upfall = true;
             ignored = false;
         } else {
@@ -253,7 +254,9 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         }
         if (distance > 0.0) {
             Rotation2d coralOrientation = new Rotation2d(theta);
-            Pose2d coralPose = new Pose2d(-distance * Math.cos((-yaw.getDegrees()+tx) * (Math.PI / 180)) + Constants.Vision.kLimeLightXOffset + poseX + offset.getX(), distance * Math.sin((-yaw.getDegrees()+tx) * (Math.PI / 180)) + Constants.Vision.kLimeLightYOffset + poseY + offset.getY(), yaw);
+            Pose2d coralPose = new Pose2d(distance * Math.cos((yaw.getDegrees()-tx) * (Math.PI / 180)) + poseX + offset.getX(), 
+                                          distance * Math.sin((yaw.getDegrees()-tx) * (Math.PI / 180)) + poseY + offset.getY(), 
+                                          yaw);
             //Pose2d coralPose = new Pose2d(2 + offset.getX(), 2 + offset.getY(), yaw);
             SmartDashboard.putNumber("distance", distance);
             ignored = false;
@@ -280,6 +283,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             coralManager.distanceAndYawUpdate(corals, getCurrentPose());
             coralManager.expiryFilter(corals, hb, fps);
             coralManager.displacementFilter(corals);
+            coralManager.possibilityFilter(corals);
             return corals;
         } else {
             return coralManager.selectCoral(corals);

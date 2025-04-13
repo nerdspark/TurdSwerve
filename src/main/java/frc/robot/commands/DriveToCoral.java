@@ -163,7 +163,7 @@ private final ProfiledPIDController driveController =
          thetaController.calculate(
                 currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
     thetaErrorAbs =
-        Math.abs((currentPose.getRotation().getRadians()) - (targetPose.getRotation().getRadians()) + Math.PI);
+        Math.abs((currentPose.getRotation().getRadians()) - (targetPose.getRotation().getRadians()));
     if (thetaErrorAbs < thetaController.getPositionTolerance()) thetaVelocity = 0.0;
 
 
@@ -249,7 +249,7 @@ private final ProfiledPIDController driveController =
     DogLog.log("DriveToPose/DriveControllerAtGoal1", driveController.atGoal());
     DogLog.log("DriveToPose/ThetaControllerAtGoal1", thetaController.atGoal());
     }
-    return running && driveController.atGoal() && (thetaErrorAbs < thetaController.getPositionTolerance());
+    return running && driveController.atGoal() && thetaController.atGoal();
   }
 
   /** Checks if the robot pose is within the allowed drive and theta tolerances. */

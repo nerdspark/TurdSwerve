@@ -4,8 +4,9 @@
   "holonomicMode": true,
   "pathFolders": [
     "CenterAuton",
-    "NemesisPrime",
     "LoliPops",
+    "NemesisPrime",
+    "coralSeek",
     "Test_NemesisPrime"
   ],
   "autoFolders": [
