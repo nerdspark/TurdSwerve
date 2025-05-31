@@ -132,8 +132,11 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             
 
             corals = coralArrayUpdateReturn();
+
+            SmartDashboard.putString("class", visionFront.getObjectClass());
             SmartDashboard.putNumber("size", corals.size());
             SmartDashboard.putBoolean("targeting", Constants.Vision.kCoralTargeted);
+            SmartDashboard.putBoolean("b", (visionFront.getObjectClass().equals("coral")));
             coralInRange = coralInRange();
             
             coralManager.coralMap(corals, field);
@@ -275,7 +278,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     }
 
     public List<CoralObject> coralArrayUpdateReturn() {
-        if (!Constants.Vision.kCoralTargeted) {
+        if (!Constants.Vision.kCoralTargeted && (visionFront.getObjectClass().equals("coral"))) {
             CoralObject newCoral = newCoral();
             double hb = visionFront.getHB();
             double fps = visionFront.getFPS();
@@ -283,7 +286,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             coralManager.distanceAndYawUpdate(corals, getCurrentPose());
             coralManager.expiryFilter(corals, hb, fps);
             coralManager.displacementFilter(corals);
-            coralManager.possibilityFilter(corals);
+            //coralManager.possibilityFilter(corals);
             return corals;
         } else {
             return coralManager.selectCoral(corals);
