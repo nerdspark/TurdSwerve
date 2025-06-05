@@ -197,6 +197,10 @@ public static class Vision {
         // public static final double kLimeLightYOffset = -0.18415;
         // public static final double kLimeLightAOD = -40.0;
 
+        public static boolean kAlgaeTargeted = false;
+        public static boolean kAlgaeInRange = false;
+        public static boolean kAlgaeAutoTarget = false;
+        
         public static boolean kCoralTargeted = false;
         public static boolean kCoralInRange = false;
         public static boolean kCoralAutoTarget = false;

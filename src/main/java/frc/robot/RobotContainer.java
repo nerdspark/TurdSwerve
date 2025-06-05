@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.DriveToAlgae;
 import frc.robot.commands.DriveToCoral;
 import frc.robot.commands.DriveToCoralAuto;
 import frc.robot.generated.TunerConstants;
@@ -72,6 +73,10 @@ public class RobotContainer {
     Trigger coralAutoTarget = new Trigger(() -> Constants.Vision.kCoralAutoTarget);
     Trigger coralInList = new Trigger(() -> poseEstimatorSubsystem.coralInList());
 
+    Trigger algaeInRange = new Trigger(() -> poseEstimatorSubsystem.algaeInRange());
+    Trigger algaeAutoTarget = new Trigger(() -> Constants.Vision.kAlgaeAutoTarget);
+    Trigger algaeInList = new Trigger(() -> poseEstimatorSubsystem.algaeInList());    
+
     public RobotContainer() {
         configureNamedCommands();
       
@@ -105,6 +110,7 @@ public class RobotContainer {
         );
 
         coralAutoTarget.and(coralInList).onTrue(new DriveToCoral(drivetrain, () -> poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose()));
+        algaeAutoTarget.and(algaeInList).onTrue(new DriveToAlgae(drivetrain, () -> poseEstimatorSubsystem.algaeArrayUpdateReturn().get(0).getPose()));
         // } else if (poseEstimatorSubsystem.coralInRange()) {
         //     drivetrain.setDefaultCommand(new DriveToCoral(drivetrain, () -> poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose()));
         // } 
@@ -112,6 +118,7 @@ public class RobotContainer {
           //joystick.y().whileTrue(new DriveToPose(drivetrain, () -> new Pose2d(1.0, 1.0, new Rotation2d(0))));
           //joystick.y().toggleOnTrue(new DriveToCoral(drivetrain, () -> new Pose2d(2.0, 2.0, new Rotation2d(0))));
         joystick.y().onTrue(new InstantCommand(() -> Constants.Vision.kCoralAutoTarget = !Constants.Vision.kCoralAutoTarget));
+        joystick.x().onTrue(new InstantCommand(() -> Constants.Vision.kAlgaeAutoTarget = !Constants.Vision.kAlgaeAutoTarget));
 
         // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         // joystick.b().whileTrue(drivetrain.applyRequest(() ->
