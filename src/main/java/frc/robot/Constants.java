@@ -55,6 +55,15 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
   public static boolean DOGLOG_ENABLED = true;
 
+
+  public static class Intake {
+    public static final int IntakeID = 0;
+    public static final int gearRatio = 1;
+  }
+  public static class FlyWheel{
+    public static final int flyWheelID = 0;
+    public static final int gearRatio = 1;
+  }
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final int kMotorPort = 0;
