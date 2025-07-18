@@ -24,18 +24,18 @@ public class Shooter extends SubsystemBase {
   public Shooter() {
     intake = new SparkMax(Constants.Intake.IntakeID, MotorType.kBrushless);
     flyWheel = new SparkMax(Constants.FlyWheel.flyWheelID, MotorType.kBrushless);
-    SparkMaxConfig config = new SparkMaxConfig();
-        config.idleMode(IdleMode.kBrake);
+    SparkMaxConfig intakeConfig = new SparkMaxConfig();
+        intakeConfig.idleMode(IdleMode.kBrake);
         
-        config.encoder.positionConversionFactor(360.0 / Constants.Intake.gearRatio)
+        intakeConfig.encoder.positionConversionFactor(360.0 / Constants.Intake.gearRatio)
         .velocityConversionFactor(360.0 / Constants.Intake.gearRatio / 60.0);
-    intake.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    intake.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     SparkMaxConfig flyWheelConfig = new SparkMaxConfig();
-        config.idleMode(IdleMode.kBrake);
+        flyWheelConfig.idleMode(IdleMode.kBrake);
         
-        config.encoder.positionConversionFactor(360.0 / Constants.FlyWheel.gearRatio)
+        flyWheelConfig.encoder.positionConversionFactor(360.0 / Constants.FlyWheel.gearRatio)
         .velocityConversionFactor(360.0 / Constants.FlyWheel.gearRatio / 60.0);
-    intake.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    flyWheel.configure(flyWheelConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
   public void setPowerIntake(double power){
     intake.set(power);
