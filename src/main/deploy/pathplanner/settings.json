@@ -4,15 +4,15 @@
   "holonomicMode": true,
   "pathFolders": [
     "CenterAuton",
-    "LoliPops",
     "NemesisPrime",
-    "coralSeek",
+    "Test_Prowl",
     "Test_NemesisPrime"
   ],
   "autoFolders": [
     "CenterAuton",
-    "NemesisPrime",
     "Choreo Autos",
+    "NemesisPrime",
+    "Test_Prowl",
     "Test_NemesisPrime"
   ],
   "defaultMaxVel": 5.45,

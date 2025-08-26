@@ -38,14 +38,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.DriveToAlgae;
 import frc.robot.commands.DriveToCoral;
-import frc.robot.commands.DriveToCoralAuto;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.PoseEstimatorSubsystem;
 import frc.robot.subsystems.Vision;
-import frc.robot.util.CoralArrayManager;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * 0.75; // kSpeedAt12Volts desired top speed
@@ -69,20 +66,14 @@ public class RobotContainer {
     public final Vision vision = new Vision(Constants.Vision.kCameraNameFront, Constants.Vision.kRobotToCamFront);
     public final PoseEstimatorSubsystem poseEstimatorSubsystem = new PoseEstimatorSubsystem(drivetrain);
 
-    Trigger coralInRange = new Trigger(() -> poseEstimatorSubsystem.coralInRange());
-    Trigger coralAutoTarget = new Trigger(() -> Constants.Vision.kCoralAutoTarget);
-    Trigger coralInList = new Trigger(() -> poseEstimatorSubsystem.coralInList());
-
-    Trigger algaeInRange = new Trigger(() -> poseEstimatorSubsystem.algaeInRange());
-    Trigger algaeAutoTarget = new Trigger(() -> Constants.Vision.kAlgaeAutoTarget);
-    Trigger algaeInList = new Trigger(() -> poseEstimatorSubsystem.algaeInList());    
-
     public RobotContainer() {
         configureNamedCommands();
       
         configureBindings();
-
-        configureAutoChooser();
+        
+        autoChooser = AutoBuilder.buildAutoChooser("Tests");
+        SmartDashboard.putData("Auto Mode", autoChooser);
+        //configureAutoChooser();
 
         PathfindingCommand.warmupCommand().schedule();
     }
@@ -90,13 +81,13 @@ public class RobotContainer {
     private void configureNamedCommands() {
       NamedCommands.registerCommand("printTest", Commands.print("[Path Planner Auto with Choreo Path] Marker Auto Action Test"));
       NamedCommands.registerCommand("printTestTeleop", Commands.print("[Path Planner] Marker Teleop Auto Action Test"));
-      //NamedCommands.registerCommand("driveToCoral", new DriveToCoralAuto(drivetrain, () -> new Pose2d(1.0, 6.0, new Rotation2d(Math.PI))));
-      NamedCommands.registerCommand("driveToCoral", new DriveToCoralAuto(drivetrain, () -> (poseEstimatorSubsystem.coralArrayUpdateReturn().size() > 0) ? poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose() : poseEstimatorSubsystem.getCurrentPose()));
     }
 
     private void configureBindings() {
         
-      
+      Trigger coralInRange = new Trigger(() -> poseEstimatorSubsystem.coralInRange());
+      Trigger coralAutoTarget = new Trigger(() -> Constants.Vision.kCoralAutoTarget);
+      Trigger coralInList = new Trigger(() -> poseEstimatorSubsystem.coralInList());
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         // if (!poseEstimatorSubsystem.coralInRange()){
@@ -105,12 +96,12 @@ public class RobotContainer {
             drivetrain.applyRequest(() ->
                 drive.withVelocityX(joystick.getLeftY() * MaxSpeed * 0.25) // Drive forward with negative Y (forward)
                     .withVelocityY(joystick.getLeftX() * MaxSpeed * 0.25) // Drive left with negative X (left)
-                    .withRotationalRate(joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
 
-        coralAutoTarget.and(coralInList).onTrue(new DriveToCoral(drivetrain, () -> poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose()));
-        algaeAutoTarget.and(algaeInList).onTrue(new DriveToAlgae(drivetrain, () -> poseEstimatorSubsystem.algaeArrayUpdateReturn().get(0).getPose()));
+        coralInRange.and(coralAutoTarget).and(coralInList).onTrue(new DriveToCoral(drivetrain, 
+        () -> poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose()));
         // } else if (poseEstimatorSubsystem.coralInRange()) {
         //     drivetrain.setDefaultCommand(new DriveToCoral(drivetrain, () -> poseEstimatorSubsystem.coralArrayUpdateReturn().get(0).getPose()));
         // } 
@@ -118,7 +109,6 @@ public class RobotContainer {
           //joystick.y().whileTrue(new DriveToPose(drivetrain, () -> new Pose2d(1.0, 1.0, new Rotation2d(0))));
           //joystick.y().toggleOnTrue(new DriveToCoral(drivetrain, () -> new Pose2d(2.0, 2.0, new Rotation2d(0))));
         joystick.y().onTrue(new InstantCommand(() -> Constants.Vision.kCoralAutoTarget = !Constants.Vision.kCoralAutoTarget));
-        joystick.x().onTrue(new InstantCommand(() -> Constants.Vision.kAlgaeAutoTarget = !Constants.Vision.kAlgaeAutoTarget));
 
         // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         // joystick.b().whileTrue(drivetrain.applyRequest(() ->
