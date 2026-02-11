@@ -100,7 +100,7 @@ public class TurdSwerve extends SubsystemBase {
   }
 
   public Rotation2d getGyro() {
-    return new Rotation2d(-gyro.getAngle()*Math.PI/180).minus(gyroResetAngle);
+    return new Rotation2d(-gyro.getYaw().getValueAsDouble()*Math.PI/180).minus(gyroResetAngle);
   }
 
   public void resetGyro() {

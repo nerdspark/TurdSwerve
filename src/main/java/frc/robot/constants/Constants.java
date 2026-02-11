@@ -4,8 +4,7 @@
 
 package frc.robot.constants;
 
-import com.revrobotics.CANSparkBase.IdleMode;
-
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 /** Add your docs here. */
 public final class Constants {

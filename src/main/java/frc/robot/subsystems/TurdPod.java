@@ -4,70 +4,80 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.AnalogEncoder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.AnalogEncoder;
+
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.ClosedLoopConfig;
+import com.revrobotics.spark.config.ClosedLoopConfigAccessor;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkMaxConfigAccessor;
+import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.ResetMode;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
+
 import frc.robot.constants.Constants;
 import frc.robot.constants.RobotMap;
 
 public class TurdPod extends SubsystemBase {
-
-  private final CANSparkMax azimuth;
-  private final CANSparkMax drive;
+  private final SparkMax azimuth;
+  private final SparkMax drive;
   private final AnalogEncoder absoluteEncoder;
 
+  private final ClosedLoopConfigAccessor azimuthPID;
   private final RelativeEncoder azimuthEncoder;
   private final RelativeEncoder driveEncoder;
-  private final SparkPIDController azimuthPID;
 
   private double azimuthDriveSpeedMultiplier;
   private double speed = 0;
   private double absoluteEncoderOffset;
   private double driveSpeedToPower = Constants.driveSpeedToPower;
 
+  private final SparkMaxConfig azimuthConfig;
+  private final SparkMaxConfig driveConfig;
 
   public TurdPod(int azimuthID, int driveID, int absoluteEncoderID, boolean azimuthInvert, boolean driveInvert, double absoluteEncoderOffset) {
-    azimuth = new CANSparkMax(azimuthID, MotorType.kBrushless);
-    drive = new CANSparkMax(driveID, MotorType.kBrushless);
+    azimuth = new SparkMax(azimuthID, MotorType.kBrushless);
+    drive = new SparkMax(driveID, MotorType.kBrushless);
     absoluteEncoder = new AnalogEncoder(absoluteEncoderID);
 
     azimuthEncoder = azimuth.getEncoder();
     driveEncoder = drive.getEncoder();
+
+    // Azimuth Configuration
+    this.azimuthConfig = new SparkMaxConfig();
+    azimuthConfig.encoder.positionConversionFactor(RobotMap.azimuthRadiansPerMotorRotation);
+    azimuthConfig.smartCurrentLimit(Constants.azimuthAmpLimit);
+    azimuthConfig.idleMode(Constants.azimuthMode);
+    azimuthConfig.inverted(azimuthInvert);
+    azimuth.configure(this.azimuthConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+    azimuthPID = azimuth.configAccessor.closedLoop;
+
+    // Drive Configuration
+    this.driveConfig = new SparkMaxConfig();
+    driveConfig.encoder.positionConversionFactor(RobotMap.driveMetersPerMotorRotation);
+    driveConfig.openLoopRampRate(Constants.driveMotorRampRate);
+    driveConfig.smartCurrentLimit(Constants.driveAmpLimit);
+    driveConfig.idleMode(Constants.driveMode);
+    driveConfig.inverted(driveInvert);    
+    drive.configure(this.driveConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     
-    azimuth.setInverted(azimuthInvert);
-    drive.setInverted(driveInvert);
-
-    driveEncoder.setPositionConversionFactor(RobotMap.driveMetersPerMotorRotation);
-    azimuthEncoder.setPositionConversionFactor(RobotMap.azimuthRadiansPerMotorRotation);
-    absoluteEncoder.setDistancePerRotation(RobotMap.absoluteRadiansPerEncoderRotation);
-
     // absoluteEncoder.setPositionOffset(absoluteEncoderOffset);
     this.absoluteEncoderOffset = absoluteEncoderOffset;
-
-    azimuth.setSmartCurrentLimit(Constants.azimuthAmpLimit);
-    drive.setSmartCurrentLimit(Constants.driveAmpLimit);
-
-    azimuth.setIdleMode(Constants.azimuthMode);
-    drive.setIdleMode(Constants.driveMode);
-
-    drive.setOpenLoopRampRate(Constants.driveMotorRampRate);
-
-    azimuthPID = azimuth.getPIDController();
 
     resetPod();
   }
   
   public void setAmpLimit(int ampLimit) {
-    drive.setSmartCurrentLimit(ampLimit);
+    driveConfig.smartCurrentLimit(ampLimit);
+    drive.configure(this.driveConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
   } 
 
   // public void setDriveSpeedtoPower(double driveSpeedToPower) {
@@ -84,7 +94,8 @@ public class TurdPod extends SubsystemBase {
   }
 
   public void resetZero() {
-    absoluteEncoderOffset = (absoluteEncoder.getAbsolutePosition() * 2*Math.PI);
+    double convertedPosition = absoluteEncoder.get() * RobotMap.absoluteRadiansPerEncoderRotation;
+    absoluteEncoderOffset = (convertedPosition * 2*Math.PI);
     SmartDashboard.putNumber((getPod() + " Encoder Offset"), absoluteEncoderOffset);
     resetPod();
   }
@@ -101,17 +112,22 @@ public class TurdPod extends SubsystemBase {
   }
 
   public void setPID(double P, double I, double D, double IZone, double outputRange, double ADMult) {
-    if (P != azimuthPID.getP()) {azimuthPID.setP(P);}
-    if (I != azimuthPID.getI()) {azimuthPID.setI(I);}
-    if (D != azimuthPID.getD()) {azimuthPID.setD(D);}
-    if (IZone != azimuthPID.getIZone()) {azimuthPID.setIZone(IZone);}
-    if (outputRange != azimuthPID.getOutputMax()) {azimuthPID.setOutputRange(-outputRange, outputRange);}
-    azimuthPID.setPositionPIDWrappingMaxInput(Math.PI);
-    azimuthPID.setPositionPIDWrappingMinInput(-Math.PI);
-    azimuthPID.setPositionPIDWrappingEnabled(true);
+    if (P != azimuthPID.getP()) {azimuthConfig.closedLoop.p(P);}
+    if (I != azimuthPID.getI()) {azimuthConfig.closedLoop.i(I);}
+    if (D != azimuthPID.getD()) {azimuthConfig.closedLoop.d(D);}
+    if (IZone != azimuthPID.getIZone()) {azimuthConfig.closedLoop.iZone(IZone);}
+    if (outputRange != azimuthPID.getMaxOutput()) {
+      azimuthConfig.closedLoop.minOutput(-outputRange);
+      azimuthConfig.closedLoop.maxOutput(-outputRange);
+    }
+    azimuthConfig.closedLoop.positionWrappingMaxInput(Math.PI);
+    azimuthConfig.closedLoop.positionWrappingMinInput(-Math.PI);
+    azimuthConfig.closedLoop.positionWrappingEnabled(true);
     // azimuthPID.setSmartMotionAllowedClosedLoopError(0, 0);
-    azimuth.setClosedLoopRampRate(0.35);
+    azimuthConfig.closedLoopRampRate(0.35);
     azimuthDriveSpeedMultiplier = ADMult;
+
+    azimuth.configure(azimuthConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
   public SwerveModulePosition getPodPosition() {
@@ -120,7 +136,7 @@ public class TurdPod extends SubsystemBase {
 
   public void setPodState(SwerveModuleState state) {
     state = SwerveModuleState.optimize(state, new Rotation2d(azimuthEncoder.getPosition())); // does not account for rotations between 180 and 360?
-    azimuthPID.setReference(state.angle.getRadians(), ControlType.kPosition); 
+    azimuth.getClosedLoopController().setSetpoint(state.angle.getRadians(), ControlType.kPosition);
     speed = Math.abs(state.speedMetersPerSecond) < .01 ? 0 : state.speedMetersPerSecond * driveSpeedToPower;
     SmartDashboard.putNumber("state.angle.getRadians()", state.angle.getRadians());
 
@@ -132,7 +148,8 @@ public class TurdPod extends SubsystemBase {
   }
 
   public double getAbsoluteEncoder() {
-    return (absoluteEncoder.getAbsolutePosition() * 2*Math.PI) - absoluteEncoderOffset;
+    double convertedPosition = absoluteEncoder.get() * RobotMap.absoluteRadiansPerEncoderRotation;
+    return (convertedPosition * 2*Math.PI) - absoluteEncoderOffset;
   }
 
   public double getDriveAmp() {
